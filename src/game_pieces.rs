@@ -6,6 +6,7 @@ pub (crate) struct Board
     state: Vec<Vec<Option<Stone>>>
 }
 
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub (crate) struct Stone
 {
     color: Color,
@@ -54,6 +55,16 @@ impl Board
             board[3][i] = Some(Stone::new(Color::Black,  (0, i)));
         }
 
+        /*
+        Detta returnar:
+        [W][W][W][W]
+        [ ][ ][ ][ ]
+        [ ][ ][ ][ ]
+        [B][B][B][B]
+
+        Boarden displayas
+        flipped för white.
+         */
         return board;
     }
 
@@ -77,5 +88,59 @@ impl Stone
     pub fn get_color(&self) -> Color
     {
         return self.color;
+    }
+
+    pub fn passive_move() -> ()
+    {
+        /*
+        Detta kommer ge typ:
+        [W][B][ ][B]
+        [ ][W][ ][ ]
+        [ ][ ][ ][ ]
+        [ ][w][B][W]
+
+        Om jag väljer lilla w ska jag ha movement i 
+        1x vänster, 1x vänster upp, 1x upp, 2x upphöger, 0x resten.
+        */
+    }
+
+    fn get_possible_moves(&self, b: &Board, aggr: bool) -> ()
+    {
+        let mut boardstate = &b.get_state();
+        let cur_pos = self.position; //0 = x, 1 = y
+        let mut movelist: Vec<(usize, usize)> = Vec::new();
+    
+        //todo: a move to the left is a [1, 0] 
+        //that gets added to the rock pos if movement.
+
+        //check North & South
+        for i in -2..3 as i8
+        {
+            let newpos = (self.position.0 as i8, self.position.1 as i8 + i);
+
+            //Check if in range.
+            if newpos.1 < 0 || newpos.1 > 4
+            {
+                continue;
+            }
+
+            //If not empty.
+            if boardstate[newpos.0 as usize][newpos.1 as usize] != None
+            {
+                continue;
+            }
+        }
+
+        //check east & West
+
+        //check NE & SW
+
+        //check NW & SE
+    }
+
+    pub fn aggressive_move() -> ()
+    {
+        //todo: Somehow kolla vad färgen på tidigare boarden var.
+        //todo: move buffer för passiv och aggressiv?
     }
 }
