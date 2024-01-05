@@ -18,7 +18,93 @@ fn state_init()
 }
 
 #[test]
-fn movement()
+fn movement_north_and_south_1()
 {
-    assert_eq!(1, 1);
+    let whitestone = Some(Stone::new(Color::White, (1,2)));
+    let blackstone = Some(Stone::new(Color::Black, (0,2)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, None, blackstone, None],
+        vec![None, None, whitestone, None],
+        vec![None, None, None, None],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone.unwrap().get_possible_moves(&b, false);
+
+    for i in &list
+    {
+        println!("({}, {})", i.0, i.1);
+    }
+
+    assert!(list.contains(&(2, 2)));
+    assert!(list.contains(&(3, 2)));
+
+    assert!(!list.contains(&(0, 2)));
+}
+
+
+#[test]
+fn movement_north_and_south_2()
+{
+    let whitestone = Some(Stone::new(Color::White, (2,2)));
+    let blackstone = Some(Stone::new(Color::Black, (0,2)));
+    let blackstone2 = Some(Stone::new(Color::Black, (3,2)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, None, blackstone, None],
+        vec![None, None, None, None],
+        vec![None, None, whitestone, None],
+        vec![None, None, blackstone2, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone.unwrap().get_possible_moves(&b, false);
+
+    for i in &list
+    {
+        println!("({}, {})", i.0, i.1);
+    }
+
+    assert!(list.contains(&(1, 2)));
+
+    assert!(!list.contains(&(0, 2)));
+    assert!(!list.contains(&(2, 2)));
+    assert!(!list.contains(&(3, 2)));
+}
+
+
+#[test]
+fn movement_north_and_south_3()
+{
+    let whitestone = Some(Stone::new(Color::White, (1,2)));
+    let blackstone = Some(Stone::new(Color::Black, (0,2)));
+    let blackstone2 = Some(Stone::new(Color::Black, (2,2)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, None, blackstone, None],
+        vec![None, None, whitestone, None],
+        vec![None, None, blackstone2, None],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone.unwrap().get_possible_moves(&b, false);
+
+    for i in &list
+    {
+        println!("({}, {})", i.0, i.1);
+    }
+
+    assert!(!list.contains(&(1, 2)));
+    assert!(!list.contains(&(0, 2)));
+    assert!(!list.contains(&(2, 2)));
+    assert!(!list.contains(&(3, 2)));
 }

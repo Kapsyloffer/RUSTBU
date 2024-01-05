@@ -72,6 +72,11 @@ impl Board
     {
         return &self.state;
     }
+
+    pub fn set_state(&mut self, new_state: Vec<Vec<Option<Stone>>>)
+    {
+        self.state = new_state;
+    }
 }
 
 impl Stone
@@ -104,31 +109,63 @@ impl Stone
         */
     }
 
-    fn get_possible_moves(&self, b: &Board, aggr: bool) -> ()
+    pub fn get_possible_moves(&self, b: &Board, aggr: bool) -> Vec<(usize, usize)>
     {
         let mut boardstate = &b.get_state();
-        let cur_pos = self.position; //0 = x, 1 = y
+        let cur_pos = self.position; //0 = y, 1 = x
         let mut movelist: Vec<(usize, usize)> = Vec::new();
     
         //todo: a move to the left is a [1, 0] 
         //that gets added to the rock pos if movement.
 
-        //check North & South
-        for i in -2..3 as i8
+        //check North
+        for i in 0..3 as i8
         {
-            let newpos = (self.position.0 as i8, self.position.1 as i8 + i);
+            let newpos = (self.position.0 as i8 - i, self.position.1 as i8);
 
             //Check if in range.
-            if newpos.1 < 0 || newpos.1 > 4
+            if newpos.1 < 0 || newpos.1 > 3 || i == 0
             {
                 continue;
             }
 
-            //If not empty.
+            //If space not empty.
             if boardstate[newpos.0 as usize][newpos.1 as usize] != None
+            {
+                if i != 1{
+                    continue;
+                }
+                else {
+                    break;
+                }
+            }
+
+            movelist.push((newpos.0 as usize, newpos.1 as usize)); //this is so crummy.
+        }
+
+        //check South
+        for i in 0..3 as i8
+        {
+            let newpos = (self.position.0 as i8 + i, self.position.1 as i8);
+
+            //Check if in range.
+            if newpos.1 < 0 || newpos.1 > 3 || i == 0
             {
                 continue;
             }
+
+            //If space not empty.
+            if boardstate[newpos.0 as usize][newpos.1 as usize] != None
+            {
+                if i != 1{
+                    continue;
+                }
+                else {
+                    break;
+                }
+            }
+
+            movelist.push((newpos.0 as usize, newpos.1 as usize)); //this is so crummy.
         }
 
         //check east & West
@@ -136,6 +173,8 @@ impl Stone
         //check NE & SW
 
         //check NW & SE
+
+        return movelist;
     }
 
     pub fn aggressive_move() -> ()
