@@ -53,7 +53,7 @@ impl Board
             board[0][i] = Some(Stone::new(Color::White,  (0, i)));
 
             //Bottom row (Black)
-            board[3][i] = Some(Stone::new(Color::Black,  (0, i)));
+            board[3][i] = Some(Stone::new(Color::Black,  (3, i)));
         }
 
         /*
@@ -96,6 +96,11 @@ impl Stone
         return self.color;
     }
 
+    fn get_pos(&self) -> (usize, usize)
+    {
+        return self.position;
+    }
+
     pub fn passive_move() -> ()
     {
         /*
@@ -127,85 +132,71 @@ impl Stone
 
         for (dy, dx) in directions.iter()
         {
-            for i in 0..3 as i8
+            for i in 1..3 as i8
             {
-                let newpos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
-
-                //free reign.
-                if self.is_valid(boardstate, newpos, aggr, &i, (&dy, &dx))
-                {
-                    movelist.push((newpos.0 as usize, newpos.1 as usize)); //this is so crummy.
-                    continue;
-                }
-                //om en sten står i vägen.
-                else if i == 1 && !aggr{
+                let new_pos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
+                if !aggr
+                {                
+                    if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
+                    {
+                        println!("ADDED {} {}", new_pos.0, new_pos.1);
+                        movelist.push((new_pos.0 as usize, new_pos.1 as usize)); //this is so crummy.
+                        continue;
+                    }
                     break;
+                }
+                else 
+                {
+                    if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
+                    {
+                        movelist.push((new_pos.0 as usize, new_pos.1 as usize)); //this is so crummy.
+                        continue;
+                    }
                 }
             }
         }
-
         return movelist;
     }
 
-    pub fn is_valid(&self, state: &Vec<Vec<Option<Stone>>>, pos: (i8, i8), aggr: bool, i: &i8, (dy, dx): (&i8, &i8)) -> bool
+    pub fn is_valid(&self, state: &Vec<Vec<Option<Stone>>>, cur_pos: (i8, i8), new_pos: (i8, i8), i: &i8, aggr: bool, (dy, dx): (&i8, &i8)) -> bool
     {
         //Check if in range.
-        if pos.1 < 0 || pos.1 > 3 || pos.0 < 0 || pos.0 > 3
+        let newy = new_pos.0 as usize;
+        let newx = new_pos.1 as usize;
+
+        let stepy = (cur_pos.0 + 1 * dy) as usize;
+        let stepx = (cur_pos.1  + 1 * dx) as usize;
+
+        //If outta range
+        if newx < 0 || newx > 3 || newy < 0 || newy > 3
         {
             return false;
         }
 
-        //Gör alla passive only checks här-
-        if !aggr
+        //Passive
+        if !aggr 
         {
-            if state[pos.0 as usize][pos.1 as usize] != None
+            if state[newy][newx].is_some() 
             {
                 return false;
             }
-        }
-
-        //Om stället vi checkar inte är tomt, vi kollar movement size 1, och det är aggressivt.
-        /*
-        t.ex.
-        [ ][ ][ ][ ]
-        [ ][W][B][ ] Good
-        [ ][ ][ ][ ]
-        [ ][ ][ ][ ]
-
-        
-        [ ][ ][ ][ ]
-        [ ][W][B][B] Bad
-        [ ][ ][ ][ ]
-        [ ][ ][ ][ ]
-
-        [ ][ ][ ][ ]
-        [ ][W][W][ ] VERY Bad 
-        [ ][ ][ ][ ]
-        [ ][ ][ ][ ]
-
-        Om vi åker mot höger.
-         */
-        if state[pos.0 as usize][pos.1 as usize] != None
+        } 
+        else 
         {
-
-            //Du får ej knuffa dina egna stenar.
-            if state[pos.0 as usize][pos.1 as usize].unwrap().get_color() == self.get_color() 
+            //Knuffa ej våra egna stenar.
+            if let Some(rock) = state[newy][newx] 
             {
-                return false;
+                if rock.get_color() == self.get_color() 
+                {
+                    return false; 
+                }
             }
             
-            //Om stenen framför har tom space bakom sig är det vald att gå dit.
-            if state[(pos.0 + 1 * dy) as usize][(pos.1 + 1 * dx) as usize] == None && i == &1
-            {
-                return true;
-            }
-            else 
+            if state[stepy][stepx].is_some() && *i == 2
             {
                 return false;
             }
         }
-
-        //Om det står en sten framför en men bakanför är tom, och vi är aggressiva.
         return true;
     }
 
