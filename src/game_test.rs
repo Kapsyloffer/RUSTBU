@@ -18,7 +18,7 @@ fn state_init()
 }
 
 #[test]
-fn valid_movement_north_and_south_1_passive()
+fn valid_movement_1_passive()
 {
     let whitestone = Some(Stone::new(Color::White, (1,2)));
     let blackstone = Some(Stone::new(Color::Black, (0,2)));
@@ -48,7 +48,7 @@ fn valid_movement_north_and_south_1_passive()
 
 
 #[test]
-fn valid_movement_north_and_south_2_passive()
+fn valid_movement_2_passive()
 {
     let whitestone  = Some(Stone::new(Color::White, (2, 2)));
     let blackstone  = Some(Stone::new(Color::Black, (0, 2)));
@@ -66,11 +66,6 @@ fn valid_movement_north_and_south_2_passive()
 
     let list = whitestone.unwrap().get_possible_moves(&b, false);
 
-    for i in &list
-    {
-        println!("ns2:  ({}, {})", i.0, i.1);
-    }
-
     assert!(list.contains(&(1, 2)));
 
     assert!(!list.contains(&(0, 2)));
@@ -80,7 +75,7 @@ fn valid_movement_north_and_south_2_passive()
 
 
 #[test]
-fn valid_movement_north_and_south_3_passive()
+fn valid_movement_3_passive()
 {
     let whitestone  = Some(Stone::new(Color::White, (1, 2)));
     let blackstone  = Some(Stone::new(Color::Black, (0, 2)));
@@ -98,13 +93,64 @@ fn valid_movement_north_and_south_3_passive()
 
     let list = whitestone.unwrap().get_possible_moves(&b, false);
 
-    for i in &list
-    {
-        println!("ns3:  ({}, {})", i.0, i.1);
-    }
-
     assert!(!list.contains(&(1, 2)));
     assert!(!list.contains(&(0, 2)));
     assert!(!list.contains(&(2, 2)));
     assert!(!list.contains(&(3, 2)));
+}
+
+#[test]
+fn valid_movement_locked_passive()
+{
+    let whitestone  = Some(Stone::new(Color::White, (1, 2)));
+    let blackstone1 = Some(Stone::new(Color::Black, (0, 2)));
+    let blackstone2 = Some(Stone::new(Color::Black, (0, 1)));
+    let blackstone3 = Some(Stone::new(Color::Black, (1, 1)));
+    let blackstone4 = Some(Stone::new(Color::Black, (1, 1)));
+    let blackstone5 = Some(Stone::new(Color::Black, (2, 2)));
+    let blackstone6 = Some(Stone::new(Color::Black, (2, 3)));
+    let blackstone7 = Some(Stone::new(Color::Black, (1, 3)));
+    let blackstone8 = Some(Stone::new(Color::Black, (0, 3)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, blackstone2, blackstone1, blackstone8],
+        vec![None, blackstone3, whitestone , blackstone7],
+        vec![None, blackstone4, blackstone5, blackstone6],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone.unwrap().get_possible_moves(&b, false);
+
+    assert!(list.is_empty());
+}
+
+#[test]
+fn valid_movement_locked_passive_2()
+{
+    let whitestone  = Some(Stone::new(Color::White, (1, 2)));
+    let blackstone1 = Some(Stone::new(Color::Black, (0, 2)));
+    let blackstone2 = Some(Stone::new(Color::Black, (0, 1)));
+    let blackstone3 = Some(Stone::new(Color::Black, (1, 0)));
+    let blackstone4 = Some(Stone::new(Color::Black, (1, 1)));
+    let blackstone5 = Some(Stone::new(Color::Black, (2, 2)));
+    let blackstone6 = Some(Stone::new(Color::Black, (2, 3)));
+    let blackstone7 = Some(Stone::new(Color::Black, (1, 3)));
+    let blackstone8 = Some(Stone::new(Color::Black, (0, 3)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, blackstone2, blackstone1, blackstone8],
+        vec![blackstone3, None, whitestone , blackstone7],
+        vec![None, blackstone4, blackstone5, blackstone6],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone.unwrap().get_possible_moves(&b, false);
+
+    assert_eq!(list.len(), 1);
 }

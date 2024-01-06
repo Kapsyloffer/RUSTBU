@@ -205,8 +205,6 @@ impl Stone
         }
 
         //Om det står en sten framför en men bakanför är tom, och vi är aggressiva.
-        
-
         return true;
     }
 
