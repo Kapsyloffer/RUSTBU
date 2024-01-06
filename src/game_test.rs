@@ -152,5 +152,64 @@ fn valid_movement_locked_passive_2()
 
     let list = whitestone.unwrap().get_possible_moves(&b, false);
 
+    assert_eq!(list[0], (1, 1));
     assert_eq!(list.len(), 1);
+}
+
+
+#[test]
+fn valid_movement_locked_aggressive()
+{
+    let whitestone   = Some(Stone::new(Color::White, (0, 3)));
+    let blackstone1  = Some(Stone::new(Color::Black, (0, 2)));
+    let blackstone2  = Some(Stone::new(Color::Black, (1, 2)));
+    let blackstone3  = Some(Stone::new(Color::Black, (1, 3)));
+    let blackstone4  = Some(Stone::new(Color::Black, (0, 1)));
+    let blackstone5  = Some(Stone::new(Color::Black, (2, 3)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, blackstone4, blackstone1,    whitestone],
+        vec![None, None,        blackstone2,    blackstone3],
+        vec![None, None,        None,           blackstone5],
+        vec![None, None,        None,           None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone.unwrap().get_possible_moves(&b, true);
+
+    for l in &list
+    {
+        println!("posible: {} {}", l.0, l.1);
+    }
+    assert_eq!(list.len(), 2);
+}
+
+#[test]
+fn valid_movement_locked_aggressive_2()
+{
+    let whitestone0  = Some(Stone::new(Color::White, (0, 3)));
+    let whitestone1  = Some(Stone::new(Color::White, (0, 2)));
+    let whitestone2  = Some(Stone::new(Color::White, (1, 2)));
+
+    let blackstone1  = Some(Stone::new(Color::Black, (2, 3)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, None, whitestone1, whitestone0],
+        vec![None, None, whitestone2, None],
+        vec![None, None, None, blackstone1],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone0.unwrap().get_possible_moves(&b, true);
+
+    for l in &list
+    {
+        println!("posible: {} {}", l.0, l.1);
+    }
+    assert_eq!(list.len(), 2);
 }

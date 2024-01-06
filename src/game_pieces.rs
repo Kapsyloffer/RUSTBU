@@ -185,7 +185,7 @@ impl Stone
 
         Om vi åker mot höger.
          */
-        if state[pos.0 as usize][pos.1 as usize] != None  && *i == 1
+        if state[pos.0 as usize][pos.1 as usize] != None
         {
 
             //Du får ej knuffa dina egna stenar.
@@ -193,8 +193,9 @@ impl Stone
             {
                 return false;
             }
-
-            if state[(pos.0 + 1 * dy) as usize][(pos.1 + 1 * dx) as usize] == None
+            
+            //Om stenen framför har tom space bakom sig är det vald att gå dit.
+            if state[(pos.0 + 1 * dy) as usize][(pos.1 + 1 * dx) as usize] == None && i == &1
             {
                 return true;
             }
