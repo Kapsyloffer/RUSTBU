@@ -18,7 +18,7 @@ fn state_init()
 }
 
 #[test]
-fn valid_movement_1_passive()
+fn valid_movement_passive_1()
 {
     let whitestone = Some(Stone::new(Color::White, (1,2)));
     let blackstone = Some(Stone::new(Color::Black, (0,2)));
@@ -48,7 +48,7 @@ fn valid_movement_1_passive()
 
 
 #[test]
-fn valid_movement_2_passive()
+fn valid_movement_passive_2()
 {
     let whitestone  = Some(Stone::new(Color::White, (2, 2)));
     let blackstone  = Some(Stone::new(Color::Black, (0, 2)));
@@ -75,7 +75,7 @@ fn valid_movement_2_passive()
 
 
 #[test]
-fn valid_movement_3_passive()
+fn valid_movement_passive_3()
 {
     let whitestone  = Some(Stone::new(Color::White, (1, 2)));
     let blackstone  = Some(Stone::new(Color::Black, (0, 2)));
@@ -100,7 +100,7 @@ fn valid_movement_3_passive()
 }
 
 #[test]
-fn valid_movement_locked_passive()
+fn valid_movement_locked_passive_1()
 {
     let whitestone  = Some(Stone::new(Color::White, (1, 2)));
     let blackstone1 = Some(Stone::new(Color::Black, (0, 2)));
@@ -158,7 +158,7 @@ fn valid_movement_locked_passive_2()
 
 
 #[test]
-fn valid_movement_locked_aggressive()
+fn valid_movement_locked_aggressive_1()
 {
     let whitestone   = Some(Stone::new(Color::White, (0, 3)));
     let blackstone1  = Some(Stone::new(Color::Black, (0, 2)));
@@ -216,4 +216,90 @@ fn valid_movement_locked_aggressive_2()
     assert!(list.contains(&(1, 3)));
     assert!(list.contains(&(2, 3)));
     assert_eq!(list.len(), 2);
+}
+
+#[test]
+fn valid_movement_locked_aggressive_3()
+{
+    let whitestone0  = Some(Stone::new(Color::White, (0, 3)));
+    let whitestone1  = Some(Stone::new(Color::White, (0, 2)));
+    let whitestone2  = Some(Stone::new(Color::White, (1, 2)));
+    let whitestone3  = Some(Stone::new(Color::White, (1, 3)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, None, whitestone1, whitestone0],
+        vec![None, None, whitestone2, whitestone3],
+        vec![None, None, None, None],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone0.unwrap().get_possible_moves(&b, true);
+
+    for l in &list
+    {
+        println!("posible: {} {}", l.0, l.1);
+    }
+    assert_eq!(list.len(), 0);
+}
+
+#[test]
+fn valid_movement_locked_aggressive_4()
+{
+    let whitestone0  = Some(Stone::new(Color::White, (0, 3)));
+    let whitestone1  = Some(Stone::new(Color::White, (0, 2)));
+    let whitestone2  = Some(Stone::new(Color::White, (1, 2)));
+    let whitestone3  = Some(Stone::new(Color::White, (1, 3)));
+
+    let black0  = Some(Stone::new(Color::Black, (0, 1)));
+    let black1  = Some(Stone::new(Color::Black, (1, 1)));
+    let black2  = Some(Stone::new(Color::Black, (2, 1)));
+    let black3  = Some(Stone::new(Color::Black, (2, 2)));
+    let black4  = Some(Stone::new(Color::Black, (2, 3)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, black0, whitestone1, whitestone0],
+        vec![None, black1, whitestone2, whitestone3],
+        vec![None, black2, black3, black4],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    let list = whitestone0.unwrap().get_possible_moves(&b, true);
+
+    for l in &list
+    {
+        println!("posible: {} {}", l.0, l.1);
+    }
+    assert_eq!(list.len(), 0);
+}
+
+#[test]
+fn check_if_stones_update()
+{
+    let black0  = Some(Stone::new(Color::Black, (0, 0)));
+    let black1  = Some(Stone::new(Color::Black, (0, 0)));
+    let black2  = Some(Stone::new(Color::Black, (0, 0)));
+    let black3  = Some(Stone::new(Color::Black, (0, 0)));
+    let black4  = Some(Stone::new(Color::Black, (0, 0)));
+
+    let boardstate: Vec<Vec<Option<Stone>>> = vec![
+        vec![None, black0, None, None],
+        vec![None, black1, None, None],
+        vec![None, black2, black3, black4],
+        vec![None, None, None, None],
+    ];
+
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    b.set_state(boardstate);
+
+    assert_ne!(black0.unwrap().get_pos(), (0, 0));
+    assert_ne!(black1.unwrap().get_pos(), (0, 0));
+    assert_ne!(black2.unwrap().get_pos(), (0, 0));
+    assert_ne!(black3.unwrap().get_pos(), (0, 0));
+    assert_ne!(black4.unwrap().get_pos(), (0, 0));
 }

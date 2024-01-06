@@ -55,7 +55,7 @@ impl Board
             //Bottom row (Black)
             board[3][i] = Some(Stone::new(Color::Black,  (3, i)));
         }
-
+        
         /*
         Detta returnar:
         [W][W][W][W]
@@ -74,9 +74,26 @@ impl Board
         return &self.state;
     }
 
-    pub fn set_state(&mut self, new_state: Vec<Vec<Option<Stone>>>)
+    pub fn set_state (&mut self, new_state: Vec<Vec<Option<Stone>>>)
     {
         self.state = new_state;
+        self.update_stones();
+    }
+
+    fn update_stones(&mut self)
+    {
+        let state = self.get_state();
+        for i in 0..state.len()
+        {
+            for j in 0..state[i].len()
+            {
+                match state[i][j] 
+                {
+                    Some(mut rock) => rock.set_pos((i, j)),
+                    None => continue,
+                }
+            }
+        }
     }
 }
 
@@ -96,9 +113,15 @@ impl Stone
         return self.color;
     }
 
-    fn get_pos(&self) -> (usize, usize)
+    pub (super) fn get_pos(&self) -> (usize, usize)
     {
         return self.position;
+    }
+
+    pub fn set_pos(mut self, new_pos: (usize, usize))
+    {
+        self.position = new_pos;
+        println!("New position: {} {}", new_pos.0, new_pos.1);
     }
 
     pub fn passive_move() -> ()
