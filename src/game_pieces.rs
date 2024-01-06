@@ -135,24 +135,14 @@ impl Stone
             for i in 1..3 as i8
             {
                 let new_pos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
-                if !aggr
-                {                
-                    if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
-                    {
-                        println!("ADDED {} {}", new_pos.0, new_pos.1);
-                        movelist.push((new_pos.0 as usize, new_pos.1 as usize)); //this is so crummy.
-                        continue;
-                    }
-                    break;
-                }
-                else 
+
+                if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
                 {
-                    if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
-                    {
-                        movelist.push((new_pos.0 as usize, new_pos.1 as usize)); //this is so crummy.
-                        continue;
-                    }
+                    println!("ADDED {} {}, DIRECTION: {} {}", new_pos.0, new_pos.1, dy, dx);
+                    movelist.push((new_pos.0 as usize, new_pos.1 as usize)); //this is so crummy.
+                    continue;
                 }
+                break;
             }
         }
         return movelist;
@@ -181,7 +171,8 @@ impl Stone
                 return false;
             }
         } 
-        else 
+        
+        if aggr //Det här är gigacrummy. TODO: Make less crummy.
         {
             //Knuffa ej våra egna stenar.
             if let Some(rock) = state[newy][newx] 
@@ -191,10 +182,29 @@ impl Stone
                     return false; 
                 }
             }
+
+            //Om rutan bakom är tom, och rutan har en sten. Move size 1
+            if * i == 1 && state[newy][newx].is_some() && state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize].is_none()
+            {
+                return true;
+            }
             
-            if state[stepy][stepx].is_some() && *i == 2
+            //Om rutan bakom har en sten, och rutan har en sten. Move size 1
+            if * i == 1 && state[newy][newx].is_some() && state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize].is_some()
             {
                 return false;
+            }
+
+            //Om rutan bakom har ing en sten, och rutan har ingen sten. Move size 2
+            if state[stepy][stepx].is_some() && *i == 2 && state[newy][newx].is_some()
+            {
+                return false;
+            }
+            
+            //Om rutan bakom har ingen sten, och rutan har en sten. Move size 2
+            if state[stepy][stepx].is_some() && *i == 2 && state[newy][newx].is_none()
+            {
+                return true;
             }
         }
         return true;

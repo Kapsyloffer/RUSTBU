@@ -183,7 +183,9 @@ fn valid_movement_locked_aggressive()
     {
         println!("posible: {} {}", l.0, l.1);
     }
-    assert_eq!(list.len(), 2);
+    assert!(list.contains(&(1, 2)));
+    assert!(list.contains(&(2, 1)));
+    assert!(list.len() == 2);
 }
 
 #[test]
@@ -211,5 +213,7 @@ fn valid_movement_locked_aggressive_2()
     {
         println!("posible: {} {}", l.0, l.1);
     }
+    assert!(list.contains(&(1, 3)));
+    assert!(list.contains(&(2, 3)));
     assert_eq!(list.len(), 2);
 }
