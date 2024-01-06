@@ -1,4 +1,5 @@
 #[allow(unused)]
+#[allow(dead_code)]
 pub (crate) struct Board
 {
     color: Color,
@@ -106,75 +107,107 @@ impl Stone
 
         Om jag väljer lilla w ska jag ha movement i 
         1x vänster, 1x vänster upp, 1x upp, 2x upphöger, 0x resten.
+        
+        Ta possible moves, 
+        om jag tar en som flyttar 2
+        så får jag size 2 och direction som skickas till aggressive.
         */
     }
 
     pub fn get_possible_moves(&self, b: &Board, aggr: bool) -> Vec<(usize, usize)>
     {
-        let mut boardstate = &b.get_state();
-        let cur_pos = self.position; //0 = y, 1 = x
+        let mut boardstate = b.get_state();
+        let cur_pos = (self.position.0 as i8, self.position.1 as i8); //0 = y, 1 = x
+
         let mut movelist: Vec<(usize, usize)> = Vec::new();
-    
+        let directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)];
+
         //todo: a move to the left is a [1, 0] 
         //that gets added to the rock pos if movement.
 
-        //check North
-        for i in 0..3 as i8
+        for (dy, dx) in directions.iter()
         {
-            let newpos = (self.position.0 as i8 - i, self.position.1 as i8);
-
-            //Check if in range.
-            if newpos.1 < 0 || newpos.1 > 3 || i == 0
+            for i in 0..3 as i8
             {
-                continue;
-            }
+                let newpos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
 
-            //If space not empty.
-            if boardstate[newpos.0 as usize][newpos.1 as usize] != None
-            {
-                if i != 1{
+                //free reign.
+                if self.is_valid(boardstate, newpos, aggr, &i, (&dy, &dx))
+                {
+                    movelist.push((newpos.0 as usize, newpos.1 as usize)); //this is so crummy.
                     continue;
                 }
-                else {
+                //om en sten står i vägen.
+                else if i == 1 && !aggr{
                     break;
                 }
             }
-
-            movelist.push((newpos.0 as usize, newpos.1 as usize)); //this is so crummy.
         }
-
-        //check South
-        for i in 0..3 as i8
-        {
-            let newpos = (self.position.0 as i8 + i, self.position.1 as i8);
-
-            //Check if in range.
-            if newpos.1 < 0 || newpos.1 > 3 || i == 0
-            {
-                continue;
-            }
-
-            //If space not empty.
-            if boardstate[newpos.0 as usize][newpos.1 as usize] != None
-            {
-                if i != 1{
-                    continue;
-                }
-                else {
-                    break;
-                }
-            }
-
-            movelist.push((newpos.0 as usize, newpos.1 as usize)); //this is so crummy.
-        }
-
-        //check east & West
-
-        //check NE & SW
-
-        //check NW & SE
 
         return movelist;
+    }
+
+    pub fn is_valid(&self, state: &Vec<Vec<Option<Stone>>>, pos: (i8, i8), aggr: bool, i: &i8, (dy, dx): (&i8, &i8)) -> bool
+    {
+        //Check if in range.
+        if pos.1 < 0 || pos.1 > 3 || pos.0 < 0 || pos.0 > 3
+        {
+            return false;
+        }
+
+        //Gör alla passive only checks här-
+        if !aggr
+        {
+            if state[pos.0 as usize][pos.1 as usize] != None
+            {
+                return false;
+            }
+        }
+
+        //Om stället vi checkar inte är tomt, vi kollar movement size 1, och det är aggressivt.
+        /*
+        t.ex.
+        [ ][ ][ ][ ]
+        [ ][W][B][ ] Good
+        [ ][ ][ ][ ]
+        [ ][ ][ ][ ]
+
+        
+        [ ][ ][ ][ ]
+        [ ][W][B][B] Bad
+        [ ][ ][ ][ ]
+        [ ][ ][ ][ ]
+
+        [ ][ ][ ][ ]
+        [ ][W][W][ ] VERY Bad 
+        [ ][ ][ ][ ]
+        [ ][ ][ ][ ]
+
+        Om vi åker mot höger.
+         */
+        if state[pos.0 as usize][pos.1 as usize] != None  && *i == 1
+        {
+
+            //Du får ej knuffa dina egna stenar.
+            if state[pos.0 as usize][pos.1 as usize].unwrap().get_color() == self.get_color() 
+            {
+                return false;
+            }
+
+            if state[(pos.0 + 1 * dy) as usize][(pos.1 + 1 * dx) as usize] == None
+            {
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
+        }
+
+        //Om det står en sten framför en men bakanför är tom, och vi är aggressiva.
+        
+
+        return true;
     }
 
     pub fn aggressive_move() -> ()

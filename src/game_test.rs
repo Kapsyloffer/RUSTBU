@@ -18,7 +18,7 @@ fn state_init()
 }
 
 #[test]
-fn movement_north_and_south_1()
+fn valid_movement_north_and_south_1_passive()
 {
     let whitestone = Some(Stone::new(Color::White, (1,2)));
     let blackstone = Some(Stone::new(Color::Black, (0,2)));
@@ -48,11 +48,11 @@ fn movement_north_and_south_1()
 
 
 #[test]
-fn movement_north_and_south_2()
+fn valid_movement_north_and_south_2_passive()
 {
-    let whitestone = Some(Stone::new(Color::White, (2,2)));
-    let blackstone = Some(Stone::new(Color::Black, (0,2)));
-    let blackstone2 = Some(Stone::new(Color::Black, (3,2)));
+    let whitestone  = Some(Stone::new(Color::White, (2, 2)));
+    let blackstone  = Some(Stone::new(Color::Black, (0, 2)));
+    let blackstone2 = Some(Stone::new(Color::Black, (3, 2)));
 
     let boardstate: Vec<Vec<Option<Stone>>> = vec![
         vec![None, None, blackstone, None],
@@ -68,7 +68,7 @@ fn movement_north_and_south_2()
 
     for i in &list
     {
-        println!("({}, {})", i.0, i.1);
+        println!("ns2:  ({}, {})", i.0, i.1);
     }
 
     assert!(list.contains(&(1, 2)));
@@ -80,11 +80,11 @@ fn movement_north_and_south_2()
 
 
 #[test]
-fn movement_north_and_south_3()
+fn valid_movement_north_and_south_3_passive()
 {
-    let whitestone = Some(Stone::new(Color::White, (1,2)));
-    let blackstone = Some(Stone::new(Color::Black, (0,2)));
-    let blackstone2 = Some(Stone::new(Color::Black, (2,2)));
+    let whitestone  = Some(Stone::new(Color::White, (1, 2)));
+    let blackstone  = Some(Stone::new(Color::Black, (0, 2)));
+    let blackstone2 = Some(Stone::new(Color::Black, (2, 2)));
 
     let boardstate: Vec<Vec<Option<Stone>>> = vec![
         vec![None, None, blackstone, None],
@@ -100,7 +100,7 @@ fn movement_north_and_south_3()
 
     for i in &list
     {
-        println!("({}, {})", i.0, i.1);
+        println!("ns3:  ({}, {})", i.0, i.1);
     }
 
     assert!(!list.contains(&(1, 2)));
