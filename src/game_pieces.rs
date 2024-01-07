@@ -121,7 +121,7 @@ impl Stone
     pub fn set_pos(mut self, new_pos: (usize, usize))
     {
         self.position = new_pos;
-        println!("New position: {} {}", new_pos.0, new_pos.1);
+        println!("New position: {} {}", self.get_pos().0, self.get_pos().1);
     }
 
     pub fn passive_move() -> ()

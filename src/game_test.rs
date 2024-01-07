@@ -295,11 +295,29 @@ fn check_if_stones_update()
     ];
 
     let mut b = Board::new_board(Color::Black, Color::Black);
+
     b.set_state(boardstate);
 
-    assert_ne!(black0.unwrap().get_pos(), (0, 0));
-    assert_ne!(black1.unwrap().get_pos(), (0, 0));
-    assert_ne!(black2.unwrap().get_pos(), (0, 0));
-    assert_ne!(black3.unwrap().get_pos(), (0, 0));
-    assert_ne!(black4.unwrap().get_pos(), (0, 0));
+    for i in b.get_state()
+    {
+        for j in i
+        {
+            if j.is_some()
+            {
+                println!("{} {}", j.unwrap().get_pos().0, j.unwrap().get_pos().1);
+            }
+        }
+    }
+
+    assert!(b.get_state()[0][1].unwrap().get_pos() != (0, 0));
+    assert!(b.get_state()[1][1].unwrap().get_pos() != (0, 0));
+    assert!(b.get_state()[2][1].unwrap().get_pos() != (0, 0));
+    assert!(b.get_state()[2][2].unwrap().get_pos() != (0, 0));
+    assert!(b.get_state()[2][3].unwrap().get_pos() != (0, 0));
+}
+
+#[test]
+fn set_state_test()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
 }
