@@ -159,13 +159,11 @@ impl Tile
     pub fn get_possible_moves(&self, b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
     {
         let mut boardstate = b.get_state();
-        //let cur_pos = (0,0);//(self.position.0 as i8, self.position.1 as i8); //0 = y, 1 = x
 
         let mut movelist: Vec<(i8, i8)> = Vec::new();
+        //0 = y, 1 = x
         let directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)];
-
-        //todo: a move to the left is a [1, 0] 
-        //that gets added to the rock pos if movement.
+        //So a move to the left is [1, 0]
 
         for (dy, dx) in directions.iter()
         {
@@ -261,14 +259,14 @@ impl Tile
         
         let mut boardstate = *b.get_state();
         
-        let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+        /*let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
         let rock_notme = boardstate[new_pos.0 as usize][new_pos.1 as usize];
 
         //Old space is empty
         boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
 
         //New space has the rock
-        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
+        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;*/
 
         //Move previously occupying rock
         //Get direction:
@@ -279,30 +277,79 @@ impl Tile
             med dir kan vi stega x antal steg.
          */
         let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
-        
-        //Steppa för varje tile.
-        for i in 0..diff.0.abs().max(diff.1.abs())
+        let size = diff.0.abs().max(diff.1.abs());
+       
+        /*
+        Detta kommer ge typ:
+        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+        [ ][ ][ ][B]      [ ][ ][ ][W]      [ ][ ][ ][W]
+        [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
+        [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+
+        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][B][ ][ ]
+        [ ][ ][ ][ ]      [ ][W][ ][ ]      [ ][W][ ][ ]
+        [ ][B][ ][ ]  =>  [ ][B][ ][ ]  =>  [ ][ ][ ][ ]
+        [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+
+        Hopefully
+        */
+
+        let still_on_board = self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1));
+        let push_pos: (i8, i8) = ((new_pos.0 + 1 * dir.0), (new_pos.1 + 1 * dir.1));
+
+        if size > 1
         {
-             /*
-                Detta kommer ge typ:
-                [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-                [ ][ ][ ][B]      [ ][ ][ ][B]      [ ][ ][ ][W]
-                [ ][ ][ ][ ]  =>  [ ][ ][W][ ]  =>  [ ][ ][ ][ ]
-                [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+            if still_on_board
+            {
+                let rocky = boardstate[(new_pos.0 +1 * dir.0) as usize][(new_pos.1 +1 * dir.1) as usize];
+                boardstate[push_pos.0 as usize][push_pos.1 as usize] = rocky;
+            }
 
-                [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][B][ ][ ]
-                [ ][ ][ ][ ]      [ ][B][ ][ ]      [ ][W][ ][ ]
-                [ ][B][ ][ ]  =>  [ ][W][ ][ ]  =>  [ ][ ][ ][ ]
-                [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+            //Sätt nya posen till vår färg
+            boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
 
-                Hopefully
-                */
-            todo!()
+            //Rensa förra.
+            boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] = Tile::empty();
         }
+        else 
+        {
+            if still_on_board
+            {
+                
+            }
+
+            boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+            boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+        }
+
+        /* 
+        //Om nya platsen inte är tom, checka om stenen hamnar out of bounds.
+        if boardstate[new_pos.0 as usize][new_pos.1 as usize] != Tile::Empty
+        {
+            //Om den inte gör det flyttar vi upp den ett steg.
+            if self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1))
+            {
+                boardstate[(new_pos.0 + 1 * dir.0) as usize][(new_pos.1 + 1 * dir.1) as usize] = boardstate[new_pos.0 as usize][new_pos.1 as usize];
+            }
+            boardstate[new_pos.0 as usize][new_pos.1 as usize] = *self;
+        }
+        //Om den är tom, chcka innan och se om den har en sten.
+        else if boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] != Tile::Empty
+            {
+                if self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1))
+                {
+                    boardstate[(new_pos.0 + 1 * dir.0) as usize][(new_pos.1 + 1 * dir.1) as usize] = boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize];
+                }
+                boardstate[new_pos.0 as usize][new_pos.1 as usize] = *self;
+            }
+        else //Annars om inga stenar, skjut bara ena stenen.
+        {
+            boardstate[new_pos.0 as usize][new_pos.1 as usize] = *self;
+        }*/
+
 
         b.set_state(boardstate);
 
         return true;
     }
-
 }
