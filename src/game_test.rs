@@ -231,13 +231,63 @@ fn check_if_stones_update()
 }
 
 #[test]
+fn check_winner()
+{
+    let boardstate_none: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Black, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Black, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Black, Tile::Black, Tile::Black],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_none2: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_white: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_black: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Black, Tile::Black],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let mut bn: Board = Board::new_board(Color::Black, Color::Black);
+    bn.set_state(boardstate_none);
+
+    let mut bn2: Board = Board::new_board(Color::Black, Color::Black);
+    bn2.set_state(boardstate_none2);
+
+    let mut bw: Board = Board::new_board(Color::Black, Color::Black);
+    bw.set_state(boardstate_white);
+
+    let mut bb: Board = Board::new_board(Color::Black, Color::Black);
+    bb.set_state(boardstate_black);
+
+    assert_eq!(Board::check_winner(&bn), None);
+    assert_eq!(Board::check_winner(&bn2), None);
+
+    assert_eq!(Board::check_winner(&bw), Some(Color::White));
+    assert_eq!(Board::check_winner(&bb), Some(Color::Black));
+}
+
+#[test]
 fn movement_passive()
 {
     let mut b = Board::new_board(Color::Black, Color::Black);
     let b2 = Board::new_board(Color::Black, Color::Black);
 
     //Ful lösning men eh
-    let (pos, diff) = b.clone().get_state()[0][3].passive_move(&mut b, (0, 3), (2, 3));
+    let (pos, diff, _) = b.clone().get_state()[0][3].passive_move(&mut b, (0, 3), (2, 3));
     assert!(pos);
     assert!(diff == (2, 0));
     assert_ne!(b.get_state(), b2.get_state());
@@ -247,9 +297,35 @@ fn movement_passive()
 fn movement_passive_2()
 {
     let mut b = Board::new_board(Color::Black, Color::Black);
-    let b2 = Board::new_board(Color::Black, Color::Black);
 
     //Ful lösning men eh
-    let (pos, diff) = b.clone().get_state()[0][3].passive_move(&mut b, (0, 3), (3, 3));
+    let (pos, _, _) = b.clone().get_state()[0][3].passive_move(&mut b, (0, 3), (3, 3));
     assert!(!pos);
+}
+
+#[test]
+fn movement_aggressive()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    let boardstate: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Black],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_next: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+    b.set_state(boardstate);
+
+    let mut b2 = Board::new_board(Color::Black, Color::Black);
+    b2.set_state(boardstate);
+
+    assert!(b.clone().get_state()[0][3].aggressive_move(&mut b, (0, 3), (0, 1), Color::White));
+    assert_eq!(*b.get_state(), boardstate_next);
+    assert_ne!(b2.get_state(), b.get_state());
 }

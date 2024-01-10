@@ -1,8 +1,15 @@
 #![allow(dead_code)]
 #![allow(unused)]
 
+use std::
+{
+    f32, 
+    primitive, 
+    cmp::Ord
+};
+
 #[derive(Clone, Copy, PartialEq, Debug)]
-pub (crate) struct Board
+pub struct Board
 {
     color: Color,
     home: Color,
@@ -10,7 +17,7 @@ pub (crate) struct Board
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
-pub (crate) enum Tile
+pub enum Tile
 {
     Empty,
     Black,
@@ -78,9 +85,9 @@ impl Board
         self.state = new_state;
     }
 
-    pub fn check_winner(self) -> Option<Color> 
+    pub fn check_winner(b: &Board) -> Option<Color> 
     {
-        let state = self.get_state();
+        let state = b.get_state();
     
         let has_white = state.iter().any(|row| row.contains(&Tile::White));
         let has_black = state.iter().any(|row| row.contains(&Tile::Black));
@@ -92,6 +99,11 @@ impl Board
             (true, false) => Some(Color::White),
             _ => None,
         }
+    }
+
+    pub fn get_color(&self) -> Color
+    {
+        return self.color;
     }
 }
 
@@ -112,11 +124,11 @@ impl Tile
         return Tile::Black;
     }
 
-    pub fn passive_move(&self, b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> (bool, (i8, i8))
+    pub fn passive_move(&self, b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> (bool, (i8, i8), Color)
     {
         if !self.get_possible_moves(b, false, cur_pos).contains(&new_pos)
         {
-            return (false, (0,0));
+            return (false, (0,0), b.get_color());
         }
 
         let mut boardstate = *b.get_state();
@@ -129,19 +141,19 @@ impl Tile
 
         Så vi tar cur_pos och flyttar till new_pos
         */
-        let rock = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+        let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
 
         //Old space is empty
         boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
 
         //New space has the rock
-        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock;
+        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
 
         b.set_state(boardstate);
 
         //Får ut storleken flyttad så vi kan slänga in den i aggr.
-        let sizediff = (-(cur_pos.0 - new_pos.0), -(cur_pos.1 - new_pos.1));
-        return (true, sizediff);
+        let sizediff = ((cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
+        return (true, sizediff, b.get_color());
     }
 
     pub fn get_possible_moves(&self, b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
@@ -163,7 +175,7 @@ impl Tile
 
                 if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
                 {
-                    println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, -(cur_pos.0 - new_pos.0), -(cur_pos.1 - new_pos.1));
+                    println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, (cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
                     movelist.push((new_pos.0, new_pos.1)); //this is so crummy.
                     continue;
                 }
@@ -232,10 +244,65 @@ impl Tile
         return true;
     }
 
-    pub fn aggressive_move() -> ()
+    pub fn aggressive_move(&self, b: &mut Board, cur_pos: (i8, i8), diff: (i8, i8), prev_colour: Color) -> bool
     {
-        //todo: Somehow kolla vad färgen på tidigare boarden var.
-        //todo: move buffer för passiv och aggressiv?
+        let new_pos = (cur_pos.0 + diff.0, cur_pos.1 + diff.1);
+        //Om tidigare movet gjordes på en board av samma färg.
+        if b.get_color() == prev_colour
+        {
+            return false;
+        }
+
+        //Om draget inte finns
+        if !self.get_possible_moves(b, true, cur_pos).contains(&new_pos)
+        {
+            return false;
+        }
+        
+        let mut boardstate = *b.get_state();
+        
+        let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+        let rock_notme = boardstate[new_pos.0 as usize][new_pos.1 as usize];
+
+        //Old space is empty
+        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+
+        //New space has the rock
+        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
+
+        //Move previously occupying rock
+        //Get direction:
+        /*
+            0 / 2 = 0,
+            1 / 2 ceil = 1
+            -2 / 2 ceil = -1
+            med dir kan vi stega x antal steg.
+         */
+        let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
+        
+        //Steppa för varje tile.
+        for i in 0..diff.0.abs().max(diff.1.abs())
+        {
+             /*
+                Detta kommer ge typ:
+                [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+                [ ][ ][ ][B]      [ ][ ][ ][B]      [ ][ ][ ][W]
+                [ ][ ][ ][ ]  =>  [ ][ ][W][ ]  =>  [ ][ ][ ][ ]
+                [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+
+                [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][B][ ][ ]
+                [ ][ ][ ][ ]      [ ][B][ ][ ]      [ ][W][ ][ ]
+                [ ][B][ ][ ]  =>  [ ][W][ ][ ]  =>  [ ][ ][ ][ ]
+                [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+
+                Hopefully
+                */
+            todo!()
+        }
+
+        b.set_state(boardstate);
+
+        return true;
     }
 
 }
