@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused)]
 
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub (crate) struct Board
 {
     color: Color,
@@ -76,6 +77,22 @@ impl Board
     {
         self.state = new_state;
     }
+
+    pub fn check_winner(self) -> Option<Color> 
+    {
+        let state = self.get_state();
+    
+        let has_white = state.iter().any(|row| row.contains(&Tile::White));
+        let has_black = state.iter().any(|row| row.contains(&Tile::Black));
+    
+        match (has_white, has_black) 
+        {
+            (true, true) => None,
+            (false, true) => Some(Color::Black),
+            (true, false) => Some(Color::White),
+            _ => None,
+        }
+    }
 }
 
 impl Tile
@@ -95,8 +112,14 @@ impl Tile
         return Tile::Black;
     }
 
-    pub fn passive_move() -> ()
+    pub fn passive_move(&self, b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> (bool, (i8, i8))
     {
+        if !self.get_possible_moves(b, false, cur_pos).contains(&new_pos)
+        {
+            return (false, (0,0));
+        }
+
+        let mut boardstate = *b.get_state();
         /*
         Detta kommer ge typ:
         [W][B][ ][B]
@@ -104,21 +127,29 @@ impl Tile
         [ ][ ][ ][ ]
         [ ][w][B][W]
 
-        Om jag väljer lilla w ska jag ha movement i 
-        1x vänster, 1x vänster upp, 1x upp, 2x upphöger, 0x resten.
-        
-        Ta possible moves, 
-        om jag tar en som flyttar 2
-        så får jag size 2 och direction som skickas till aggressive.
+        Så vi tar cur_pos och flyttar till new_pos
         */
+        let rock = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+
+        //Old space is empty
+        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+
+        //New space has the rock
+        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock;
+
+        b.set_state(boardstate);
+
+        //Får ut storleken flyttad så vi kan slänga in den i aggr.
+        let sizediff = (-(cur_pos.0 - new_pos.0), -(cur_pos.1 - new_pos.1));
+        return (true, sizediff);
     }
 
-    pub fn get_possible_moves(&self, b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(usize, usize)>
+    pub fn get_possible_moves(&self, b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
     {
         let mut boardstate = b.get_state();
         //let cur_pos = (0,0);//(self.position.0 as i8, self.position.1 as i8); //0 = y, 1 = x
 
-        let mut movelist: Vec<(usize, usize)> = Vec::new();
+        let mut movelist: Vec<(i8, i8)> = Vec::new();
         let directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)];
 
         //todo: a move to the left is a [1, 0] 
@@ -132,8 +163,8 @@ impl Tile
 
                 if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
                 {
-                    println!("ADDED {} {}, DIRECTION: {} {}", new_pos.0, new_pos.1, dy, dx);
-                    movelist.push((new_pos.0 as usize, new_pos.1 as usize)); //this is so crummy.
+                    println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, -(cur_pos.0 - new_pos.0), -(cur_pos.1 - new_pos.1));
+                    movelist.push((new_pos.0, new_pos.1)); //this is so crummy.
                     continue;
                 }
                 break;
@@ -208,34 +239,3 @@ impl Tile
     }
 
 }
-
-
-/*impl Stone
-{
-    pub (crate) fn new(c: Color, pos: (usize, usize)) -> Stone
-    {
-        return Stone
-        {
-            color: c,
-            position: pos
-        }
-    }
-    
-    pub fn get_color(&self) -> Color
-    {
-        return self.color;
-    }
-
-    pub (super) fn get_pos(&self) -> (usize, usize)
-    {
-        return self.position;
-    }
-
-    pub fn set_pos(mut self, new_pos: (usize, usize))
-    {
-        self.position = new_pos;
-        println!("New position: {} {}", self.get_pos().0, self.get_pos().1);
-    }
-
-    
-}*/

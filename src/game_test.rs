@@ -220,6 +220,36 @@ fn check_if_stones_update()
     let boardstate: [[Tile; 4]; 4] = [[Tile::empty(); 4]; 4];
 
     let mut b = Board::new_board(Color::Black, Color::Black);
+    let b2 = Board::new_board(Color::Black, Color::Black);
+
+    assert_eq!(b.get_state(), b2.get_state());
 
     b.set_state(boardstate);
+
+    
+    assert_ne!(b.get_state(), b2.get_state());
+}
+
+#[test]
+fn movement_passive()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    let b2 = Board::new_board(Color::Black, Color::Black);
+
+    //Ful lösning men eh
+    let (pos, diff) = b.clone().get_state()[0][3].passive_move(&mut b, (0, 3), (2, 3));
+    assert!(pos);
+    assert!(diff == (2, 0));
+    assert_ne!(b.get_state(), b2.get_state());
+}
+
+#[test]
+fn movement_passive_2()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    let b2 = Board::new_board(Color::Black, Color::Black);
+
+    //Ful lösning men eh
+    let (pos, diff) = b.clone().get_state()[0][3].passive_move(&mut b, (0, 3), (3, 3));
+    assert!(!pos);
 }
