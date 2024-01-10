@@ -325,10 +325,16 @@ fn movement_aggressive_1_step_push()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(boardstate);
 
-    b.clone().get_state()[0][3].aggressive_move(&mut b, (0, 3), (0, 1), Color::White);
+    assert!(b.get_state()[0][2].get_possible_moves(&b, true, (0, 2)).contains(&(0, 1)));
+
+    print!("POSSIBLE");
+
+    b.clone().get_state()[0][2].aggressive_move(&mut b, (0, 2), (0, 1), Color::White);
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
+    println!("{:#?}", *b.get_state());
+    println!("{:#?}", *b2.get_state());
 }
 
 
@@ -358,6 +364,8 @@ fn movement_aggressive_2_step_push_1()
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
+    println!("{:#?}", *b.get_state());
+    println!("{:#?}", *b2.get_state());
 }
 
 #[test]
@@ -386,6 +394,8 @@ fn movement_aggressive_2_step_push_2()
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
+    println!("{:#?}", *b.get_state());
+    println!("{:#?}", *b2.get_state());
 }
 
 
@@ -442,4 +452,6 @@ fn movement_aggressive_nopush()
     assert!(b.clone().get_state()[0][1].aggressive_move(&mut b, (0, 1), (0, 2), Color::White));
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
+    println!("{:#?}", *b.get_state());
+    println!("{:#?}", *b2.get_state());
 }

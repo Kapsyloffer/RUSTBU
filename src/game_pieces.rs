@@ -193,7 +193,7 @@ impl Tile
         let stepx = (cur_pos.1  + 1 * dx) as usize;
 
         //If outta range
-        if newx > 3 || newy > 3
+        if newx > 3 || newy > 3 || stepy > 3 || stepx > 3
         {
             return false;
         }
@@ -215,28 +215,21 @@ impl Tile
                 return false;
             }
 
-            //Om rutan bakom är tom, och rutan har en sten. Move size 1
-            if * i == 1 && state[newy][newx] != Tile::Empty && state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty
+            if *i == 1 && state[newy][newx] != Tile::Empty
             {
-                return true;
+                if (cur_pos.0 + 2 * dy) > 3 || (cur_pos.1 + 2 * dx) > 3
+                {
+                    return true;
+                }
+                //Om rutan bakom är tom, och rutan har en sten. Move size 1
+                return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
+                //Om rutan bakom har en sten, och rutan har en sten. Move size 1
             }
-            
-            //Om rutan bakom har en sten, och rutan har en sten. Move size 1
-            if * i == 1 && state[newy][newx] != Tile::Empty && state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] != Tile::Empty
+            else if *i == 2 && state[stepy][stepx] != Tile::Empty
             {
-                return false;
-            }
-
-            //Om rutan bakom har ing en sten, och rutan har ingen sten. Move size 2
-            if state[stepy][stepx] != Tile::Empty && *i == 2 && state[newy][newx] != Tile::Empty
-            {
-                return false;
-            }
-            
-            //Om rutan bakom har ingen sten, och rutan har en sten. Move size 2
-            if state[stepy][stepx] != Tile::Empty && *i == 2 && state[newy][newx] == Tile::Empty
-            {
-                return true;
+                //Om rutan bakom har ingen sten, och rutan har ingen sten. Move size 2
+                return state[newy][newx] == Tile::Empty;
+                //Om rutan bakom har ingen sten, och rutan har en sten. Move size 2
             }
         }
         return true;
@@ -258,17 +251,7 @@ impl Tile
         }
         
         let mut boardstate = *b.get_state();
-        
-        /*let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
-        let rock_notme = boardstate[new_pos.0 as usize][new_pos.1 as usize];
 
-        //Old space is empty
-        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
-
-        //New space has the rock
-        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;*/
-
-        //Move previously occupying rock
         //Get direction:
         /*
             0 / 2 = 0,
@@ -297,7 +280,7 @@ impl Tile
         let still_on_board = self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1));
         let push_pos: (i8, i8) = ((new_pos.0 + 1 * dir.0), (new_pos.1 + 1 * dir.1));
 
-        if size > 1
+        if size == 2
         {
             if still_on_board
             {
@@ -310,8 +293,9 @@ impl Tile
 
             //Rensa förra.
             boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] = Tile::empty();
+            boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
         }
-        else 
+        else if size == 1
         {
             if still_on_board
             {
@@ -321,32 +305,6 @@ impl Tile
             boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
             boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
         }
-
-        /* 
-        //Om nya platsen inte är tom, checka om stenen hamnar out of bounds.
-        if boardstate[new_pos.0 as usize][new_pos.1 as usize] != Tile::Empty
-        {
-            //Om den inte gör det flyttar vi upp den ett steg.
-            if self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1))
-            {
-                boardstate[(new_pos.0 + 1 * dir.0) as usize][(new_pos.1 + 1 * dir.1) as usize] = boardstate[new_pos.0 as usize][new_pos.1 as usize];
-            }
-            boardstate[new_pos.0 as usize][new_pos.1 as usize] = *self;
-        }
-        //Om den är tom, chcka innan och se om den har en sten.
-        else if boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] != Tile::Empty
-            {
-                if self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1))
-                {
-                    boardstate[(new_pos.0 + 1 * dir.0) as usize][(new_pos.1 + 1 * dir.1) as usize] = boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize];
-                }
-                boardstate[new_pos.0 as usize][new_pos.1 as usize] = *self;
-            }
-        else //Annars om inga stenar, skjut bara ena stenen.
-        {
-            boardstate[new_pos.0 as usize][new_pos.1 as usize] = *self;
-        }*/
-
 
         b.set_state(boardstate);
 
