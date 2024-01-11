@@ -1,15 +1,15 @@
 #![allow(unused)]
 
-use crate::game_rules::{Color, Board, Tile};
+use crate::rules::game_rules::{Color, Board, Tile};
 
 //TODO: Somehow authenticate players?
-struct Player
+pub struct Player
 {
     id: i8,
     color: Color,
 }
 
-struct Game
+pub struct Game
 {
     boards: [Board; 4],
     turn: Color,
@@ -17,12 +17,12 @@ struct Game
 
 impl Player 
 {
-    fn new_white() -> Player
+    pub fn new_white() -> Player
     {
         return Player {id: 123, color: Color::White};
     }
 
-    fn new_black() -> Player
+    pub fn new_black() -> Player
     {
         return Player {id: 123, color: Color::Black};
     }
@@ -30,7 +30,7 @@ impl Player
 
 impl Game
 {
-    fn new_game () -> Game
+    pub fn new_game () -> Game
     {
         let board_bw = Board::new_board(Color::Black, Color::White);
         let board_ww = Board::new_board(Color::White, Color::White);

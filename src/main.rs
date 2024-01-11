@@ -1,5 +1,4 @@
-use shoburs::game_rules;
-use crate::game_rules::*;
+use shoburs::rules::game_rules::*;
 
 #[macro_use] extern crate rocket;
 

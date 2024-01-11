@@ -1,4 +1,4 @@
-use crate::game_rules::*;
+use crate::rules::game_rules::*;
 
 #[cfg(test)]
 
