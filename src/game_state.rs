@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use crate::game_rules::{Color, Board, Tile};
 
 //TODO: Somehow authenticate players?
