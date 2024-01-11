@@ -1,4 +1,5 @@
-pub mod game_pieces;
+pub mod game_rules;
+pub mod game_state;
 
 #[cfg(test)]
-pub mod game_test;
+pub mod game_rules_test;

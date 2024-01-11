@@ -1,5 +1,5 @@
-use shoburs::game_pieces;
-use crate::game_pieces::*;
+use shoburs::game_rules;
+use crate::game_rules::*;
 
 #[macro_use] extern crate rocket;
 
@@ -17,8 +17,14 @@ fn get_game_state_default() -> String
     return format!("{:#?}", state);
 }
 
+#[get("/create/<id>")]
+fn create_lobby(id: i8) -> String
+{
+    return format!("Created lobby {}", id);
+}
+
 #[launch]
 fn rocket() -> _ 
 {
-    rocket::build().mount("/", routes![hello, get_game_state_default])
+    rocket::build().mount("/", routes![hello, get_game_state_default, create_lobby])
 }
