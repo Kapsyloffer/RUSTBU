@@ -217,19 +217,18 @@ impl Tile
 
             if *i == 1 && state[newy][newx] != Tile::Empty
             {
-                if (cur_pos.0 + 2 * dy) > 3 || (cur_pos.1 + 2 * dx) > 3
+                //In case stenen vi puttar faller av boarden.
+                if (cur_pos.0 + 2 * dy) > 3 || (cur_pos.1 + 2 * dx) > 3 || (cur_pos.0 + 2 * dy) <0 || (cur_pos.1 + 2 * dx) < 0
                 {
                     return true;
                 }
-                //Om rutan bakom är tom, och rutan har en sten. Move size 1
+                //Checka om det finns en sten bakom stenen vi puttar.
                 return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
-                //Om rutan bakom har en sten, och rutan har en sten. Move size 1
             }
             else if *i == 2 && state[stepy][stepx] != Tile::Empty
             {
-                //Om rutan bakom har ingen sten, och rutan har ingen sten. Move size 2
+                //Checka om det finns en sten bakom stenen vi puttar.
                 return state[newy][newx] == Tile::Empty;
-                //Om rutan bakom har ingen sten, och rutan har en sten. Move size 2
             }
         }
         return true;
