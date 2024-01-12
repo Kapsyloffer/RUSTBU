@@ -1,11 +1,11 @@
 #[macro_use] extern crate rocket;
-//Controller functions
 use shoburs::api::api_controller::*;
+use std::net::Ipv4Addr;
+
 
 #[launch]
-fn rocket() -> _ 
-{
+fn rocket() -> _ {
     rocket::build()
-    .register("/", catchers![not_found, server_error])
-    .mount("/", routes![hello, get_game_state_default, create_lobby])
+        .mount("/", routes![hello, get_game_state_default, create_lobby])
+        .register("/", catchers![not_found, server_error])
 }
