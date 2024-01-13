@@ -1,5 +1,8 @@
 use crate::rules::game_rules::*;
 use rocket::*;
+//use crate::game_state::Game;
+use diesel::prelude;
+use diesel::sqlite::*;
 
 #[catch(404)]
 pub fn not_found() -> String 
@@ -19,12 +22,16 @@ pub fn hello() -> String
     return format!("Hello, back");
 }
 
-#[get("/api/gamestate/default")]
-pub fn get_game_state_default() -> String
+#[post("/api/game/new")]
+pub fn new_game_instance() 
 {
-    let b = Board::new_board(Color::Black, Color::White);
-    let state = b.get_state();
-    return format!("{:#?}", state);
+    let _b = Board::new_board(Color::Black, Color::White);
+}
+
+#[post("/api/join/<id>")]
+pub fn join_game_instance(id: i32) 
+{
+    let _b = Board::new_board(Color::Black, Color::White);
 }
 
 #[get("/create/<id>")]

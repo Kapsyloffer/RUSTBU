@@ -9,6 +9,7 @@ pub struct Player
     color: Color,
 }
 
+#[derive(Debug)]
 pub struct Game
 {
     boards: [Board; 4],
@@ -40,4 +41,5 @@ impl Game
 
         return Game{boards: [board_bw, board_ww, board_bb, board_wb], turn: Color::Black};
     }
+
 }
