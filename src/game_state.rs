@@ -1,6 +1,7 @@
 #![allow(unused)]
 
 use crate::rules::game_rules::{Color, Board, Tile};
+use serde::{Serialize, Deserialize};
 
 //TODO: Somehow authenticate players?
 pub struct Player
@@ -9,7 +10,7 @@ pub struct Player
     color: Color,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Game
 {
     boards: [Board; 4],
@@ -42,4 +43,13 @@ impl Game
         return Game{boards: [board_bw, board_ww, board_bb, board_wb], turn: Color::Black};
     }
 
+    pub fn next_turn(&mut self)
+    {
+        match self.turn
+        {
+            Color::White => self.turn = Color::Black,
+            
+            Color::Black => self.turn = Color::White,
+        }
+    }
 }
