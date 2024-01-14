@@ -40,7 +40,8 @@ pub fn serde_test2(serialized: &str) -> String
 #[post("/api/game/new")]
 pub fn new_game_instance() 
 {
-    let _b = Board::new_board(Color::Black, Color::White);
+    #[allow(unused)]
+    let b = Board::new_board(Color::Black, Color::White);
 }
 
 #[post("/api/join/<id>")]

@@ -1,6 +1,6 @@
 #[macro_use] 
 extern crate rocket;
-use shoburs::api::api_controller::*;
+use rustbu::api::api_controller::*;
 
 
 #[launch]
