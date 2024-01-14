@@ -1,7 +1,11 @@
 #![allow(unused)]
 
+use std::{collections::{hash_map, HashMap}, hash::Hash};
+use rand::{distributions::Alphanumeric, Rng};
+
 use super::game_board::{Color, Board, Tile};
 use serde::{Serialize, Deserialize};
+use std::sync::{Mutex, Arc};
 
 //TODO: Somehow authenticate players?
 pub struct Player
@@ -15,6 +19,12 @@ pub struct Game
 {
     boards: [Board; 4],
     turn: Color,
+}
+
+#[derive(Debug)]
+pub struct GameHodler
+{
+   pub games: Arc<Mutex<HashMap<String, Game>>>
 }
 
 impl Player 
@@ -56,5 +66,23 @@ impl Game
     pub fn get_boards(&self) -> [Board; 4]
     {
         return self.boards;
+    }
+
+    pub fn generate_url() -> String
+    {
+        let s: String = rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(9)
+        .map(char::from)
+        .collect();
+        return s;
+    }
+}
+
+impl GameHodler
+{
+    pub fn default () -> GameHodler
+    {
+        return GameHodler{games: Arc::new(Mutex::new(HashMap::new()))}
     }
 }

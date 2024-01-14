@@ -1,2 +1,5 @@
 [print_schema]
 file = "src/db/schema.rs"
+
+[target.'cfg(feature = "sqlite")']
+url = "src/db/rustbu.sql"
