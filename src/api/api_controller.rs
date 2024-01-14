@@ -1,4 +1,3 @@
-use crate::rules::game_board::*;
 use rocket::*;
 use crate::rules::game_state::Game;
 use serde_json;
@@ -35,24 +34,4 @@ pub fn serde_test2(serialized: &str) -> String
     let mut dserialized: Game = serde_json::from_str(&serialized).unwrap();
     dserialized.next_turn();
     return format!("{:#?}", dserialized);
-}
-
-#[post("/api/game/new")]
-pub fn new_game_instance() 
-{
-    #[allow(unused)]
-    let b = Board::new_board(Color::Black, Color::White);
-}
-
-#[post("/api/join/<id>")]
-pub fn join_game_instance(id: i32) 
-{
-    let _b = Board::new_board(Color::Black, Color::White);
-    println!("{}", id);
-}
-
-#[get("/create/<id>")]
-pub fn create_lobby(id: i8) -> String
-{
-    return format!("Created lobby {}", id);
 }

@@ -1,7 +1,10 @@
 #![allow(unused)]
 
+use std::{collections::{hash_map, HashMap}, hash::Hash};
+
 use super::game_board::{Color, Board, Tile};
 use serde::{Serialize, Deserialize};
+use std::sync::{Mutex, Arc};
 
 //TODO: Somehow authenticate players?
 pub struct Player
@@ -15,6 +18,12 @@ pub struct Game
 {
     boards: [Board; 4],
     turn: Color,
+}
+
+#[derive(Debug)]
+pub struct GameHodler
+{
+   pub games: Arc<Mutex<HashMap<i32, Game>>>
 }
 
 impl Player 
@@ -56,5 +65,18 @@ impl Game
     pub fn get_boards(&self) -> [Board; 4]
     {
         return self.boards;
+    }
+}
+
+impl GameHodler
+{
+    pub fn default () -> GameHodler
+    {
+        return GameHodler{games: Arc::new(Mutex::new(HashMap::new()))}
+    }
+
+    pub fn add_game(&mut self, g: Game)
+    {
+        todo!()
     }
 }
