@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use crate::rules::game_rules::{Color, Board, Tile};
+use crate::rules::game_board::{Color, Board, Tile};
 use serde::{Serialize, Deserialize};
 
 //TODO: Somehow authenticate players?

@@ -1,6 +1,6 @@
-use crate::rules::game_rules::*;
+use crate::rules::game_board::*;
 use rocket::*;
-use crate::game_state::Game;
+use crate::rules::game_state::Game;
 use serde_json;
 
 #[catch(404)]
