@@ -126,9 +126,9 @@ impl Tile
         return Tile::Black;
     }
 
-    pub fn passive_move(&self, b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> (bool, (i8, i8), Color)
+    pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> (bool, (i8, i8), Color)
     {
-        if !self.get_possible_moves(b, false, cur_pos).contains(&new_pos)
+        if !Tile::get_possible_moves(b, false, cur_pos).contains(&new_pos)
         {
             return (false, (0,0), b.get_color());
         }
@@ -158,7 +158,7 @@ impl Tile
         return (true, sizediff, b.get_color());
     }
 
-    pub fn get_possible_moves(&self, b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
+    pub fn get_possible_moves(b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
     {
         let mut boardstate = b.get_state();
 
@@ -173,7 +173,7 @@ impl Tile
             {
                 let new_pos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
 
-                if self.is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
+                if Tile::is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
                 {
                     println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, (cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
                     movelist.push((new_pos.0, new_pos.1)); //this is so crummy.
@@ -185,7 +185,7 @@ impl Tile
         return movelist;
     }
 
-    pub fn is_valid(&self, state: &[[Tile; 4]; 4], cur_pos: (i8, i8), new_pos: (i8, i8), i: &i8, aggr: bool, (dy, dx): (&i8, &i8)) -> bool
+    pub fn is_valid(state: &[[Tile; 4]; 4], cur_pos: (i8, i8), new_pos: (i8, i8), i: &i8, aggr: bool, (dy, dx): (&i8, &i8)) -> bool
     {
         //Check if in range.
         let newy = new_pos.0 as usize;
@@ -236,7 +236,7 @@ impl Tile
         return true;
     }
 
-    pub fn aggressive_move(&self, b: &mut Board, cur_pos: (i8, i8), diff: (i8, i8), prev_colour: Color) -> bool
+    pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), diff: (i8, i8), prev_colour: Color) -> bool
     {
         let new_pos = (cur_pos.0 + diff.0, cur_pos.1 + diff.1);
         //Om tidigare movet gjordes på en board av samma färg.
@@ -246,7 +246,7 @@ impl Tile
         }
 
         //Om draget inte finns
-        if !self.get_possible_moves(b, true, cur_pos).contains(&new_pos)
+        if !Tile::get_possible_moves(b, true, cur_pos).contains(&new_pos)
         {
             return false;
         }
@@ -278,7 +278,7 @@ impl Tile
         Hopefully
         */
 
-        let still_on_board = self.is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1));
+        let still_on_board = Tile::is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1));
         let push_pos: (i8, i8) = ((new_pos.0 + 1 * dir.0), (new_pos.1 + 1 * dir.1));
 
         if size == 2

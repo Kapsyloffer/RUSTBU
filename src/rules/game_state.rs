@@ -1,6 +1,7 @@
 #![allow(unused)]
 
 use std::{collections::{hash_map, HashMap}, hash::Hash};
+use rand::{distributions::Alphanumeric, Rng};
 
 use super::game_board::{Color, Board, Tile};
 use serde::{Serialize, Deserialize};
@@ -23,7 +24,7 @@ pub struct Game
 #[derive(Debug)]
 pub struct GameHodler
 {
-   pub games: Arc<Mutex<HashMap<i32, Game>>>
+   pub games: Arc<Mutex<HashMap<String, Game>>>
 }
 
 impl Player 
@@ -66,6 +67,16 @@ impl Game
     {
         return self.boards;
     }
+
+    pub fn generate_url() -> String
+    {
+        let s: String = rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(9)
+        .map(char::from)
+        .collect();
+        return s;
+    }
 }
 
 impl GameHodler
@@ -73,10 +84,5 @@ impl GameHodler
     pub fn default () -> GameHodler
     {
         return GameHodler{games: Arc::new(Mutex::new(HashMap::new()))}
-    }
-
-    pub fn add_game(&mut self, g: Game)
-    {
-        todo!()
     }
 }
