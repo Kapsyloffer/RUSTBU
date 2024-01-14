@@ -1,10 +1,10 @@
-use crate::schema::games;
-use diesel::*;
+use diesel::prelude::*;
+use crate::schema::game_instance;
 
-#[derive(Debug, Insertable, Queryable)]
-#[table_name = "games"]
-pub struct GameInstance
-{
+#[derive(Insertable, Debug)]
+#[table_name = "game_instance"]  // Corrected table_name attribute
+pub struct GameInstance {
+    pub id: i32,
     pub game_id: i32,
     pub board_bw: String,
     pub board_bb: String,

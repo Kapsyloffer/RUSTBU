@@ -1,8 +1,6 @@
 use crate::rules::game_rules::*;
 use rocket::*;
 //use crate::game_state::Game;
-use diesel::prelude;
-use diesel::sqlite::*;
 
 #[catch(404)]
 pub fn not_found() -> String 
@@ -32,6 +30,7 @@ pub fn new_game_instance()
 pub fn join_game_instance(id: i32) 
 {
     let _b = Board::new_board(Color::Black, Color::White);
+    println!("{id}");
 }
 
 #[get("/create/<id>")]

@@ -1,7 +1,5 @@
-use diesel::*;
-
-table! {
-    games {
+diesel::table! {
+    game_instance {
         id -> Integer,
         game_id -> Integer,
         board_bw -> Text,
