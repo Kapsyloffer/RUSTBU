@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate diesel;
 #[macro_use] 
 extern crate rocket;
 use shoburs::api::api_controller::*;

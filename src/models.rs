@@ -2,7 +2,7 @@ use diesel::prelude::*;
 use crate::schema::game_instance;
 
 #[derive(Insertable, Debug)]
-#[table_name = "game_instance"]  // Corrected table_name attribute
+#[diesel(table_name = game_instance)]  // Corrected table_name attribute
 pub struct GameInstance {
     pub id: i32,
     pub game_id: i32,
