@@ -8,8 +8,8 @@ use rustbu::rules::game_state::GameHodler;
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .manage(GameHodler::default())
-        .mount("/", routes![hello, join_game_instance, serde_test, serde_test2, get_all_games])
-        .mount("/api/game/", routes![new_game_instance, get_game_instance])
+        .manage(GameHodler::new())
+        .mount("/", routes![join_game_instance])
+        .mount("/api/game/", routes![new_game_instance, get_game_instance, who_am_i])
         .register("/", catchers![not_found, server_error])
 }

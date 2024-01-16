@@ -17,6 +17,8 @@ pub struct Player
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Game
 {
+    player_b: Option<String>,
+    player_w: Option<String>,
     boards: [Board; 4],
     turn: Color,
 }
@@ -50,7 +52,7 @@ impl Game
         let board_ww = Board::new_board(Color::White, Color::White);
         let board_wb = Board::new_board(Color::White, Color::Black);
 
-        return Game{boards: [board_bw, board_bb, board_wb, board_ww], turn: Color::Black};
+        return Game{player_b: None, player_w: None, boards: [board_bw, board_bb, board_wb, board_ww], turn: Color::Black};
     }
 
     pub fn next_turn(&mut self)
@@ -61,6 +63,12 @@ impl Game
             
             Color::Black => self.turn = Color::White,
         }
+    }
+
+    pub fn get_players(&self) -> (Option<String>, Option<String>)
+    {
+        //Forgive me father for I have sinned.
+        return (self.player_b.to_owned(), self.player_w.to_owned());
     }
 
     pub fn get_boards(&self) -> [Board; 4]
@@ -81,7 +89,7 @@ impl Game
 
 impl GameHodler
 {
-    pub fn default () -> GameHodler
+    pub fn new () -> GameHodler
     {
         return GameHodler{games: Arc::new(Mutex::new(HashMap::new()))}
     }
