@@ -114,6 +114,10 @@ impl Board
 
 impl Tile
 {
+    pub fn is_empty(t: Tile) -> bool
+    {
+        t == Tile::Empty
+    }
     pub fn empty() -> Tile
     {
         return Tile::Empty;
@@ -248,6 +252,11 @@ impl Tile
             return false;
         }
 
+        if Tile::is_empty(b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize])
+        {
+            panic!("wtf")
+        }
+
         //Om draget inte finns
         if !Tile::get_possible_moves(b, true, cur_pos).contains(&new_pos)
         {
@@ -264,6 +273,8 @@ impl Tile
             med dir kan vi stega x antal steg.
          */
         let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
+
+        //Linear size of diff
         let size = diff.0.abs().max(diff.1.abs());
        
         /*
@@ -281,36 +292,29 @@ impl Tile
         Hopefully
         */
 
-        let still_on_board = Tile::is_valid(b.get_state(), new_pos, (new_pos.0 + 1 * dir.0, new_pos.1 + 1 * dir.1), &size, true, (&dir.0, &dir.1));
-        let push_pos: (i8, i8) = ((new_pos.0 + 1 * dir.0), (new_pos.1 + 1 * dir.1));
+        let push_pos: (usize, usize) = ((new_pos.0 + 1 * dir.0) as usize, (new_pos.1 + 1 * dir.1) as usize);
+        let still_on_board = Tile::is_valid(b.get_state(), new_pos, (push_pos.0 as i8, push_pos.1 as i8), &size, true, (&dir.0, &dir.1));
+        
 
-        if size == 2
+        //Om den puttade stenen fortfarande är på brädet.
+        if still_on_board
         {
-            if still_on_board
-            {
-                let rocky = boardstate[(new_pos.0 +1 * dir.0) as usize][(new_pos.1 +1 * dir.1) as usize];
-                boardstate[push_pos.0 as usize][push_pos.1 as usize] = rocky;
-            }
-
-            //Sätt nya posen till vår färg
-            boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
-
-            //Rensa förra.
-            boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] = Tile::empty();
-            boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
-        }
-        else if size == 1
-        {
-            if still_on_board
-            {
-                let rocky = boardstate[(new_pos.0) as usize][(new_pos.1) as usize];
-                boardstate[push_pos.0 as usize][push_pos.1 as usize] = rocky;
-            }
-
-            boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
-            boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+            //Ta stenen
+            let rocky = boardstate[(new_pos.0 + (size -1) * dir.0) as usize][(new_pos.1 + (size -1) * dir.1) as usize];
+            //Sätt nästa position till den stenen
+            boardstate[push_pos.0][push_pos.1] = rocky;
         }
 
+        //Sätt nya posen till vår färg
+        boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+        
+        //Om vi hoppar framåt 2 steg, rensa platsen 1 steg bakom oss. (rUqeRT metoden)
+        if size == 2 {boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] = Tile::empty();}
+        
+        //Rensa förra platsen.
+        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+        
+        //Uppdatera boardstate.
         b.set_state(boardstate);
 
         return true;
