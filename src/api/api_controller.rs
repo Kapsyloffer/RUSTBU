@@ -1,5 +1,6 @@
 use rocket::*;
 use crate::rules::game_board::{Color, Board};
+use crate::rules::game_state::Game;
 //use serde_json;
 
 #[catch(404)]
@@ -20,6 +21,24 @@ pub fn join_game_instance(id: i32)
     let _b = Board::new_board(Color::Black, Color::White);
     println!("{}", id);
 }
+
+use rocket::http::Cookie;
+use rocket::http::CookieJar;
+
+#[get("/set")]
+pub fn set_cookie(kakburk: &CookieJar) -> String 
+{
+    let cookie = Cookie::new("my_cookie", Game::generate_url());
+
+    kakburk.add(cookie.clone());
+
+    if kakburk.get("my_cookie").is_none()
+    {
+        return "ded".into();
+    }
+    return kakburk.get("my_cookie").unwrap().value().to_string();
+}
+
 
 /*
 #[get("/api/serialized_game")]
