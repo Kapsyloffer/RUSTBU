@@ -308,7 +308,7 @@ impl Tile
         //Sätt nya posen till vår färg
         boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
         
-        //Om vi hoppar framåt 2 steg, rensa platsen 1 steg bakom oss. (rUqeRT metoden)
+        //Om vi hoppar framåt 2 steg, rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
         if size == 2 {boardstate[(new_pos.0 -1 * dir.0) as usize][(new_pos.1 -1 * dir.1) as usize] = Tile::empty();}
         
         //Rensa förra platsen.
