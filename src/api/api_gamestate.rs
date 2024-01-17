@@ -35,7 +35,7 @@ fn make_move(url: String, colors: String, aggr: bool, y1: i8, x1: i8, y2: i8, x2
 
 //Kolla vilken spelare du är i ett game, om rollen är tom, blir du den rollen.
 //I guess used for debugging
-#[get("/<url>/whoami")]
+#[get("/whoami/<url>")]
 pub fn who_am_i(url: String, shared: &State<GameHodler>) -> String
 {
     let (mut b, mut w) = shared.games.lock().expect("Idk who you are").get(&url).unwrap().get_players();
@@ -62,5 +62,3 @@ pub fn who_am_i(url: String, shared: &State<GameHodler>) -> String
     }
     return String::new();
 }
-
-//fn get_cookie() -> Cookie<'static>

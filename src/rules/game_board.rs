@@ -8,9 +8,10 @@ use std::
     cmp::Ord
 };
 
-use serde::{Serialize, Deserialize};
+//use serde::{Serialize, Deserialize};
 
-#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+//#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Board
 {
     color: Color,
@@ -18,7 +19,8 @@ pub struct Board
     state: [[Tile; 4]; 4]
 }
 
-#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+//#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Tile
 {
     Empty,
@@ -26,7 +28,8 @@ pub enum Tile
     White
 }
 
-#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+//#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Color 
 {
     White,

@@ -4,7 +4,7 @@ use std::{collections::{hash_map, HashMap}, hash::Hash};
 use rand::{distributions::Alphanumeric, Rng};
 
 use super::game_board::{Color, Board, Tile};
-use serde::{Serialize, Deserialize};
+//use serde::{Serialize, Deserialize};
 use std::sync::{Mutex, Arc};
 
 //TODO: Somehow authenticate players?
@@ -14,7 +14,8 @@ pub struct Player
     color: Color,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+//#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug)]
 pub struct Game
 {
     player_b: Option<String>,

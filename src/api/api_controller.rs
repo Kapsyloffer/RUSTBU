@@ -1,6 +1,6 @@
 use rocket::*;
-use crate::rules::{game_state::Game, game_board::{Color, Board}};
-use serde_json;
+use crate::rules::game_board::{Color, Board};
+//use serde_json;
 
 #[catch(404)]
 pub fn not_found() -> String 
@@ -21,6 +21,7 @@ pub fn join_game_instance(id: i32)
     println!("{}", id);
 }
 
+/*
 #[get("/api/serialized_game")]
 pub fn serde_test() -> String 
 {
@@ -36,3 +37,4 @@ pub fn serde_test2(serialized: &str) -> String
     dserialized.next_turn();
     return format!("{:#?}", dserialized);
 }
+ */
