@@ -1,25 +1,27 @@
 use rocket::*;
-use crate::rules::game_state::Game;
-use serde_json;
+use crate::rules::game_board::{Color, Board};
+//use serde_json;
 
 #[catch(404)]
 pub fn not_found() -> String 
 {
-    return format!("404");
+    return format!("404: Not found.");
 }
 
 #[catch(500)]
 pub fn server_error() -> String
 {
-    return format!("500: Internal Server Error");
+    return format!("500: Internal Server Error.");
 }
 
-#[get("/api/hello")]
-pub fn hello() -> String 
+#[post("/join/<id>")]
+pub fn join_game_instance(id: i32) 
 {
-    return format!("Hello, back");
+    let _b = Board::new_board(Color::Black, Color::White);
+    println!("{}", id);
 }
 
+/*
 #[get("/api/serialized_game")]
 pub fn serde_test() -> String 
 {
@@ -35,3 +37,4 @@ pub fn serde_test2(serialized: &str) -> String
     dserialized.next_turn();
     return format!("{:#?}", dserialized);
 }
+ */
