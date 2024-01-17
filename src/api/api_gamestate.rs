@@ -1,6 +1,7 @@
 #![allow(unused)]
-use rocket::{*, http::Cookie};
+use rocket::{*, http::Cookie, http::CookieJar, response::Redirect};
 use crate::rules::game_state::{Game, GameHodler};
+use crate::api::api_controller::set_cookie;
 
 //Skapa en ny game lobby med en random url
 //t.ex. rsIa8ZVuA
@@ -36,29 +37,30 @@ fn make_move(url: String, colors: String, aggr: bool, y1: i8, x1: i8, y2: i8, x2
 //Kolla vilken spelare du är i ett game, om rollen är tom, blir du den rollen.
 //I guess used for debugging
 #[get("/whoami/<url>")]
-pub fn who_am_i(url: String, shared: &State<GameHodler>) -> String
+pub fn who_am_i(url: String, shared: &State<GameHodler>, kakburk: &CookieJar) -> String
 {
     let (mut b, mut w) = shared.games.lock().expect("Idk who you are").get(&url).unwrap().get_players();
-    //Check black player
-    match b
-    {
-        Some(p) => (),
-        None =>
-        {
-            b = Some(String::new());
-            return format!("You are Black, my condolences.");
-        } 
-    }
+    let mut my_url: String;
 
-    //Check white player
-    match w
+    //Om player ID hittas, sätt spelare till
+    match  kakburk.get("player_id")
     {
-        Some(p) => (),
-        None =>
-        {
-            w = Some(String::new());
-            return format!("You are White");
-        } 
+        Some(v) => my_url = v.value().to_string(),
+        None => return "Set a cookie, dummy".into(),
     }
-    return String::new();
+    //Check black player
+    if b.is_none()
+    {
+        b = Some(my_url);
+        return format!("You are Black, my condolences.");
+    }
+            
+    //Check white player
+    if w.is_none()
+    {
+        w = Some(my_url);
+        return format!("You are White");
+    } 
+
+    return "You are the spectator".into();
 }

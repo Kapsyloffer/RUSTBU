@@ -25,21 +25,28 @@ pub fn join_game_instance(id: i32)
 use rocket::http::Cookie;
 use rocket::http::CookieJar;
 
-#[get("/set")]
+#[get("/set_cookie")]
 pub fn set_cookie(kakburk: &CookieJar) -> String 
 {
-    let cookie = Cookie::new("my_cookie", Game::generate_url());
-
-    kakburk.add(cookie.clone());
-
-    if kakburk.get("my_cookie").is_none()
+    if kakburk.get("player_id").is_none()
     {
-        return "ded".into();
+        let cookie_data = Game::generate_url();
+        let cookie = Cookie::new("player_id", cookie_data);
+        kakburk.add(cookie.clone());
+        return "cookie added".into();
     }
-    return kakburk.get("my_cookie").unwrap().value().to_string();
+    return "You already have a cookie you silly goose".to_string();
 }
 
-
+#[get("/get_cookie")]
+pub fn get_cookie(kakburk: &CookieJar) -> String
+{
+    if kakburk.get("player_id").is_none()
+    {
+        return "no cookie".into();
+    }
+    return kakburk.get("player_id").unwrap().value().to_string();
+}
 /*
 #[get("/api/serialized_game")]
 pub fn serde_test() -> String 
