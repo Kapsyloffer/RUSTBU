@@ -303,7 +303,8 @@ impl Tile
         {
             if still_on_board
             {
-                
+                let rocky = boardstate[(new_pos.0) as usize][(new_pos.1) as usize];
+                boardstate[push_pos.0 as usize][push_pos.1 as usize] = rocky;
             }
 
             boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];

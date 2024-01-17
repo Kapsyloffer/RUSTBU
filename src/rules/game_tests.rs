@@ -518,7 +518,69 @@ fn movement_aggressive_3_0()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (2, 1), (3, 0), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1), Color::White));
+
+    assert_eq!(*b.get_state(), boardstate_next);
+    assert_ne!(b2.get_state(), b.get_state());
+
+    println!("{:#?}", *b.get_state());
+    println!("{:#?}", *b2.get_state());
+}
+
+#[test]
+fn movement_aggressive_3_0_nopush()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    let boardstate: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_next: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+    b.set_state(boardstate);
+
+    let mut b2 = Board::new_board(Color::Black, Color::Black);
+    b2.set_state(boardstate);
+
+    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1), Color::White));
+
+    assert_eq!(*b.get_state(), boardstate_next);
+    assert_ne!(b2.get_state(), b.get_state());
+
+    println!("{:#?}", *b.get_state());
+    println!("{:#?}", *b2.get_state());
+}
+
+#[test]
+fn movement_aggressive_3_0_slightpush()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+    let boardstate: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_next: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+    b.set_state(boardstate);
+
+    let mut b2 = Board::new_board(Color::Black, Color::Black);
+    b2.set_state(boardstate);
+    
+    Tile::aggressive_move(&mut b, (1, 2), (1, -1), Color::White);
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
