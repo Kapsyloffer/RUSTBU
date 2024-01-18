@@ -1,6 +1,6 @@
 #![allow(unused)]
 use rocket::{*, response::content::*, http::{hyper::Response, Cookie}};
-use crate::rules::{game_board::{Color, Tile}, game_state::{Game, GameHodler}};
+use crate::rules::{game_board::{Color, Board}, game_hodler::*, game_instance::Game, game_tile::Tile};
 
 //Skapa en ny game lobby med en random url
 //t.ex. rsIa8ZVuA

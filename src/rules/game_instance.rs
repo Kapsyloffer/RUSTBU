@@ -1,18 +1,7 @@
-#![allow(unused)]
-
-use std::{collections::{hash_map, HashMap}, hash::Hash};
 use rand::{distributions::Alphanumeric, Rng};
+use super::game_board::{Board, Color};
 
-use super::game_board::{Color, Board, Tile};
-//use serde::{Serialize, Deserialize};
-use std::sync::{Mutex, Arc};
 
-//TODO: Somehow authenticate players?
-pub struct Player
-{
-    id: i8,
-    color: Color,
-}
 
 //#[derive(Serialize, Deserialize, Debug)]
 #[derive(Debug)]
@@ -22,25 +11,6 @@ pub struct Game
     player_w: Option<String>,
     boards: [Board; 4],
     turn: Color,
-}
-
-#[derive(Debug)]
-pub struct GameHodler
-{
-   pub games: Arc<Mutex<HashMap<String, Game>>>
-}
-
-impl Player 
-{
-    pub fn new_white() -> Player
-    {
-        return Player {id: 123, color: Color::White};
-    }
-
-    pub fn new_black() -> Player
-    {
-        return Player {id: 123, color: Color::Black};
-    }
 }
 
 impl Game
@@ -79,11 +49,11 @@ impl Game
 
     pub fn get_board(&self, h: Color, c: Color) -> Option<Board>
     {
-        for board in &self.boards 
+        for board in *&self.boards 
         {
            if board.get_color() == c && board.get_home() == h
            {
-                return Some(*board);
+                return Some(board);
            }
            else 
            {
@@ -102,13 +72,5 @@ impl Game
         .map(char::from)
         .collect();
         return s;
-    }
-}
-
-impl GameHodler
-{
-    pub fn new () -> GameHodler
-    {
-        return GameHodler{games: Arc::new(Mutex::new(HashMap::new()))}
     }
 }
