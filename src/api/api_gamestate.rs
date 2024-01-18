@@ -1,4 +1,7 @@
 #![allow(unused)]
+use core::panic;
+use std::fmt::Error;
+
 use rocket::{*, response::content::*, http::{hyper::Response, Cookie}};
 use crate::rules::{game_board::{Color, Board}, game_hodler::*, game_instance::Game, game_tile::Tile};
 
@@ -14,7 +17,7 @@ pub fn new_game_instance<'r>(shared: &State<GameHodler>) -> response::Redirect
     let url = Game::generate_url();
     games_map.insert(url.to_owned(), g);
 
-    return response::Redirect::to(format!("/api/game/{}", url));
+    return response::Redirect::to(format!("/api/game/state/{}", url));
 }
 
 //Fetcha en gamestate med associated URL
@@ -26,26 +29,69 @@ pub fn get_game_instance<'r>(url: String, shared: &State<GameHodler>) -> String
     return format!("{:#?}", g);
 }
 
-#[post("/make_move/<url>/<p>/<a>")]
+#[get("/make_move/<url>/<p>/<a>")]
 pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) -> RawJson<&'static str>
 {
-    if parse_move(&url, &p, &shared) && parse_move(&url, &a, &shared)
+    if parse_move(&url, &p, &shared).is_ok() && parse_move(&url, &a, &shared).is_ok()
     {
+        if &a.as_bytes()[1] == &p.as_bytes()[1]
+        {
+            panic!()
+        }
+        move_rocks(&url, &p, shared);
+        move_rocks(&url, &a, shared);
         return RawJson("we good");
     }
     let mut board = shared.games.lock().expect("FAILED TO LOCk").get_mut(&url).unwrap().get_boards();
-    todo!();
-
     RawJson("true")
 }
 
-pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> bool
+pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Result<(), ()>
+{
+    //Vi checkar om det är valid
+    let parsed_move = parse_move(url, m, shared);
+
+    //If it ain't we kirr
+    if parsed_move.is_err(){
+        return Err(());
+    }
+
+    let (homeside, colour, x1, y1, x2, y2, aggr) = parsed_move.unwrap();
+
+    let mut game = shared.games.lock().expect("Failed to lock in parse moves");
+    let mut board = game.get_mut(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
+    
+    let delta_x = (x2 - x1).abs();
+    let delta_y = (y2 - y1).abs();
+
+    //print!("{:#?}", board);
+
+    //print!("x1: {}\ny1: {}\nx2: {}\ny2: {}\nΔx: {}\nΔy: {}\n", x1, y1, x2, y2, delta_x, delta_y);
+
+    //Om vårt move är invalid returnar vi false.
+    if !Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &delta_x.max(delta_y), aggr, (&delta_x, &delta_y))
+    {
+        return Err(());
+    }
+    
+    //ANNARS KÖR VI
+    match aggr
+    {
+        false => Tile::aggressive_move(&mut board, (x1, y1), (delta_x, delta_y)),
+        true => Tile::passive_move(&mut board, (x1, y1), (x2, y2)),
+    };
+
+    Ok(())
+}
+
+//Denna funktionen tar en string t.ex. BW1131A och parsar den.
+pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> Result<(Color, Color, i8, i8, i8, i8, bool), ()>
 {
     let list: Vec<char> = m.to_lowercase().chars().collect();
-    print!("{:#?}", list);
+    //print!("{:#?}", list);
     if list.len() != 7
     {
-        return false;
+        return Err(());
     }
     /*
     movestringen ser ut såhär:
@@ -65,76 +111,91 @@ pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> bool
 
      */
 
+     // B W 1 1 3 1 A
+     // ^
     let homeside = match list[0]
     {
         'b' => Color::Black,
         'w' => Color::White,
-        _=> return false,
+        _=> return Err(()),
     };
 
-    let colour = match list[0]
+    // B W 1 1 3 1 A
+    //   ^
+    let colour = match list[1]
     {
         'b' => Color::Black,
         'w' => Color::White,
-        _=> return false,
+        _=> return Err(()),
     };
 
     let mut game = shared.games.lock().expect("Failed to lock in parse moves");
     let mut board = game.get_mut(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
 
+    // B W 1 1 3 1 A
+    //     ^
     let x1: i8 = match list[2].to_digit(4) 
     {
         Some(digit) => digit as i8,
         None => 
         {
-            return false;
+            return Err(());
         }
     };
     
+    // B W 1 1 3 1 A
+    //       ^
     let y1: i8 = match list[3].to_digit(4) 
     {
         Some(digit) => digit as i8,
         None => 
         {
-            return false;
+            return Err(());
         }
     };
 
+    // B W 1 1 3 1 A
+    //         ^
     let x2: i8 = match list[4].to_digit(4) 
     {
         Some(digit) => digit as i8,
         None => 
         {
-            return false;
+            return Err(());
         }
     };
 
+    // B W 1 1 3 1 A
+    //           ^
     let y2: i8 = match list[5].to_digit(4) 
     {
         Some(digit) => digit as i8,
         None => 
         {
-            return false;
+            return Err(());
         }
+    };
+
+    // B W 1 1 3 1 A
+    //             ^
+    let aggr = match list[6]
+    {
+        'a' => true,
+        'p' => false,
+        _=>  return Err(()),
     };
 
     let delta_x = (x2 - x1).abs();
     let delta_y = (y2 - y1).abs();
 
-    let aggr = match list[6]
+    if delta_x == 0 && delta_y == 0
     {
-        'a' => true,
-        'p' => false,
-        _=> return false,
-    };
+        return Err(());
+    }
 
-    print!("{:#?}", board);
-    print!("x1: {}\ny1: {}\nx2: {}\ny2: {}\nΔx: {}\nΔy: {}\n", x1, y1, x2, y2, delta_x, delta_y);
-
-    //Det här är så crummy.
-    return Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &delta_x.max(delta_y), aggr, (&delta_x, &delta_y));
-
+    Ok((homeside, colour, x1, y1, x2, y2, aggr))
 }
+
 
 //Kolla vilken spelare du är i ett game, om rollen är tom, blir du den rollen.
 //I guess used for debugging

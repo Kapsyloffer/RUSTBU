@@ -1,5 +1,5 @@
 use crate::rules::{
-    game_board::Color, game_hodler::GameHodler, game_instance::Game, game_tile::Tile
+    game_board::{Board, Color}, game_hodler::GameHodler, game_instance::Game, game_tile::Tile
 };
 
 use rocket::State;
@@ -32,7 +32,7 @@ fn test_move_parser() {
 
     let shared = State::from(&binding);
 
-    assert!(parse_move(&url, &m, shared));
+    assert!(parse_move(&url, &m, shared).is_ok());
 }
 
 #[test]
@@ -45,7 +45,7 @@ fn test_move_parser_faulty_1() {
 
     let shared = State::from(&binding);
 
-    assert!(!parse_move(&url, &m, shared));
+    assert!(parse_move(&url, &m, shared).is_err());
 }
 
 #[test]
@@ -58,7 +58,7 @@ fn test_move_parser_faulty_2() {
 
     let shared = State::from(&binding);
 
-    assert!(!parse_move(&url, &m, shared));
+    assert!(parse_move(&url, &m, shared).is_err());
 }
 
 #[test]
@@ -71,7 +71,7 @@ fn test_move_parser_faulty_3() {
 
     let shared = State::from(&binding);
 
-    assert!(!parse_move(&url, &m, shared));
+    assert!(parse_move(&url, &m, shared).is_err());
 }
 
 #[test]
@@ -84,7 +84,7 @@ fn test_move_parser_faulty_4() {
 
     let shared = State::from(&binding);
 
-    assert!(!parse_move(&url, &m, shared));
+    assert!(parse_move(&url, &m, shared).is_err());
 }
 
 
@@ -110,7 +110,7 @@ fn test_move_parser_faulty_5() {
 
     let shared = State::from(&binding);
 
-    assert!(parse_move(&url, &m, shared));
+    assert!(parse_move(&url, &m, shared).is_ok());
 }
 
 #[test]
@@ -134,4 +134,52 @@ fn set_state_test()
     println!("{:#?}", g.get_board(Color::White, Color::White).unwrap());
 
     assert_eq!(g.get_board(Color::White, Color::White).unwrap().get_state()[0][3], Tile::Empty);
+}
+
+ /*
+        Board
+        [0,0][0,1][0,2][0,3] <-- Black start
+        [1,0][1,1][1,2][1,3]
+        [2,0][2,1][2,2][2,3]
+        [3,0][3,1][3,2][3,3] <--- White start
+
+        Så vi tar cur_pos och flyttar till new_pos
+        */
+
+#[test]
+fn test_make_moves()
+{
+    let url = String::from("testcase");
+
+    //Black's turn
+    let mpb = String::from("BW0010P");
+    let mab = String::from("BB0313A");
+
+    //White's turn
+    let mpw = String::from("WW3321P");
+    let maw = String::from("BB3210A");
+
+    let binding = GameHodler::new();
+    binding.games.lock().expect("nah").insert(url.clone(), Game::new_game());
+    
+    let shared = State::from(&binding);
+
+    make_move(url.to_owned(), mpb, mab, shared);
+    make_move(url.to_owned(), mpw, maw, shared);
+
+    let target_boardstate_state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::White, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Black, Tile::Black]
+    ];
+
+    let mut b: Board = Board::new_board(Color::Black, Color::Black);
+    b.set_state(&target_boardstate_state);
+
+    //Holy fuck.
+    let cur_state = *shared.games.lock().expect("Lock fail").get_mut(&url).unwrap().get_board(Color::Black, Color::Black).unwrap();
+
+    assert_eq!(cur_state.to_owned(), b);
+
 }

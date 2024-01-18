@@ -4,7 +4,7 @@ use std::
     cmp::Ord
 };
 
-use super::game_board::{Board, Color};
+use super::game_board::Board;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Tile
@@ -36,11 +36,11 @@ impl Tile
         return Tile::Black;
     }
 
-    pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> (bool, (i8, i8), Color)
+    pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool
     {
         if !Tile::get_possible_moves(b, false, cur_pos).contains(&new_pos)
         {
-            return (false, (0,0), b.get_color());
+            return false
         }
 
         let mut boardstate = *b.get_state();
@@ -64,8 +64,8 @@ impl Tile
         b.set_state(&boardstate);
 
         //Får ut storleken flyttad så vi kan slänga in den i aggr.
-        let sizediff = ((cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
-        return (true, sizediff, b.get_color());
+        //let sizediff = ((cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
+        return true
     }
 
     pub fn get_possible_moves(b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
@@ -146,14 +146,10 @@ impl Tile
         return true;
     }
 
-    pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), diff: (i8, i8), prev_colour: Color) -> bool
+    pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), diff: (i8, i8)) -> bool
     {
+        //Färg hanteras nu av movement api
         let new_pos = (cur_pos.0 + diff.0, cur_pos.1 + diff.1);
-        //Om tidigare movet gjordes på en board av samma färg.
-        if b.get_color() == prev_colour
-        {
-            return false;
-        }
 
         if Tile::is_empty(b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize])
         {

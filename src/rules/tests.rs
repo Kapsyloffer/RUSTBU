@@ -291,9 +291,7 @@ fn movement_passive()
     let b2 = Board::new_board(Color::Black, Color::Black);
 
     //Ful lösning men eh
-    let (pos, diff, _) = Tile::passive_move(&mut b, (0, 3), (2, 3));
-    assert!(pos);
-    assert!(diff == (2, 0));
+    assert!(Tile::passive_move(&mut b, (0, 3), (2, 3)));
     assert_ne!(b.get_state(), b2.get_state());
 }
 
@@ -303,8 +301,7 @@ fn movement_passive_2()
     let mut b = Board::new_board(Color::Black, Color::Black);
 
     //Ful lösning men eh
-    let (pos, _, _) = Tile::passive_move(&mut b, (0, 3), (3, 3));
-    assert!(!pos);
+    assert!(!Tile::passive_move(&mut b, (0, 3), (3, 3)));
 }
 
 #[test]
@@ -333,7 +330,7 @@ fn movement_aggressive_1_step_push()
 
     print!("POSSIBLE");
 
-    Tile::aggressive_move(&mut b, (0, 2), (0, 1), Color::White);
+    Tile::aggressive_move(&mut b, (0, 2), (0, 1));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -365,7 +362,7 @@ fn movement_aggressive_2_step_push_1()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    Tile::aggressive_move(&mut b, (0, 1), (0, 2), Color::White);
+    Tile::aggressive_move(&mut b, (0, 1), (0, 2));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -396,7 +393,7 @@ fn movement_aggressive_2_step_push_2()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    Tile::aggressive_move(&mut b, (0, 1), (0, 2), Color::White);
+    Tile::aggressive_move(&mut b, (0, 1), (0, 2));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -428,7 +425,7 @@ fn movement_aggressive_1_step_push_2()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    Tile::aggressive_move(&mut b, (1, 1), (-1, -1), Color::White);
+    Tile::aggressive_move(&mut b, (1, 1), (-1, -1));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -489,7 +486,7 @@ fn movement_aggressive_nopush()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (0, 1), (0, 2), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (0, 1), (0, 2)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -522,7 +519,7 @@ fn movement_aggressive_3_0()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -553,7 +550,7 @@ fn movement_aggressive_3_0_nopush()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -584,7 +581,7 @@ fn movement_aggressive_3_0_slightpush()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
     
-    assert!(Tile::aggressive_move(&mut b, (1, 2), (1, -1), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (1, 2), (1, -1)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -615,7 +612,7 @@ fn movement_aggressive_0_0_push_1_step()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
     
-    assert!(Tile::aggressive_move(&mut b, (1, 1), (-1, -1), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (1, 1), (-1, -1)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -646,7 +643,7 @@ fn movement_aggressive_0_0_push_2_steps()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
     
-    assert!(Tile::aggressive_move(&mut b, (2, 2), (-2, -2), Color::White));
+    assert!(Tile::aggressive_move(&mut b, (2, 2), (-2, -2)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
