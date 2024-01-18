@@ -47,9 +47,9 @@ impl Game
         return self.boards;
     }
 
-    pub fn get_board(&self, h: Color, c: Color) -> Option<Board>
+    pub fn get_board(&mut self, h: Color, c: Color) -> Option<&mut Board>
     {
-        for board in *&self.boards 
+        for board in &mut self.boards 
         {
            if board.get_color() == c && board.get_home() == h
            {
