@@ -277,8 +277,8 @@ impl Tile
             -2 / 2 ceil = -1
             med dir kan vi stega x antal steg.
          */
-        let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
-
+        //let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
+        let dir = ((diff.0 as f32 / 2.0).round() as i8, (diff.1 as f32 / 2.0).round() as i8);
         //Linear size of diff
         let size = diff.0.abs().max(diff.1.abs());
        

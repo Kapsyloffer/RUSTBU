@@ -1,5 +1,7 @@
 use crate::rules::game_board::*;
 
+use super::game_state::Game;
+
 #[cfg(test)]
 
 #[test]
@@ -649,4 +651,27 @@ fn movement_aggressive_0_0_push_2_steps()
 
     println!("{:#?}", *b.get_state());
     println!("{:#?}", *b2.get_state());
+}
+
+/*#[test]
+fn direction_parsing_test()
+{
+    let moves = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1), (0, -2), (0, 2), (-2, 0), (2, 0), (-2, -2), (-2, 2), (2, 2), (2, -2)];
+
+    for x in moves
+    {
+        let dir = ((x.0 as f32 / 2.0).round() as i8, (x.1 as f32 / 2.0).round() as i8);
+        println!("({} {}) ({} {})", x.0, x.1, dir.0, dir.1);
+    }
+    assert!(false);
+}*/
+
+#[test]
+fn get_board_from_game_instance_test()
+{
+    let g = Game::new_game();
+    let b = g.get_board(Color::Black, Color::White).unwrap();
+
+    assert_eq!(b.get_color(), Color::White);
+    assert_eq!(b.get_home(), Color::Black);
 }

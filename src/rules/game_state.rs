@@ -81,13 +81,14 @@ impl Game
     {
         for board in &self.boards 
         {
-            match (h, c) 
-            {
-                (h_color, c_color) if h_color == h && c_color == c => {
-                    return Some(*board);
-                }
-                _ => continue,
-            }
+           if board.get_color() == c && board.get_home() == h
+           {
+                return Some(*board);
+           }
+           else 
+           {
+                continue;   
+           }
         }
 
         return None

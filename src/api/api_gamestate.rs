@@ -39,9 +39,10 @@ pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) 
     RawJson("true")
 }
 
-pub fn parse_move(url: &String, m: &String, shared: &&State<GameHodler>) -> bool
+pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> bool
 {
-    let list: Vec<char> = m.chars().collect();
+    let list: Vec<char> = m.to_lowercase().chars().collect();
+    print!("{:#?}", list);
     if list.len() != 7
     {
         return false;
@@ -66,20 +67,20 @@ pub fn parse_move(url: &String, m: &String, shared: &&State<GameHodler>) -> bool
 
     let homeside = match list[0]
     {
-        b => Color::Black,
-        w => Color::White,
+        'b' => Color::Black,
+        'w' => Color::White,
         _=> return false,
     };
 
     let colour = match list[0]
     {
-        b => Color::Black,
-        w => Color::White,
+        'b' => Color::Black,
+        'w' => Color::White,
         _=> return false,
     };
 
     let game = shared.games.lock().expect("Failed to lock in parse moves");
-    let board = game.get(url).unwrap().get_board(homeside, colour).unwrap();
+    let board = game.get(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
 
     let x1 = list[2] as i8;
     let y1 = list[3] as i8;
@@ -91,8 +92,8 @@ pub fn parse_move(url: &String, m: &String, shared: &&State<GameHodler>) -> bool
 
     let aggr = match list[6]
     {
-        a => true,
-        p => false,
+        'a' => true,
+        'p' => false,
         _=> return false,
     };
 

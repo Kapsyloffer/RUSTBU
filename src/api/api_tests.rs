@@ -24,13 +24,12 @@ fn test_state() {
 #[test]
 fn test_move_parser() {
     let url = String::from("testcase");
-    let m = String::from("BW1131A");
+    let m = String::from("BW0011P");
 
     let binding = GameHodler::new();
+    binding.games.lock().expect("nah").insert(url.clone(), Game::new_game());
+
     let shared = State::from(&binding);
-
-    let mut games_map = shared.games.lock().expect("FAILED TO LOCK");
-    games_map.insert(url.clone(), Game::new_game());
-
-    assert!(parse_move(&url, &m, &shared));
+    
+    assert!(parse_move(&url, &m, shared));
 }
