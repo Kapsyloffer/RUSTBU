@@ -82,10 +82,41 @@ pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> bool
     let game = shared.games.lock().expect("Failed to lock in parse moves");
     let board = game.get(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
 
-    let x1 = list[2] as i8;
-    let y1 = list[3] as i8;
-    let x2 = list[4] as i8;
-    let y2 = list[5] as i8;
+    let x1: i8 = match list[2].to_digit(4) 
+    {
+        Some(digit) => digit as i8,
+        None => 
+        {
+            return false;
+        }
+    };
+    
+    let y1: i8 = match list[3].to_digit(4) 
+    {
+        Some(digit) => digit as i8,
+        None => 
+        {
+            return false;
+        }
+    };
+
+    let x2: i8 = match list[4].to_digit(4) 
+    {
+        Some(digit) => digit as i8,
+        None => 
+        {
+            return false;
+        }
+    };
+
+    let y2: i8 = match list[5].to_digit(4) 
+    {
+        Some(digit) => digit as i8,
+        None => 
+        {
+            return false;
+        }
+    };
 
     let delta_x = (x2 - x1).abs();
     let delta_y = (y2 - y1).abs();
@@ -96,6 +127,9 @@ pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> bool
         'p' => false,
         _=> return false,
     };
+
+    print!("{:#?}", board);
+    print!("x1: {}\ny1: {}\nx2: {}\ny2: {}\nΔx: {}\nΔy: {}\n", x1, y1, x2, y2, delta_x, delta_y);
 
     //Det här är så crummy.
     return Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &delta_x.max(delta_y), aggr, (&delta_x, &delta_y));
