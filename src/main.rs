@@ -2,7 +2,7 @@
 extern crate rocket;
 use rustbu::api::api_controller::*;
 use rustbu::api::api_gamestate::*;
-use rustbu::rules::game_state::GameHodler;
+use rustbu::rules::game_hodler::GameHodler;
 
 
 #[launch]
