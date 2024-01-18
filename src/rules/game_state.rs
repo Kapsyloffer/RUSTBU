@@ -77,6 +77,22 @@ impl Game
         return self.boards;
     }
 
+    pub fn get_board(&self, h: Color, c: Color) -> Option<Board>
+    {
+        for board in &self.boards 
+        {
+            match (h, c) 
+            {
+                (h_color, c_color) if h_color == h && c_color == c => {
+                    return Some(*board);
+                }
+                _ => continue,
+            }
+        }
+
+        return None
+    }
+
     pub fn generate_url() -> String
     {
         let s: String = rand::thread_rng()

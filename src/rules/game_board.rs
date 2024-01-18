@@ -110,6 +110,11 @@ impl Board
     {
         return self.color;
     }
+
+    pub fn get_home(&self) -> Color
+    {
+        return self.home;
+    }
 }
 
 impl Tile

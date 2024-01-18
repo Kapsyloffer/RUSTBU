@@ -10,6 +10,6 @@ fn rocket() -> _ {
     rocket::build()
         .manage(GameHodler::new())
         .mount("/", routes![join_game_instance])
-        .mount("/api/game/", routes![new_game_instance, get_game_instance, who_am_i])
+        .mount("/api/game/", routes![new_game_instance, get_game_instance, who_am_i, make_move])
         .register("/", catchers![not_found, server_error])
 }
