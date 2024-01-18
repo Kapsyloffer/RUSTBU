@@ -100,7 +100,7 @@ fn test_move_parser_faulty_5() {
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
     ];
 
-    let g = Game::new_game();
+    let mut g = Game::new_game();
     assert_ne!(g.get_board(Color::White, Color::White).unwrap().get_state()[0][3], Tile::Empty);
     g.get_board(Color::White, Color::White).unwrap().set_state(&boardstate);
     assert_eq!(g.get_board(Color::White, Color::White).unwrap().get_state()[0][3], Tile::Empty);
@@ -123,7 +123,7 @@ fn set_state_test()
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
     ];
 
-    let g = Game::new_game();
+    let mut g = Game::new_game();
 
     assert_ne!(g.get_board(Color::White, Color::White).unwrap().get_state()[0][3], Tile::Empty);
 

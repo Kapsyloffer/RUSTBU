@@ -658,7 +658,7 @@ fn movement_aggressive_0_0_push_2_steps()
 #[test]
 fn get_board_from_game_instance_test()
 {
-    let g = Game::new_game();
+    let mut g = Game::new_game();
     let b = g.get_board(Color::Black, Color::White).unwrap();
 
     assert_eq!(b.get_color(), Color::White);

@@ -33,7 +33,7 @@ pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) 
     {
         return RawJson("we good");
     }
-    let mut board = shared.games.lock().expect("FAILED TO LOCk").get(&url).unwrap().get_boards();
+    let mut board = shared.games.lock().expect("FAILED TO LOCk").get_mut(&url).unwrap().get_boards();
     todo!();
 
     RawJson("true")
@@ -79,8 +79,8 @@ pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> bool
         _=> return false,
     };
 
-    let game = shared.games.lock().expect("Failed to lock in parse moves");
-    let board = game.get(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
+    let mut game = shared.games.lock().expect("Failed to lock in parse moves");
+    let mut board = game.get_mut(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
 
     let x1: i8 = match list[2].to_digit(4) 
     {
