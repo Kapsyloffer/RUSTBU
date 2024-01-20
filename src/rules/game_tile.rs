@@ -85,7 +85,7 @@ impl Tile
 
                 if Tile::is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx))
                 {
-                    println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, (cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
+                    //println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, (cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
                     movelist.push((new_pos.0, new_pos.1)); //this is so crummy.
                     continue;
                 }

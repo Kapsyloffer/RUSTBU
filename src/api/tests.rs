@@ -136,6 +136,30 @@ fn set_state_test()
     assert_eq!(g.get_board(Color::White, Color::White).unwrap().get_state()[0][3], Tile::Empty);
 }
 
+
+#[test]
+fn set_state_in_shared_test()
+{
+    let boardstate: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let url = String::from("testcase");
+    let g = Game::new_game();
+
+    let binding = GameHodler::new();
+    binding.games.lock().expect("nah").insert(url.clone(), g);
+
+    let state = State::from(&binding);
+
+    state.games.lock().expect("a").get_mut(&url).unwrap().get_board(Color::White, Color::White).unwrap().set_state(&boardstate);
+
+    assert_eq!(state.games.lock().expect("a").get_mut(&url).unwrap().get_board(Color::White, Color::White).unwrap().get_state(), &boardstate);
+}
+
  /*
         Board
         [0,0][0,1][0,2][0,3] <-- Black start
@@ -164,8 +188,19 @@ fn test_make_moves()
     
     let shared = State::from(&binding);
 
-    make_move(url.to_owned(), mpb, mab, shared);
-    make_move(url.to_owned(), mpw, maw, shared);
+    let b4b = *shared.games.lock().expect("Lock fail").get_mut(&url as &str).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state();
+
+    make_move(url.to_owned(), mpb, mab, &shared);
+
+    let afterb = *shared.games.lock().expect("Lock fail").get_mut(&url as &str).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state();
+
+    assert_ne!(afterb, b4b); //FAILS
+
+    make_move(url.to_owned(), mpw, maw, &shared);
+
+    let afterw = *shared.games.lock().expect("Lock fail").get_mut(&url).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state();
+
+    //assert_ne!(afterb, afterw); //FAILS
 
     let target_boardstate_state: [[Tile; 4]; 4] = [
         [Tile::White, Tile::White, Tile::Empty, Tile::White],
@@ -178,8 +213,8 @@ fn test_make_moves()
     b.set_state(&target_boardstate_state);
 
     //Holy fuck.
-    let cur_state = *shared.games.lock().expect("Lock fail").get_mut(&url).unwrap().get_board(Color::Black, Color::Black).unwrap();
+    let cur_state = *shared.games.lock().expect("Lock fail").get_mut(&url as &str).unwrap().get_board(Color::Black, Color::Black).unwrap();
 
-    assert_eq!(cur_state.to_owned(), b);
+    assert_eq!(cur_state, b); //FAILS
 
 }

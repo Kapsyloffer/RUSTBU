@@ -55,12 +55,7 @@ impl Game
            {
                 return Some(board);
            }
-           else 
-           {
-                continue;   
-           }
         }
-
         return None
     }
 

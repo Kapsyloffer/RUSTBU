@@ -42,6 +42,7 @@ pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) 
         move_rocks(&url, &a, shared);
         return RawJson("we good");
     }
+    panic!();
     let mut board = shared.games.lock().expect("FAILED TO LOCk").get_mut(&url).unwrap().get_boards();
     RawJson("true")
 }
@@ -59,7 +60,7 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     let (homeside, colour, x1, y1, x2, y2, aggr) = parsed_move.unwrap();
 
     let mut game = shared.games.lock().expect("Failed to lock in parse moves");
-    let mut board = game.get_mut(url).unwrap().get_board(homeside, colour).unwrap().to_owned();
+    let mut board = *game.get_mut(url).unwrap().get_board(homeside, colour).unwrap();
     
     let delta_x = (x2 - x1).abs();
     let delta_y = (y2 - y1).abs();
@@ -81,6 +82,8 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
         true => Tile::passive_move(&mut board, (x1, y1), (x2, y2)),
     };
 
+    game.get_mut(url).unwrap().get_board(homeside, colour).unwrap().set_state(board.get_state());
+    
     Ok(())
 }
 
