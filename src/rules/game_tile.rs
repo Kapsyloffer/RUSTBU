@@ -111,14 +111,14 @@ impl Tile
                     return true;
                 }
                 //Checka om det finns en sten bakom stenen vi puttar.
-                println!("(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}\n(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}", (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx), (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx));
-                println!("No rock is falling off. Returns true if valid: {}\nwtf is there: {:?}", (state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty), state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize]);
+                //println!("(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}\n(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}", (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx), (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx));
+                //println!("No rock is falling off. Returns true if valid: {}\nwtf is there: {:?}", (state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty), state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize]);
                 return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
             }
             else if *i == 2 && state[stepy][stepx] != Tile::Empty
             {
                 //Checka om det finns en sten bakom stenen vi puttar.
-                println!("Rock 1 step ahead: {:?}\nRock 2 step ahead: {:?}", state[stepx][stepy], state[newx][newy]);
+                //println!("Rock 1 step ahead: {:?}\nRock 2 step ahead: {:?}", state[stepx][stepy], state[newx][newy]);
                 return state[newy][newx] == Tile::Empty;
             }
         }

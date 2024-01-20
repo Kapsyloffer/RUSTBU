@@ -167,6 +167,7 @@ fn set_state_in_shared_test()
     assert_eq!(state.games.lock().expect("a").get_mut(&url).unwrap().get_board(Color::White, Color::White).unwrap().get_state(), &boardstate);
 }
 
+
  /*
         Board
         [0,0][0,1][0,2][0,3] <--- White start
@@ -177,60 +178,37 @@ fn set_state_in_shared_test()
         Så vi tar cur_pos och flyttar till new_pos
 */
 
-/* 
+
 #[test]
-fn test_make_moves()
+fn test_make_moves_black()
 {
     let url = String::from("testcase");
 
     //Black's turn
-    let mpb = String::from("BW0010P");
-    let mab = String::from("BB0313A");
-
-    //White's turn
-    let mpw = String::from("WW3012P");
-    let maw = String::from("BB3113A");
+    let mpb = String::from("BW0010P"); // 0,0 -> 1,0
+    let mab = String::from("BB0313A"); // 0,3 -> 1,3
 
     let binding = GameHodler::new();
-    binding.games.lock().expect("nah").insert(url.clone(), Game::new_game());
+    let mut g = Game::new_game();
+
+    let b4_bw = *g.get_board(Color::Black, Color::White).unwrap();
+    let b4_bb = *g.get_board(Color::Black, Color::Black).unwrap();
+
+    binding.games.lock().expect("nah").insert(String::from(&url), g);
+
+    let mut shared = State::from(&binding);
+
+    make_move(String::from(&url), mpb, mab, &mut shared);
+
+    let mut binding = shared.games.lock().expect("fail");
+    let new_bw = binding.get_mut(&url as &str).unwrap().get_board(Color::Black, Color::White).unwrap().to_owned();
+    let new_bb = binding.get_mut(&url as &str).unwrap().get_board(Color::Black, Color::Black).unwrap().to_owned();
     
-    let shared = State::from(&binding);
+    assert_ne!(b4_bw.get_state(), new_bw.get_state());
+    assert_ne!(b4_bb.get_state(), new_bb.get_state());
 
-    let mut shared_binding = shared.games.lock().expect("Lock fail @b4b");
 
-    let b4b = shared_binding.get(&url).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state().clone();
-
-    make_move(url.to_owned(), mpb, mab, &shared);
-
-    let afterb = shared_binding.get(&url).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state().clone();
-
-    assert_ne!(afterb, b4b); //FAILS
-    println!("BLACK MOVE OK!");
-
-    make_move(url.to_owned(), mpw, maw, &shared);
-
-    let afterw = shared_binding.get(&url).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state().clone();
-
-    assert_ne!(afterb, afterw); //SUCCESS
-
-    let target_boardstate_state: [[Tile; 4]; 4] = [
-        [Tile::White, Tile::White, Tile::White, Tile::Empty],
-        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
-        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
-        [Tile::White, Tile::Empty, Tile::White, Tile::White]
-    ];
-
-    let mut b: Board = Board::new_board(Color::Black, Color::Black);
-    b.set_state(&target_boardstate_state);
-
-    //Holy fuck.
-    let cur_state = shared_binding.get_mut(&url as &str).unwrap().get_board(Color::Black, Color::Black).unwrap().get_state();
-    
-    println!("{:#?}", shared.games.lock().expect("Lock fail").get_mut(&url as &str).unwrap());
-
-    assert_eq!(cur_state, b.get_state()); //FAILS'
-}*/
-
+}
 
 #[test]
 fn test_move_rocks()
@@ -255,7 +233,6 @@ fn test_move_rocks()
     let after = shared.games.lock().expect("failed to lock").get_mut("testcase").unwrap().get_board(Color::Black, Color::Black).unwrap().clone();
     
     assert_ne!(b4.get_state(), after.get_state());
-
 }
 
 

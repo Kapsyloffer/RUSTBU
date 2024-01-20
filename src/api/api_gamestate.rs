@@ -36,7 +36,7 @@ pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) 
     || parse_move(&url, &a, &shared).is_err() 
     || &a.as_bytes()[1] == &p.as_bytes()[1]
     {
-        panic!()
+        panic!("make_move fucked up")
     }
 
     if move_rocks(&url, &p, shared).is_ok() && move_rocks(&url, &a, shared).is_ok()
@@ -44,7 +44,8 @@ pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) 
         return RawJson("we good");
     }
 
-    println!("move_rocks passive: {}\nmove_rocks aggressive: {}\n", move_rocks(&url, &p, shared).is_ok(), move_rocks(&url, &a, shared).is_ok());
+    //println!("move_rocks passive OK: {}\nmove_rocks aggressive OK: {}\n", move_rocks(&url, &p, shared).is_ok(), move_rocks(&url, &a, shared).is_ok());
+    //println!("move_rocks passive ERR: {}\nmove_rocks aggressive ERR: {}\n", move_rocks(&url, &p, shared).is_err(), move_rocks(&url, &a, shared).is_err());
     //panic!()
     return RawJson("we not good");
 }
@@ -66,7 +67,7 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
 
     let (homeside, colour, x1, y1, x2, y2, aggr) = parsed_move.unwrap();
 
-    let mut board = game_instance.get_board(homeside, colour).unwrap().to_owned();
+    let mut board = game_instance.get_board(homeside, colour).unwrap().clone();
     
     let dx = (x2 - x1);
     let dy = (y2 - y1);
@@ -77,12 +78,12 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     //i = antal steps, 1 eller 2
     let i = dy.abs().max(dx.abs());
 
-    print!("\nx1: {}\ny1: {}\nx2: {}\ny2: {}\nΔy: {}\nΔx: {}\ndiry: {}\ndirx: {}\naggr: {}\n\n", x1, y1, x2, y2, dy, dx, dir.0, dir.1, aggr);
+    //print!("\nx1: {}\ny1: {}\nx2: {}\ny2: {}\nΔy: {}\nΔx: {}\ndiry: {}\ndirx: {}\naggr: {}\n\n", x1, y1, x2, y2, dy, dx, dir.0, dir.1, aggr);
 
     //Om vårt move är invalid returnar vi false.
     if !Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &i, true, (&dir.0, &dir.1))
     {
-        println!("Tile::is_valid() does not find you valid.");
+        println!("Move is not valid apparently.");
         return Err(());
     }
     
@@ -93,12 +94,19 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
         true => Tile::passive_move(&mut board, (x1, y1), (x2, y2)),
     };
 
+    println!("{:#?}", board);
+
     game_instance.get_board(homeside, colour).unwrap().set_state(board.get_state());
 
-    let g_i = game_instance.clone();
+    let mut g_i = game_instance.clone();
+
+    println!("{:#?}", g_i.get_board(homeside, colour).unwrap());
 
     //reinsert instance into shared
     shared.games.lock().expect("Failed to lock").insert(String::from(url), g_i);
+
+    let board = shared.games.lock().expect("Failed to lock").get_mut(url).unwrap().get_board(homeside, colour).unwrap().clone();
+    println!("{:#?}", board);
     Ok(())
 }
 
@@ -111,6 +119,8 @@ pub fn parse_move(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     {
         return Err(());
     }
+
+    println!("url: {}", m);
     /*
     movestringen ser ut såhär:
 
