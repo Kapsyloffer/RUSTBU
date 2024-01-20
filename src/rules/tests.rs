@@ -330,7 +330,7 @@ fn movement_aggressive_1_step_push()
 
     print!("POSSIBLE");
 
-    Tile::aggressive_move(&mut b, (0, 2), (0, 1));
+    Tile::aggressive_move(&mut b, (0, 2), (0, 3));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -362,7 +362,7 @@ fn movement_aggressive_2_step_push_1()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    Tile::aggressive_move(&mut b, (0, 1), (0, 2));
+    Tile::aggressive_move(&mut b, (0, 1), (0, 3));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -393,7 +393,7 @@ fn movement_aggressive_2_step_push_2()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    Tile::aggressive_move(&mut b, (0, 1), (0, 2));
+    Tile::aggressive_move(&mut b, (0, 1), (0, 3));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -425,7 +425,7 @@ fn movement_aggressive_1_step_push_2()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    Tile::aggressive_move(&mut b, (1, 1), (-1, -1));
+    Tile::aggressive_move(&mut b, (1, 1), (0, 0));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -486,7 +486,7 @@ fn movement_aggressive_nopush()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (0, 1), (0, 2)));
+    assert!(Tile::aggressive_move(&mut b, (0, 1), (0, 3)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -519,7 +519,7 @@ fn movement_aggressive_3_0()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1)));
+    assert!(Tile::aggressive_move(&mut b, (2, 1), (3, 0)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -550,7 +550,7 @@ fn movement_aggressive_3_0_nopush()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-    assert!(Tile::aggressive_move(&mut b, (2, 1), (1, -1)));
+    assert!(Tile::aggressive_move(&mut b, (2, 1), (3, 0)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -581,7 +581,7 @@ fn movement_aggressive_3_0_slightpush()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
     
-    assert!(Tile::aggressive_move(&mut b, (1, 2), (1, -1)));
+    assert!(Tile::aggressive_move(&mut b, (1, 2), (2, 1)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -612,7 +612,7 @@ fn movement_aggressive_0_0_push_1_step()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
     
-    assert!(Tile::aggressive_move(&mut b, (1, 1), (-1, -1)));
+    assert!(Tile::aggressive_move(&mut b, (1, 1), (0, 0)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -643,7 +643,7 @@ fn movement_aggressive_0_0_push_2_steps()
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
     
-    assert!(Tile::aggressive_move(&mut b, (2, 2), (-2, -2)));
+    assert!(Tile::aggressive_move(&mut b, (2, 2), (0, 0)));
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
@@ -660,4 +660,184 @@ fn get_board_from_game_instance_test()
 
     assert_eq!(b.get_color(), Color::White);
     assert_eq!(b.get_home(), Color::Black);
+}
+
+
+#[test]
+fn movement_one_in_each_dir_1_step_passive()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+
+    let boardstate: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    b.set_state(&boardstate);
+    
+    let directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)];
+
+    for d in directions
+    {
+        assert!(Tile::is_valid(b.get_state(), (2, 2), (2 + d.0, 2 + d.1), &1, false, (&d.0, &d.1)));
+    }
+}
+
+#[test]
+fn movement_one_in_each_dir_1_step_aggressive()
+{
+    let mut b = Board::new_board(Color::Black, Color::Black);
+
+    let boardstate: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Black, Tile::Black],
+        [Tile::Empty, Tile::Black, Tile::White, Tile::Black],
+        [Tile::Empty, Tile::Black, Tile::Black, Tile::Black]
+    ];
+
+    b.set_state(&boardstate);
+    
+    let directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)];
+
+    for d in directions
+    {
+        assert!(Tile::is_valid(b.get_state(), (2, 2), (2 + d.0, 2 + d.1), &1, true, (&d.0, &d.1)));
+    }
+}
+
+#[test]
+fn movement_one_in_each_dir_2_step_passive()
+{
+    let mut b_tl = Board::new_board(Color::Black, Color::Black);
+    let mut b_tr = Board::new_board(Color::Black, Color::White);
+    let mut b_bl = Board::new_board(Color::White, Color::Black);
+    let mut b_br = Board::new_board(Color::White, Color::White);
+
+    let boardstate_tl: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_tr: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_bl: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_br: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White]
+    ];
+
+    b_tl.set_state(&boardstate_tl);
+    b_tr.set_state(&boardstate_tr);
+    b_bl.set_state(&boardstate_bl);
+    b_br.set_state(&boardstate_br);
+    
+    let dir_tl = [(1,0), (1,1), (0,1)];
+    let dir_tr = [(1,0), (1,-1), (0,-1)];
+    let dir_bl = [(-1,0), (-1,1), (0,1)];
+    let dir_br = [(-1,0), (-1, -1), (0,-1)];
+
+    for d in dir_tl
+    {
+        assert!(Tile::is_valid(b_tl.get_state(), (0, 0), (2 + d.0, 2 + d.1), &2, false, (&d.0, &d.1)));
+    }
+
+    for d in dir_tr
+    {
+        assert!(Tile::is_valid(b_tr.get_state(), (0, 3), (2 + d.0, 2 + d.1), &2, false, (&d.0, &d.1)));
+    }
+
+    for d in dir_bl
+    {
+        assert!(Tile::is_valid(b_bl.get_state(), (3, 0), (2 + d.0, 2 + d.1), &2, false, (&d.0, &d.1)));
+    }
+
+    for d in dir_br
+    {
+        assert!(Tile::is_valid(b_br.get_state(), (3, 3), (2 + d.0, 2 + d.1), &2, false, (&d.0, &d.1)));
+    }
+}
+
+
+#[test]
+fn movement_one_in_each_dir_2_step_aggr()
+{
+    let mut b_tl = Board::new_board(Color::Black, Color::Black);
+    let mut b_tr = Board::new_board(Color::Black, Color::White);
+    let mut b_bl = Board::new_board(Color::White, Color::Black);
+    let mut b_br = Board::new_board(Color::White, Color::White);
+
+    let boardstate_tl: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_tr: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_bl: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty]
+    ];
+
+    let boardstate_br: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White]
+    ];
+
+    b_tl.set_state(&boardstate_tl);
+    b_tr.set_state(&boardstate_tr);
+    b_bl.set_state(&boardstate_bl);
+    b_br.set_state(&boardstate_br);
+    
+    let dir_tl = [(1,0), (1,1), (0,1)];
+    let dir_tr = [(1,0), (1,-1), (0,-1)];
+    let dir_bl = [(-1,0), (-1,1), (0,1)];
+    let dir_br = [(-1,0), (-1, -1), (0,-1)];
+
+    for d in dir_tl
+    {
+        assert!(Tile::is_valid(b_tl.get_state(), (0, 0), (2 + d.0, 2 + d.1), &2, true, (&d.0, &d.1)));
+    }
+
+    for d in dir_tr
+    {
+        assert!(Tile::is_valid(b_tr.get_state(), (0, 3), (2 + d.0, 2 + d.1), &2, true, (&d.0, &d.1)));
+    }
+
+    for d in dir_bl
+    {
+        assert!(Tile::is_valid(b_bl.get_state(), (3, 0), (2 + d.0, 2 + d.1), &2, true, (&d.0, &d.1)));
+    }
+
+    for d in dir_br
+    {
+        assert!(Tile::is_valid(b_br.get_state(), (3, 3), (2 + d.0, 2 + d.1), &2, true, (&d.0, &d.1)));
+    }
 }
