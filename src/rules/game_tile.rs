@@ -73,14 +73,14 @@ impl Tile
         let stepx = (cur_pos.1 + dx * 1) as usize;
 
         
-        println!("newy: {:?}\nnewx: {:?}\ndy: {}\ndx: {}\ni: {}", newy, newx, dy, dx, i);
+        //println!("newy: {:?}\nnewx: {:?}\ndy: {}\ndx: {}\ni: {}", newy, newx, dy, dx, i);
 
-        println!("cur_pos: {:?}\nnew_pos: {:?}\nstepy: {}\nstepx: {}", cur_pos, new_pos, stepy, stepx);
+        //println!("cur_pos: {:?}\nnew_pos: {:?}\nstepy: {}\nstepx: {}", cur_pos, new_pos, stepy, stepx);
 
         //If outta range
         if newx > 3 || newy > 3 || stepy > 3 || stepx > 3
         {
-            println!("\n\nMove is out of range. \nCurpos: {:?}\nNewpos: {:?}\nNewx: {}\nNewy: {}\nStepx: {}\nStepy: {}\ndy: {}\ndx: {}\n\n", cur_pos, new_pos, newx, newy, stepx, stepy, dy, dx);
+            //println!("\n\nMove is out of range. \nCurpos: {:?}\nNewpos: {:?}\nNewx: {}\nNewy: {}\nStepx: {}\nStepy: {}\ndy: {}\ndx: {}\n\n", cur_pos, new_pos, newx, newy, stepx, stepy, dy, dx);
             return false;
         }
 
@@ -112,7 +112,7 @@ impl Tile
                 }
                 //Checka om det finns en sten bakom stenen vi puttar.
                 println!("(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}\n(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}", (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx), (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx));
-                println!("Rock behind. 1");
+                println!("No rock is falling off. Returns true if valid: {}\nwtf is there: {:?}", (state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty), state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize]);
                 return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
             }
             else if *i == 2 && state[stepy][stepx] != Tile::Empty
@@ -133,15 +133,14 @@ impl Tile
             return false
         }*/ 
         
-        let dx = (new_pos.1 - cur_pos.1).abs();
-        let dy = (new_pos.0 - cur_pos.0).abs();
+        let dx = new_pos.1 - cur_pos.1;
+        let dy = new_pos.0 - cur_pos.0;
 
         //i = antal steps, 1 eller 2
         let i = dy.abs().max(dx.abs());
 
         if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, false, (&dy, &dx))
         {
-            println!("ur retarded");
             return false;
         }
 

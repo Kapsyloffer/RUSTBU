@@ -54,26 +54,33 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     //Vi checkar om det är valid
     let parsed_move = parse_move(url, m, shared);
 
+    //grab instance from shared
+    let mut game_instance = shared.games.lock().expect("nut").get_mut(url).unwrap().clone();
+
     //If it ain't we kirr
-    if parsed_move.is_err(){
+    if parsed_move.is_err()
+    {
         println!("{:?}", parsed_move);
         return Err(());
     }
 
     let (homeside, colour, x1, y1, x2, y2, aggr) = parsed_move.unwrap();
 
-    let mut game = shared.games.lock().expect("Failed to lock in parse moves");
-    let mut board = *game.get_mut(url).unwrap().get_board(homeside, colour).unwrap();
+    let mut board = game_instance.get_board(homeside, colour).unwrap().to_owned();
     
-    let delta_x = (x2 - x1);
-    let delta_y = (y2 - y1);
+    let dx = (x2 - x1);
+    let dy = (y2 - y1);
 
-    //print!("{:#?}", board);
+    //Get the direction
+    let dir = ((dy as f32 / 2.0).round() as i8, (dx as f32 / 2.0).round() as i8);
 
-    //print!("x1: {}\ny1: {}\nx2: {}\ny2: {}\nΔx: {}\nΔy: {}\n", x1, y1, x2, y2, delta_x, delta_y);
+    //i = antal steps, 1 eller 2
+    let i = dy.abs().max(dx.abs());
+
+    print!("\nx1: {}\ny1: {}\nx2: {}\ny2: {}\nΔy: {}\nΔx: {}\ndiry: {}\ndirx: {}\naggr: {}\n\n", x1, y1, x2, y2, dy, dx, dir.0, dir.1, aggr);
 
     //Om vårt move är invalid returnar vi false.
-    if !Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &delta_x.max(delta_y), aggr, (&delta_x, &delta_y))
+    if !Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &i, true, (&dir.0, &dir.1))
     {
         println!("Tile::is_valid() does not find you valid.");
         return Err(());
@@ -86,8 +93,12 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
         true => Tile::passive_move(&mut board, (x1, y1), (x2, y2)),
     };
 
-    game.get_mut(url).unwrap().get_board(homeside, colour).unwrap().set_state(board.get_state());
-    
+    game_instance.get_board(homeside, colour).unwrap().set_state(board.get_state());
+
+    let g_i = game_instance.clone();
+
+    //reinsert instance into shared
+    shared.games.lock().expect("Failed to lock").insert(String::from(url), g_i);
     Ok(())
 }
 

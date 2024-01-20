@@ -4,7 +4,7 @@ use super::game_board::{Board, Color};
 
 
 //#[derive(Serialize, Deserialize, Debug)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Game
 {
     player_b: Option<String>,
