@@ -45,7 +45,8 @@ pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) 
     }
 
     println!("move_rocks passive: {}\nmove_rocks aggressive: {}\n", move_rocks(&url, &p, shared).is_ok(), move_rocks(&url, &a, shared).is_ok());
-    panic!()
+    //panic!()
+    return RawJson("we not good");
 }
 
 pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Result<(), ()>

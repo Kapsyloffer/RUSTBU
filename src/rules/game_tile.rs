@@ -36,38 +36,6 @@ impl Tile
         return Tile::Black;
     }
 
-    pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool
-    {
-        if !Tile::get_possible_moves(b, false, cur_pos).contains(&new_pos)
-        {
-            return false
-        }
-
-        let mut boardstate = *b.get_state();
-        /*
-        Detta kommer ge typ:
-        [W][B][ ][B]
-        [ ][W][ ][ ]
-        [ ][ ][ ][ ]
-        [ ][w][B][W]
-
-        Så vi tar cur_pos och flyttar till new_pos
-        */
-        let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
-
-        //Old space is empty
-        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
-
-        //New space has the rock
-        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
-
-        b.set_state(&boardstate);
-
-        //Får ut storleken flyttad så vi kan slänga in den i aggr.
-        //let sizediff = ((cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
-        return true
-    }
-
     pub fn get_possible_moves(b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)>
     {
         let boardstate = b.get_state();
@@ -151,19 +119,75 @@ impl Tile
         return true;
     }
 
-    pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), diff: (i8, i8)) -> bool
+    pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool
     {
-        //Färg hanteras nu av movement api
-        let new_pos = (cur_pos.0 + diff.0, cur_pos.1 + diff.1);
+        //TODO: get_possible_moves borde inte finnas.
+       /* if !Tile::get_possible_moves(b, false, cur_pos).contains(&new_pos)
+        {
+            return false
+        }*/ 
+        
+        let dx = (new_pos.1 - cur_pos.1).abs();
+        let dy = (new_pos.0 - cur_pos.0).abs();
 
+        let i = dy.abs().max(dx.abs());
+
+        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, false, (&dy, &dx))
+        {
+            println!("ur retarded");
+            return false;
+        }
+
+        if dx == 0 && dy == 0 {return false}
+
+        let mut boardstate = *b.get_state();
+        /*
+        Detta kommer ge typ:
+        [W][B][ ][B]
+        [ ][W][ ][ ]
+        [ ][ ][ ][ ]
+        [ ][w][B][W]
+
+        Så vi tar cur_pos och flyttar till new_pos
+        */
+        let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+
+        //Old space is empty
+        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+
+        //New space has the rock
+        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
+
+        b.set_state(&boardstate);
+
+        //Får ut storleken flyttad så vi kan slänga in den i aggr.
+        //let sizediff = ((cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
+        return true
+    }
+
+    pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool
+    {
         if Tile::is_empty(b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize])
         {
             panic!("wtf")
         }
 
-        //Om draget inte finns
-        if !Tile::get_possible_moves(b, true, cur_pos).contains(&new_pos)
+        //TODO: get_possible_moves borde inte finnas.
+        /*if !Tile::get_possible_moves(b, true, cur_pos).contains(&new_pos)
         {
+            return false;
+        }*/
+
+        let dx = (new_pos.1 - cur_pos.1).abs();
+        let dy = (new_pos.0 - cur_pos.0).abs();
+
+        let diff = (dy, dx);
+
+        let i = dy.abs().max(dx.abs());
+
+        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, true, (&dy, &dx))
+        {
+            println!("ur retarded");
             return false;
         }
         
