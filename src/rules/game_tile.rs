@@ -69,8 +69,13 @@ impl Tile
         let newy = new_pos.0 as usize;
         let newx = new_pos.1 as usize;
 
-        let stepy = (cur_pos.0 + dy) as usize;
-        let stepx = (cur_pos.1 + dx) as usize;
+        let stepy = (cur_pos.0 + dy * 1) as usize;
+        let stepx = (cur_pos.1 + dx * 1) as usize;
+
+        
+        println!("newy: {:?}\nnewx: {:?}\ndy: {}\ndx: {}\ni: {}", newy, newx, dy, dx, i);
+
+        println!("cur_pos: {:?}\nnew_pos: {:?}\nstepy: {}\nstepx: {}", cur_pos, new_pos, stepy, stepx);
 
         //If outta range
         if newx > 3 || newy > 3 || stepy > 3 || stepx > 3
@@ -106,13 +111,14 @@ impl Tile
                     return true;
                 }
                 //Checka om det finns en sten bakom stenen vi puttar.
-                println!("Rock behind.");
+                println!("(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}\n(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}", (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx), (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx));
+                println!("Rock behind. 1");
                 return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
             }
             else if *i == 2 && state[stepy][stepx] != Tile::Empty
             {
                 //Checka om det finns en sten bakom stenen vi puttar.
-                println!("Rock behind.");
+                println!("Rock 1 step ahead: {:?}\nRock 2 step ahead: {:?}", state[stepx][stepy], state[newx][newy]);
                 return state[newy][newx] == Tile::Empty;
             }
         }
@@ -130,6 +136,7 @@ impl Tile
         let dx = (new_pos.1 - cur_pos.1).abs();
         let dy = (new_pos.0 - cur_pos.0).abs();
 
+        //i = antal steps, 1 eller 2
         let i = dy.abs().max(dx.abs());
 
         if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, false, (&dy, &dx))
@@ -178,32 +185,28 @@ impl Tile
             return false;
         }*/
 
-        let dx = (new_pos.1 - cur_pos.1).abs();
-        let dy = (new_pos.0 - cur_pos.0).abs();
+        let dx = new_pos.1 - cur_pos.1;
+        let dy = new_pos.0 - cur_pos.0;
 
-        let diff = (dy, dx);
+        let dir = ((dy as f32 / 2.0).round() as i8, (dx as f32 / 2.0).round() as i8);
 
+        //i = antal steps, 1 eller 2
         let i = dy.abs().max(dx.abs());
 
-        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, true, (&dy, &dx))
+        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, true, (&dir.0, &dir.1))
         {
-            println!("ur retarded");
+            println!("not valid.");
             return false;
         }
         
         let mut boardstate = *b.get_state();
 
-        //Get direction:
-        /*
-            0 / 2 = 0,
-            1 / 2 ceil = 1
-            -2 / 2 ceil = -1
-            med dir kan vi stega x antal steg.
-         */
+
         //let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
-        let dir = ((diff.0 as f32 / 2.0).round() as i8, (diff.1 as f32 / 2.0).round() as i8);
+        let dir = ((dy as f32 / 2.0).round() as i8, (dx as f32 / 2.0).round() as i8);
+        println!("{:?}", dir);
         //Linear size of diff
-        let size = diff.0.abs().max(diff.1.abs());
+        let size = i;
        
         /*
         Detta kommer ge typ:
@@ -216,6 +219,11 @@ impl Tile
         [ ][ ][ ][ ]      [ ][W][ ][ ]      [ ][W][ ][ ]
         [ ][B][ ][ ]  =>  [ ][B][ ][ ]  =>  [ ][ ][ ][ ]
         [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+
+        [ ][W][B][ ]      [ ][ ][B][W]      [ ][ ][ ][W]
+        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
+        [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
+        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
 
         Hopefully
         */

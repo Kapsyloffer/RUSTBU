@@ -82,7 +82,7 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     //ANNARS KÖR VI
     match aggr
     {
-        false => Tile::aggressive_move(&mut board, (x1, y1), (delta_x, delta_y)),
+        false => Tile::aggressive_move(&mut board, (x1, y1), (x2, y2)),
         true => Tile::passive_move(&mut board, (x1, y1), (x2, y2)),
     };
 
