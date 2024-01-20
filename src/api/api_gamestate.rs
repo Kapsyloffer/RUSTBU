@@ -32,19 +32,20 @@ pub fn get_game_instance<'r>(url: String, shared: &State<GameHodler>) -> String
 #[get("/make_move/<url>/<p>/<a>")]
 pub fn make_move(url: String, p: String, a: String, shared: &State<GameHodler>) -> RawJson<&'static str>
 {
-    if parse_move(&url, &p, &shared).is_ok() && parse_move(&url, &a, &shared).is_ok()
+    if parse_move(&url, &p, &shared).is_err() 
+    || parse_move(&url, &a, &shared).is_err() 
+    || &a.as_bytes()[1] == &p.as_bytes()[1]
     {
-        if &a.as_bytes()[1] == &p.as_bytes()[1]
-        {
-            panic!()
-        }
-        move_rocks(&url, &p, shared);
-        move_rocks(&url, &a, shared);
+        panic!()
+    }
+
+    if move_rocks(&url, &p, shared).is_ok() && move_rocks(&url, &a, shared).is_ok()
+    {
         return RawJson("we good");
     }
-    panic!();
-    let mut board = shared.games.lock().expect("FAILED TO LOCk").get_mut(&url).unwrap().get_boards();
-    RawJson("true")
+
+    println!("move_rocks passive: {}\nmove_rocks aggressive: {}\n", move_rocks(&url, &p, shared).is_ok(), move_rocks(&url, &a, shared).is_ok());
+    panic!()
 }
 
 pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Result<(), ()>
@@ -54,6 +55,7 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
 
     //If it ain't we kirr
     if parsed_move.is_err(){
+        println!("{:?}", parsed_move);
         return Err(());
     }
 
@@ -62,8 +64,8 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     let mut game = shared.games.lock().expect("Failed to lock in parse moves");
     let mut board = *game.get_mut(url).unwrap().get_board(homeside, colour).unwrap();
     
-    let delta_x = (x2 - x1).abs();
-    let delta_y = (y2 - y1).abs();
+    let delta_x = (x2 - x1);
+    let delta_y = (y2 - y1);
 
     //print!("{:#?}", board);
 
@@ -72,6 +74,7 @@ pub fn move_rocks(url: &String, m: &String, shared: &State<GameHodler>) -> Resul
     //Om vårt move är invalid returnar vi false.
     if !Tile::is_valid(board.get_state(), (x1, y1), (x2, y2), &delta_x.max(delta_y), aggr, (&delta_x, &delta_y))
     {
+        println!("Tile::is_valid() does not find you valid.");
         return Err(());
     }
     

@@ -101,12 +101,13 @@ impl Tile
         let newy = new_pos.0 as usize;
         let newx = new_pos.1 as usize;
 
-        let stepy = (cur_pos.0 + 1 * dy) as usize;
-        let stepx = (cur_pos.1  + 1 * dx) as usize;
+        let stepy = (cur_pos.0 + dy) as usize;
+        let stepx = (cur_pos.1 + dx) as usize;
 
         //If outta range
         if newx > 3 || newy > 3 || stepy > 3 || stepx > 3
         {
+            println!("\n\nMove is out of range. \nCurpos: {:?}\nNewpos: {:?}\nNewx: {}\nNewy: {}\nStepx: {}\nStepy: {}\ndy: {}\ndx: {}\n\n", cur_pos, new_pos, newx, newy, stepx, stepy, dy, dx);
             return false;
         }
 
@@ -115,6 +116,7 @@ impl Tile
         {
             if state[newy][newx] != Tile::Empty 
             {
+                println!("You tried to passive into a mf.");
                 return false;
             }
         } 
@@ -124,6 +126,7 @@ impl Tile
             //Knuffa ej våra egna stenar.
             if state[newy][newx] == state[cur_pos.0 as usize][cur_pos.1 as usize]
             {
+                println!("Cannot push own rocks.");
                 return false;
             }
 
@@ -135,11 +138,13 @@ impl Tile
                     return true;
                 }
                 //Checka om det finns en sten bakom stenen vi puttar.
+                println!("Rock behind.");
                 return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
             }
             else if *i == 2 && state[stepy][stepx] != Tile::Empty
             {
                 //Checka om det finns en sten bakom stenen vi puttar.
+                println!("Rock behind.");
                 return state[newy][newx] == Tile::Empty;
             }
         }
