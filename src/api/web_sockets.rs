@@ -97,9 +97,15 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         Tile::passive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
                     println!("moved_a: {moved_a}");
 
-                    if !moved_p || !moved_a {
-                        panic!()
+                    if moved_p && moved_a {
+                        game.next_turn();
                     }
+                    println!("{:#?}", game);
+                    
+                    //DEBUG
+                    let size = games.len();
+
+                    println!("{}", size);
                 }
                 GamePacket::GameCreated { .. } => (),
             }
