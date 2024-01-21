@@ -15,7 +15,6 @@
       {
         const msg = {
           type: "CreateGame",
-          name: "dfkjslödf"
         };
         ws.send(JSON.stringify(msg));
       }
@@ -26,20 +25,31 @@
       if(msg.type == "GameCreated") {
         current_game = msg.id;
 
-        const action = {
-          board: "White",
-          home_side: "White",
-          start_x: 0,
-          start_y: 0,
-          end_x: 0,
-          end_y: 0,
-          aggressive: true
+        const action_p = {
+          board_colour: "White",
+          home_colour: "Black",
+          x1: 0,
+          y1: 0,
+          x2: 1,
+          y2: 1,
+          aggr: false
+        };
+
+        const action_a = {
+          board_colour: "White",
+          home_colour: "Black",
+          x1: 0,
+          y1: 1,
+          x2: 2,
+          y2: 3,
+          aggr: true
         };
 
         const packet = {
           type: "Action",
           id: current_game,
-          action: action
+          move_p: action_p,
+          move_a: action_a
         };
 
         ws.send(JSON.stringify(packet));
