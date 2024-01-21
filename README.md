@@ -2,4 +2,4 @@
 
 how 2 run:
 
-COMING SOON
+just `cargo run` lmao
