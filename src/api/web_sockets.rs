@@ -22,6 +22,9 @@ enum GamePacket {
     GameCreated {
         id: String,
     },
+    FetchGame{
+        url: String
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -36,7 +39,7 @@ struct Action {
 }
 
 pub async fn handler(ws: WebSocketUpgrade, State(state): State<GameHodler>) -> Response {
-    ws.on_upgrade(|socket| handle_socket(socket, state))
+    return ws.on_upgrade(|socket| handle_socket(socket, state));
 }
 
 pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
@@ -76,6 +79,21 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     }
                 }
+                GamePacket::FetchGame { url } =>
+                {
+                    let mut games = game_hodler.games.lock().unwrap().clone();
+                    let Some(game) = games.get_mut(&url) else {
+                        return;
+                    };
+                    let state: String = serde_json::to_string(game).unwrap();
+                    if socket
+                        .send(Message::Text(state))
+                        .await
+                        .is_err()
+                    {
+                        return;
+                    }
+                }
                 GamePacket::Action { id, move_p, move_a } => {
                     let mut games = game_hodler.games.lock().unwrap();
                     let Some(game) = games.get_mut(&id) else {
@@ -87,14 +105,14 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         .unwrap();
                     let moved_p: bool =
                         Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
-                    //println!("moved_p: {moved_p}");
+                    println!("moved_p: {moved_p}");
 
                     let board_a = game
                         .get_board(move_a.home_colour, move_a.board_colour)
                         .unwrap();
                     let moved_a: bool =
                         Tile::passive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
-                    //println!("moved_a: {moved_a}");
+                    println!("moved_a: {moved_a}");
 
                     if moved_p && moved_a {
                         game.next_turn();

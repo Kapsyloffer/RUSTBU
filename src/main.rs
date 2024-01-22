@@ -10,7 +10,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root))
         .route("/ws", get(handler))
-        .route("/game/:id", get(handler)) //Join a game using URL
+        .route("/game/:id", get(fetch_game)) //Join a game using URL
         .with_state(GameHodler::new());
 
     let listener = tokio::net::TcpListener::bind("localhost:3000")
@@ -22,3 +22,9 @@ async fn main() {
 async fn root() -> impl IntoResponse {
     Html(include_str!("../html/index.html"))
 }
+
+
+async fn fetch_game() -> impl IntoResponse {
+    Html(include_str!("../html/game.html"))
+}
+
