@@ -1,6 +1,6 @@
 use axum::{
     extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade}, Path, State
+        ws::{Message, WebSocket, WebSocketUpgrade}, State
     },
     response::*,
 };
@@ -47,6 +47,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
         let msg = if let Ok(msg) = msg {
             msg
         } else {
+            println!("Socket ded");
             return;
         };
 
@@ -89,10 +90,9 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                     if socket
                         .send(Message::Text(state))
                         .await
-                        .is_err()
-                    {
-                        return;
-                    }
+                        .is_err(){
+                            return;
+                        }
                 }
                 GamePacket::Action { id, move_p, move_a } => {
                     let mut games = game_hodler.games.lock().unwrap();
@@ -120,9 +120,9 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                     //println!("{:#?}", game);
                     
                     //DEBUG
-                    let size = games.len();
+                    //let size = games.len();
 
-                    println!("{}", size);
+                    println!("{}", game.dislay());
                 }
                 GamePacket::GameCreated { .. } => (),
             }

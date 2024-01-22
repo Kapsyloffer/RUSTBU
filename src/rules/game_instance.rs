@@ -1,7 +1,7 @@
 use rand::{distributions::Alphanumeric, Rng};
 use serde::Serialize;
 
-use super::game_board::{Board, Color};
+use super::{game_board::{Board, Color}, game_tile::Tile};
 
 //#[derive(Serialize, Deserialize, Debug)]
 #[derive(Debug, Clone, Serialize)]
@@ -52,6 +52,73 @@ impl Game {
             }
         }
         return None;
+    }
+
+    pub fn dislay(&mut self) -> String
+    {
+        let mut disp: String = String::from("\n\n\tS H O B U\n\n");
+        let red = "\x1b[31m";
+        let green = "\x1b[32m";
+        let reset = "\x1b[0m";
+        
+
+        //TRASH
+        for i in 0..4 as usize
+        {
+            for j in 0..4 as usize
+            {
+                disp.push_str(red);
+                match self.get_board(Color::White, Color::White).unwrap().get_state()[i][j]
+                {   
+                    Tile::White => disp.push_str("[W]"),
+                    Tile::Black => disp.push_str("[B]"),
+                    Tile::Empty => disp.push_str("[ ]"),
+                }
+                disp.push_str(reset);
+            }
+            disp.push_str("   ");
+            for j in 0..4 as usize
+            {
+                disp.push_str(green);
+                match self.get_board(Color::White, Color::Black).unwrap().get_state()[i][j]
+                {   
+                    Tile::White => disp.push_str("[W]"),
+                    Tile::Black => disp.push_str("[B]"),
+                    Tile::Empty => disp.push_str("[ ]"),
+                }
+                disp.push_str(reset);
+            }
+            disp.push_str("\n");
+        }
+        disp.push_str("\n---------------------------\n\n");
+        for i in 0..4 as usize
+        {
+            for j in 0..4 as usize
+            {   
+                disp.push_str(green);
+                match self.get_board(Color::Black, Color::White).unwrap().get_state()[i][j]
+                {   
+                    Tile::White => disp.push_str("[W]"),
+                    Tile::Black => disp.push_str("[B]"),
+                    Tile::Empty => disp.push_str("[ ]"),
+                }
+                disp.push_str(reset);
+            }
+            disp.push_str("   ");
+            for j in 0..4 as usize
+            {  
+                disp.push_str(red);
+                match self.get_board(Color::Black, Color::Black).unwrap().get_state()[i][j]
+                {   
+                    Tile::White => disp.push_str("[W]"),
+                    Tile::Black => disp.push_str("[B]"),
+                    Tile::Empty => disp.push_str("[ ]"),
+                }
+                disp.push_str(reset);
+            }
+            disp.push_str("\n");
+        }
+        return String::from(disp);
     }
 
     pub fn generate_url() -> String {
