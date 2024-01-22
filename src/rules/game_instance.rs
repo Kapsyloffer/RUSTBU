@@ -1,9 +1,10 @@
 use rand::{distributions::Alphanumeric, Rng};
+use serde::Serialize;
 
 use super::game_board::{Board, Color};
 
 //#[derive(Serialize, Deserialize, Debug)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Game {
     player_b: Option<String>,
     player_w: Option<String>,

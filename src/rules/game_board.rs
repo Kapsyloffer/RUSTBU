@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::game_tile::Tile;
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Serialize)]
 pub struct Board {
     color: Color,
     home: Color,

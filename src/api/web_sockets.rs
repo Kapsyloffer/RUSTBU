@@ -1,7 +1,6 @@
 use axum::{
     extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade},
-        State,
+        ws::{Message, WebSocket, WebSocketUpgrade}, Path, State
     },
     response::*,
 };
@@ -88,19 +87,19 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         .unwrap();
                     let moved_p: bool =
                         Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
-                    println!("moved_p: {moved_p}");
+                    //println!("moved_p: {moved_p}");
 
                     let board_a = game
                         .get_board(move_a.home_colour, move_a.board_colour)
                         .unwrap();
                     let moved_a: bool =
                         Tile::passive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
-                    println!("moved_a: {moved_a}");
+                    //println!("moved_a: {moved_a}");
 
                     if moved_p && moved_a {
                         game.next_turn();
                     }
-                    println!("{:#?}", game);
+                    //println!("{:#?}", game);
                     
                     //DEBUG
                     let size = games.len();

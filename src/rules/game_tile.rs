@@ -1,8 +1,10 @@
 use std::{cmp::Ord, f32};
 
+use serde::Serialize;
+
 use super::game_board::Board;
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Serialize)]
 pub enum Tile {
     Empty,
     Black,

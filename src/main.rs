@@ -10,6 +10,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root))
         .route("/ws", get(handler))
+        .route("/game/:id", get(handler)) //Join a game using URL
         .with_state(GameHodler::new());
 
     let listener = tokio::net::TcpListener::bind("localhost:3000")
