@@ -6,9 +6,10 @@ use axum::{
     response::*,
 };
 use serde::{Deserialize, Serialize};
+use crate::{api::do_move::{do_move, Action}, rules::game_board::Color};
 
 use crate::rules::{
-    game_board::Color, game_hodler::GameHodler, game_instance::Game, game_tile::Tile,
+    game_hodler::GameHodler, game_instance::Game,
 };
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -18,6 +19,14 @@ enum GamePacket {
         id: String,
         move_p: Action,
         move_a: Action,
+    },
+    FetchMoves{
+        url: String,
+        h: Color,
+        c: Color,
+        x: i8,
+        y: i8,
+        aggr: bool,
     },
     CreateGame,
     GameCreated {
@@ -29,18 +38,11 @@ enum GamePacket {
     NewState {
         board: String,
     },
+    Exists{
+        url: String,
+    }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-struct Action {
-    board_colour: Color,
-    home_colour: Color,
-    x1: i8,
-    y1: i8,
-    x2: i8,
-    y2: i8,
-    aggr: bool,
-}
 
 pub async fn handler(ws: WebSocketUpgrade, State(state): State<GameHodler>) -> Response {
     return ws.on_upgrade(|socket| handle_socket(socket, state));
@@ -65,7 +67,14 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                 }
             };
 
-            match packet {
+            match packet { 
+                //recieve and process movement action
+                GamePacket::Action { id, move_p, move_a } => {
+                    //Fetcha game efter id, then we do move
+                    let mut games = game_hodler.games.lock().unwrap();
+                    let Some(game) = games.get_mut(&id) else {return};
+                    do_move(game, &move_p, &move_a);
+                }
                 GamePacket::CreateGame => {
                     let id = Game::generate_url();
                     println!("\nCreated game: {}\n", id);
@@ -84,6 +93,15 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     }
                 }
+                GamePacket::Exists {url}=> {
+                    let e: bool; //exists
+                    let games = game_hodler.games.lock().unwrap().clone();
+                    e = games.get(&url).is_some();
+
+                    if socket.send(Message::Text(format!("{}", e))).await.is_err() {
+                        return; 
+                    }
+                }
                 //Send current gamestate
                 GamePacket::FetchGame { url } => {
                     let mut games = game_hodler.games.lock().unwrap().clone();
@@ -95,68 +113,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     }
                 }
-                //recieve and process movement action
-                GamePacket::Action { id, move_p, move_a } => {
-                    let mut games = game_hodler.games.lock().unwrap();
-                    let Some(game) = games.get_mut(&id) else {
-                        return;
-                    };
-
-                    if move_p.board_colour == move_a.board_colour {
-                        return;
-                        //panic!("Cannot move on the same colour");
-                    }
-
-                    //Make move on p
-                    let board_p = game
-                        .get_board(move_p.home_colour, move_p.board_colour)
-                        .unwrap();
-                    let b4_p = board_p.clone(); //In case it breaks
-                    let moved_p: bool = Tile::passive_move(
-                        board_p, 
-                        (move_p.x1, move_p.y1), 
-                        (move_p.x2, move_p.y2)
-                    );
-                    println!("moved_p: {moved_p}");
-
-                    //Make move on a
-                    let board_a = game
-                        .get_board(move_a.home_colour, move_a.board_colour)
-                        .unwrap();
-                    let b4_a = board_a.clone(); //In case it breaks
-                    let moved_a: bool = Tile::aggressive_move(
-                        board_a,
-                        (move_a.x1, move_a.y1),
-                        (move_a.x2, move_a.y2),
-                    );
-                    println!("moved_a: {moved_a}");
-
-                    //If either move fail.
-                    if !moved_p || !moved_a {
-                        //Reset passive move board
-                        game.get_board(move_p.home_colour, move_p.board_colour)
-                            .unwrap()
-                            .set_state(b4_p.get_state());
-
-                        //Reset aggressive move board
-                        game.get_board(move_a.home_colour, move_a.board_colour)
-                            .unwrap()
-                            .set_state(b4_a.get_state());
-
-                        //return;
-                    } else {
-                        game.next_turn();
-                    }
-
-                    let _new_state = GamePacket::NewState {
-                        board: serde_json::to_string(&game).unwrap(),
-                    };
-
-                    //Send new state via socket. (If I add await it breaks idk why.)
-                    //socket.send(Message::Text(serde_json::to_string(&_new_state).unwrap()));//.await;
-
-                    println!("{}", game.dislay());
-                }
+                GamePacket::FetchMoves { url, h, c, x, y, aggr } => (),
                 GamePacket::GameCreated { id } => {
                     if socket.send(Message::Text(id)).await.is_err() {
                         return;
