@@ -102,8 +102,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     };
 
-                    if move_p.board_colour == move_a.board_colour
-                    {
+                    if move_p.board_colour == move_a.board_colour {
                         return;
                         //panic!("Cannot move on the same colour");
                     }
@@ -113,8 +112,11 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         .get_board(move_p.home_colour, move_p.board_colour)
                         .unwrap();
                     let b4_p = board_p.clone(); //In case it breaks
-                    let moved_p: bool =
-                        Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
+                    let moved_p: bool = Tile::passive_move(
+                        board_p, 
+                        (move_p.x1, move_p.y1), 
+                        (move_p.x2, move_p.y2)
+                    );
                     println!("moved_p: {moved_p}");
 
                     //Make move on a
@@ -122,8 +124,11 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         .get_board(move_a.home_colour, move_a.board_colour)
                         .unwrap();
                     let b4_a = board_a.clone(); //In case it breaks
-                    let moved_a: bool =
-                        Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
+                    let moved_a: bool = Tile::aggressive_move(
+                        board_a,
+                        (move_a.x1, move_a.y1),
+                        (move_a.x2, move_a.y2),
+                    );
                     println!("moved_a: {moved_a}");
 
                     //If either move fail.

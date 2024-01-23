@@ -22,6 +22,7 @@ how 2 run:
 
 - [ ] Render the boards on the frontend.
 - [x] Create a new game and get a sharable link to it
+- [ ] Entering a link joins the game.
 - [ ] Navigatable Menu using mouse.
 - [ ] Mirror the game for the white player. (i.e. white rocks on bottom)
 - [ ] Proper use of websockets.
@@ -63,12 +64,15 @@ Standard layout:       "DORK" layout:
 - [x] Generate link on new game, and redirect.
 - [ ] Update state for both players on board change.
 - [ ] Unit test websocket gameplay.
+- [ ] Joining a game; lobby owner is black, next person to join is white.
+- [ ] If a game is full you're spectator.
 
 
 ### Future improvements:
 
 - [ ] Lobby browser.
 - [ ] Lobby/in-game chat.
+- [ ] Option to select color on lobby creation.
 - [ ] Option to surrender.
 - [ ] Option to offer draw.
 - [ ] Option to ask for takeback.
