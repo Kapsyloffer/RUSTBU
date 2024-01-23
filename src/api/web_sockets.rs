@@ -102,6 +102,12 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     };
 
+                    if move_p.board_colour == move_a.board_colour
+                    {
+                        return;
+                        //panic!("Cannot move on the same colour");
+                    }
+
                     //Make move on p
                     let board_p = game
                         .get_board(move_p.home_colour, move_p.board_colour)
@@ -137,12 +143,12 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         game.next_turn();
                     }
 
-                    let new_state = GamePacket::NewState {
+                    let _new_state = GamePacket::NewState {
                         board: serde_json::to_string(&game).unwrap(),
                     };
 
                     //Send new state via socket. (If I add await it breaks idk why.)
-                    socket.send(Message::Text(serde_json::to_string(&new_state).unwrap()));//.await;
+                    //socket.send(Message::Text(serde_json::to_string(&_new_state).unwrap()));//.await;
 
                     println!("{}", game.dislay());
                 }

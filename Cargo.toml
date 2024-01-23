@@ -7,9 +7,8 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.7.4", features = ["ws"] }
-# easycookie = "1.0.3"
 rand = "0.8.5"
 serde = { version = "1.0.195", features = ["derive"] }
 serde_json = "1.0.111"
 tokio = { version = "1.35.1", features = ["full"] }
-tracing-subscriber = "0.3.18"
+winres = "0.1"

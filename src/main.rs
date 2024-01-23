@@ -5,7 +5,7 @@ use rustbu::{api::web_sockets::*, rules::game_hodler::GameHodler};
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt::init();
+    //tracing_subscriber::fmt::init();
 
     let app = Router::new()
         .route("/", get(root))
