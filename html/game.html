@@ -9,31 +9,82 @@
   <meta name="description" content="" />
   <link rel="icon" href="favicon.png">
   <script>
+
     var url = window.location.href;
     var res = url.split("/");
     var pos = res.indexOf('game');
     var gameUrl = res[pos+1];
-    alert(gameUrl);
+
     const ws = new WebSocket("ws://localhost:3000/ws");
     let current_game = null;
     ws.onopen = (event) => {
       {
-          const fetchGameMsg = {
-          type: "FetchGame",
-          url: gameUrl
-        };
-        ws.send(JSON.stringify(fetchGameMsg));
+          fetch_game();
       }
     };
 
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
       console.log(event.data);
+      if(msg.type == "Game") {
+        alert("We just got a game!");
+      }
     }
+
+    function move()
+    {
+      const action_p = {
+          board_colour: "White",
+          home_colour: "White",
+          x1: 0,
+          y1: 0,
+          x2: 2,
+          y2: 2,
+          aggr: false
+        };
+
+        const action_a = {
+          board_colour: "White",
+          home_colour: "Black",
+          x1: 0,
+          y1: 1,
+          x2: 2,
+          y2: 3,
+          aggr: true
+        };
+
+        const packet = {
+          type: "Action",
+          id: gameUrl,
+          move_p: action_p,
+          move_a: action_a
+        };
+
+        ws.send(JSON.stringify(packet));
+        fetch_game()
+    }
+    
+    function fetch_game()
+    {
+      const fetchGameMsg = {
+          type: "FetchGame",
+          url: gameUrl
+        };
+        ws.send(JSON.stringify(fetchGameMsg));
+    }
+
+    ws.onclose = (event) => {
+      console.log('WebSocket closed:', event);
+    };
+
+    ws.onerror = (event) => {
+      console.error('WebSocket error:', event);
+    };
   </script>
 </head>
 
 <body>
   <h1>Hello, world!</h1>
+  <button onclick="move()">Move</button>
 </body>
 </html>

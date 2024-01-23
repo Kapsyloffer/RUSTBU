@@ -11,54 +11,30 @@
   <script>
     const ws = new WebSocket("ws://localhost:3000/ws");
     let current_game = null;
+
+    
     ws.onopen = (event) => {
-      {
-        const msg = {
-          type: "CreateGame",
-        };
-        ws.send(JSON.stringify(msg));
+
       }
-    };
+
+    function new_game()
+    {
+      const msg = {
+        type: "CreateGame",
+      };
+      ws.send(JSON.stringify(msg));
+    }
 
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
       if(msg.type == "GameCreated") {
-        current_game = msg.id;
-
-        const action_p = {
-          board_colour: "White",
-          home_colour: "White",
-          x1: 0,
-          y1: 0,
-          x2: 2,
-          y2: 2,
-          aggr: false
-        };
-
-        const action_a = {
-          board_colour: "White",
-          home_colour: "Black",
-          x1: 0,
-          y1: 1,
-          x2: 2,
-          y2: 3,
-          aggr: true
-        };
-
-        const packet = {
-          type: "Action",
-          id: current_game,
-          move_p: action_p,
-          move_a: action_a
-        };
-
-        ws.send(JSON.stringify(packet));
+        window.location.href = `./game/${msg.id}`;
       }
     }
   </script>
 </head>
 
 <body>
-  <h1>Hello, world!</h1>
+  <button onclick="new_game()">New Game</button>
 </body>
 </html>

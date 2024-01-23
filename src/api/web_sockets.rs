@@ -24,6 +24,9 @@ enum GamePacket {
     },
     FetchGame{
         url: String
+    },
+    NewState{
+        board: String,
     }
 }
 
@@ -80,6 +83,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     }
                 }
+                //Send current gamestate
                 GamePacket::FetchGame { url } =>
                 {
                     let mut games = game_hodler.games.lock().unwrap().clone();
@@ -94,37 +98,65 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                             return;
                         }
                 }
+                //recieve and process movement action
                 GamePacket::Action { id, move_p, move_a } => {
                     let mut games = game_hodler.games.lock().unwrap();
                     let Some(game) = games.get_mut(&id) else {
                         return;
                     };
 
-                    let board_p = game
+                    //Make move on p
+                    let mut board_p = game
                         .get_board(move_p.home_colour, move_p.board_colour)
                         .unwrap();
+                    let b4_p = board_p.clone(); //In case it breaks
                     let moved_p: bool =
                         Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
                     println!("moved_p: {moved_p}");
 
-                    let board_a = game
+                    //Make move on a
+                    let mut board_a = game
                         .get_board(move_a.home_colour, move_a.board_colour)
                         .unwrap();
+                    let b4_a = board_a.clone();  //In case it breaks
                     let moved_a: bool =
                         Tile::passive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
                     println!("moved_a: {moved_a}");
 
-                    if moved_p && moved_a {
+                    //If either move fail.
+                    if !moved_p || !moved_a
+                    {
+                        //Reset passive move board
+                        game
+                        .get_board(move_p.home_colour, move_p.board_colour)
+                        .unwrap()
+                        .set_state(b4_p.get_state());
+
+                        //Reset aggressive move board
+                        game
+                        .get_board(move_a.home_colour, move_a.board_colour)
+                        .unwrap()
+                        .set_state(b4_a.get_state());
+                        
+                        return;
+                    }else{
                         game.next_turn();
                     }
-                    //println!("{:#?}", game);
-                    
-                    //DEBUG
-                    //let size = games.len();
 
-                    println!("{}", game.dislay());
+                    let new_state = GamePacket::NewState {
+                        board: String::from(serde_json::to_string(&game).unwrap()),
+                    };
+
                 }
-                GamePacket::GameCreated { .. } => (),
+                GamePacket::GameCreated { id } => {
+                    if socket
+                        .send(Message::Text(id))
+                        .await
+                        .is_err(){
+                            return;
+                        }
+                },
+                GamePacket::NewState { board } => {},
             }
         }
     }
