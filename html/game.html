@@ -17,6 +17,7 @@
 
     const ws = new WebSocket("ws://localhost:3000/ws");
     let current_game = null;
+
     ws.onopen = (event) => {
       {
           fetch_game();
@@ -31,25 +32,29 @@
       }
     }
 
+    ws.addEventListener("message", (event) => {
+      console.log("Message from server ", event.data);
+    });
+
     function move()
     {
       const action_p = {
           board_colour: "White",
           home_colour: "White",
-          x1: 0,
-          y1: 0,
-          x2: 2,
-          y2: 2,
+          x1: x1_p,
+          y1: y1_p,
+          x2: x2_p,
+          y2: y2_p,
           aggr: false
         };
 
         const action_a = {
           board_colour: "White",
           home_colour: "Black",
-          x1: 0,
-          y1: 1,
-          x2: 2,
-          y2: 3,
+          x1: x1_a,
+          y1: y1_a,
+          x2: x2_a,
+          y2: y2_a,
           aggr: true
         };
 
@@ -61,7 +66,6 @@
         };
 
         ws.send(JSON.stringify(packet));
-        fetch_game()
     }
     
     function fetch_game()
@@ -84,7 +88,20 @@
 </head>
 
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="move()">Move</button>
+  <h1>RUSTBU</h1>
+  <div class="game">
+    <div class="board_b">
+
+    </div>
+    <div class="board_b">
+
+    </div>
+    <div class="board_b">
+
+    </div>
+    <div class="board_b">
+      
+    </div>
+  </div>
 </body>
 </html>

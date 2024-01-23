@@ -204,7 +204,7 @@ impl Tile {
             (dy as f32 / 2.0).round() as i8,
             (dx as f32 / 2.0).round() as i8,
         );
-        println!("{:?}", dir);
+        //println!("{:?}", dir);
         //Linear size of diff
         let size = i;
 

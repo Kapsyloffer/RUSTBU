@@ -23,8 +23,6 @@ async fn root() -> impl IntoResponse {
     Html(include_str!("../html/index.html"))
 }
 
-
 async fn fetch_game() -> impl IntoResponse {
     Html(include_str!("../html/game.html"))
 }
-

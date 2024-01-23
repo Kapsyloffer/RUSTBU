@@ -1,6 +1,7 @@
 use axum::{
     extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade}, State
+        ws::{Message, WebSocket, WebSocketUpgrade},
+        State,
     },
     response::*,
 };
@@ -22,12 +23,12 @@ enum GamePacket {
     GameCreated {
         id: String,
     },
-    FetchGame{
-        url: String
+    FetchGame {
+        url: String,
     },
-    NewState{
+    NewState {
         board: String,
-    }
+    },
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -84,19 +85,15 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                     }
                 }
                 //Send current gamestate
-                GamePacket::FetchGame { url } =>
-                {
+                GamePacket::FetchGame { url } => {
                     let mut games = game_hodler.games.lock().unwrap().clone();
                     let Some(game) = games.get_mut(&url) else {
                         return;
                     };
                     let state: String = serde_json::to_string(game).unwrap();
-                    if socket
-                        .send(Message::Text(state))
-                        .await
-                        .is_err(){
-                            return;
-                        }
+                    if socket.send(Message::Text(state)).await.is_err() {
+                        return;
+                    }
                 }
                 //recieve and process movement action
                 GamePacket::Action { id, move_p, move_a } => {
@@ -106,7 +103,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                     };
 
                     //Make move on p
-                    let mut board_p = game
+                    let board_p = game
                         .get_board(move_p.home_colour, move_p.board_colour)
                         .unwrap();
                     let b4_p = board_p.clone(); //In case it breaks
@@ -115,48 +112,48 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                     println!("moved_p: {moved_p}");
 
                     //Make move on a
-                    let mut board_a = game
+                    let board_a = game
                         .get_board(move_a.home_colour, move_a.board_colour)
                         .unwrap();
-                    let b4_a = board_a.clone();  //In case it breaks
+                    let b4_a = board_a.clone(); //In case it breaks
                     let moved_a: bool =
-                        Tile::passive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
+                        Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
                     println!("moved_a: {moved_a}");
 
                     //If either move fail.
-                    if !moved_p || !moved_a
-                    {
+                    if !moved_p || !moved_a {
                         //Reset passive move board
-                        game
-                        .get_board(move_p.home_colour, move_p.board_colour)
-                        .unwrap()
-                        .set_state(b4_p.get_state());
+                        game.get_board(move_p.home_colour, move_p.board_colour)
+                            .unwrap()
+                            .set_state(b4_p.get_state());
 
                         //Reset aggressive move board
-                        game
-                        .get_board(move_a.home_colour, move_a.board_colour)
-                        .unwrap()
-                        .set_state(b4_a.get_state());
-                        
-                        return;
-                    }else{
+                        game.get_board(move_a.home_colour, move_a.board_colour)
+                            .unwrap()
+                            .set_state(b4_a.get_state());
+
+                        //return;
+                    } else {
                         game.next_turn();
                     }
 
                     let new_state = GamePacket::NewState {
-                        board: String::from(serde_json::to_string(&game).unwrap()),
+                        board: serde_json::to_string(&game).unwrap(),
                     };
 
+                    //Send new state via socket. (If I add await it breaks idk why.)
+                    socket.send(Message::Text(serde_json::to_string(&new_state).unwrap()));//.await;
+
+                    println!("{}", game.dislay());
                 }
                 GamePacket::GameCreated { id } => {
-                    if socket
-                        .send(Message::Text(id))
-                        .await
-                        .is_err(){
-                            return;
-                        }
-                },
-                GamePacket::NewState { board } => {},
+                    if socket.send(Message::Text(id)).await.is_err() {
+                        return;
+                    }
+                }
+                GamePacket::NewState { board: _ } => {
+                    todo!()
+                }
             }
         }
     }
