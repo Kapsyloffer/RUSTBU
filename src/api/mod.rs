@@ -1,5 +1,4 @@
-//pub mod api_controller;
-//pub mod api_gamestate;
+pub mod do_move;
 pub mod web_sockets;
 
 #[cfg(test)]

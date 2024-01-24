@@ -172,7 +172,7 @@ impl Tile {
 
     pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
         if Tile::is_empty(b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize]) {
-            panic!("wtf")
+            println!("wtf are you doing");
         }
 
         //TODO: get_possible_moves borde inte finnas.

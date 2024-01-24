@@ -86,6 +86,7 @@ Standard layout:       "DORK" layout:
 - [ ] Show a little flag next to name.
 - [ ] Navigatable page.
 - [ ] Themes for boards and pieces.
+- [ ] SHOBU engine/AI.
 
 Disclaimer: I do not own SHOBU in any way, shape, or form.  I just find the game neat hence I'm doing this project.
 
