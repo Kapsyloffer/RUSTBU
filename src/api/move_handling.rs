@@ -1,6 +1,7 @@
+use axum::extract::ws::{Message, WebSocket};
 use serde::{Deserialize, Serialize};
 
-use crate::rules::{game_board::Color, game_hodler::GameHodler, game_tile::Tile};
+use crate::{api::web_sockets::GamePacket, rules::{game_board::Color, game_hodler::GameHodler, game_tile::Tile}};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Action {
@@ -57,4 +58,20 @@ pub async fn do_move(game_hodler: &GameHodler, id: &String, move_p: &Action, mov
     }
 
     println!("{}", game.display());
+}
+
+pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Color, c: &Color, x: &i8, y: &i8, aggr: &bool,) {
+    let mut binding = game_hodler.games.lock().unwrap().to_owned();
+    let b = binding.get_mut(url).unwrap().get_board(*h, *c).unwrap();
+
+    let move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
+    println!("fetch_moves: {}", move_list);
+
+    let packet = GamePacket::FetchedMoves { moves: move_list };
+    if socket
+        .send(Message::Text(serde_json::to_string(&packet).unwrap()))
+        .await
+        .is_err() {
+        return;
+    }
 }
