@@ -20,7 +20,7 @@ how 2 run:
 
 ### Frontend todo:
 
-- [ ] Render the boards on the frontend.
+- [x] Render the boards on the frontend.
 - [x] Create a new game and get a sharable link to it
 - [ ] Entering a link joins the game.
 - [ ] Navigatable Menu using mouse.
