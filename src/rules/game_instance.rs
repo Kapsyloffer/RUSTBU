@@ -61,7 +61,7 @@ impl Game {
         return None;
     }
 
-    pub fn dislay(&mut self) -> String {
+    pub fn display(&mut self) -> String {
         let mut disp: String = String::from("\n\n\tS H O B U\n\n");
         let red = "\x1b[31m";
         let green = "\x1b[32m";

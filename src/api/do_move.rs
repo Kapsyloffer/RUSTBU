@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use crate::rules::game_board::Color; 
-use crate::rules::game_instance::Game; 
+use crate::rules::game_hodler::GameHodler;
 use crate::rules::game_tile::Tile;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -15,8 +15,10 @@ pub struct Action {
 }
 
 
-pub fn do_move(game: &mut Game, move_p: &Action, move_a: &Action)
+pub async fn do_move(game_hodler: &GameHodler, id: &String, move_p: &Action, move_a: &Action)
 {
+    let mut games = game_hodler.games.lock().unwrap();
+                    let Some(game) = games.get_mut(id) else {return};
     if move_p.board_colour == move_a.board_colour {
         return;
         //panic!("Cannot move on the same colour");
@@ -62,5 +64,5 @@ pub fn do_move(game: &mut Game, move_p: &Action, move_a: &Action)
         game.next_turn();
     }
 
-    println!("{}", game.dislay());
+    println!("{}", game.display());
 }
