@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
@@ -6,10 +8,11 @@ use axum::{
     response::*,
 };
 use serde::{Deserialize, Serialize};
+use tokio::sync::broadcast;
 
 use crate::{
     api::{game_handling::{check_exists, create_game, fetch_game}, move_handling::*},
-    rules::{game_board::Color, game_hodler::GameHodler},
+    rules::{game_board::Color, game_hodler::GameHodler, game_instance::Game},
 };
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

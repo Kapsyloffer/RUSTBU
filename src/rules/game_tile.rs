@@ -29,8 +29,13 @@ impl Tile {
 
     pub fn get_possible_moves(b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)> {
         let boardstate = b.get_state();
-
         let mut movelist: Vec<(i8, i8)> = Vec::new();
+
+        //Om vår tile är tom har vi nada moves.
+        if boardstate[cur_pos.0 as usize][cur_pos.1 as usize] == Tile::Empty{
+            return movelist;
+        }
+        
         //0 = y, 1 = x
         let directions = [
             (0, -1),

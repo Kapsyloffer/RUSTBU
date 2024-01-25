@@ -15,7 +15,7 @@
     var pos = res.indexOf('game');
     var gameUrl = res[pos+1];
 
-    const ws = new WebSocket("ws://localhost:3000/ws");
+    const ws = new WebSocket("ws://localhost:4444/ws");
     let current_game = null;
 
     ws.onopen = (event) => {

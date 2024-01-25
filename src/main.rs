@@ -13,7 +13,7 @@ async fn main() {
         .route("/game/:id", get(fetch_game)) //Join a game using URL
         .with_state(GameHodler::new());
 
-    let listener = tokio::net::TcpListener::bind("localhost:3000")
+    let listener = tokio::net::TcpListener::bind("localhost:4444")
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
