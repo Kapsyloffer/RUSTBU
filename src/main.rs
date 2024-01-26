@@ -8,9 +8,7 @@ async fn main() {
     //tracing_subscriber::fmt::init();
 
     let app = Router::new()
-        .route("/", get(root))
         .route("/ws", get(handler))
-        .route("/game/:id", get(fetch_game)) //Join a game using URL
         .with_state(GameHodler::new());
 
     let listener = tokio::net::TcpListener::bind("localhost:4444")
@@ -19,10 +17,3 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn root() -> impl IntoResponse {
-    Html(include_str!("../html/index.html"))
-}
-
-async fn fetch_game() -> impl IntoResponse {
-    Html(include_str!("../html/game.html"))
-}
