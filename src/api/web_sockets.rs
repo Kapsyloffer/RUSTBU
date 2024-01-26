@@ -1,18 +1,15 @@
-use std::collections::HashMap;
-
-use axum::{
-    extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade},
-        State,
-    },
-    response::*,
+use axum::
+{
+    extract::{ws::{Message, WebSocket, WebSocketUpgrade},State,},response::*,
 };
-use serde::{Deserialize, Serialize};
-use tokio::sync::broadcast;
-
-use crate::{
+use serde::
+{
+    Deserialize, Serialize
+};
+use crate::
+{
     api::{game_handling::{check_exists, create_game, fetch_game}, move_handling::*},
-    rules::{game_board::Color, game_hodler::GameHodler, game_instance::Game},
+    rules::{game_board::Color, game_hodler::GameHodler},
 };
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -52,9 +49,9 @@ pub async fn handler(ws: WebSocketUpgrade, State(state): State<GameHodler>) -> R
 }
 
 pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
-    while let Some(msg) = socket.recv().await {
-        let msg = if let Ok(msg) = msg {
-            msg
+    while let Some(m_res) = socket.recv().await {
+        let msg = if let Ok(m_res) = m_res {
+            m_res
         } else {
             println!("Socket ded");
             return;
