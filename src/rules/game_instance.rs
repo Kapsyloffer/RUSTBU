@@ -140,8 +140,6 @@ impl Game {
             .take(9)
             .map(char::from)
             .collect();
-        //TESTING
-        return String::from("testcase");
         return s;
     }
 }

@@ -22,7 +22,10 @@ how 2 run:
 
 - [x] Render the boards on the frontend.
 - [x] Create a new game and get a sharable link to it
-- [ ] Entering a link joins the game.
+- [x] Entering a link joins the game.
+- [ ] Entering a link checks if the game is started.
+- [ ] Allow moves only if the game is started.
+- [ ] Allow moves only if it's your turn.
 - [ ] Navigatable Menu using mouse.
 - [ ] Mirror the game for the white player. (i.e. white rocks on bottom)
 - [ ] Proper use of websockets.
