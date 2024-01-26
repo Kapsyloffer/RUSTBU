@@ -10,10 +10,17 @@ pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &Game
     let Some(game) = games.get_mut(url) else {
         return;
     };
-    let state: String = serde_json::to_string(game).unwrap();
-    if socket.send(Message::Text(state)).await.is_err() {
-        return;
-    }
+    let state: String = format!("{:?}", game);
+    let packet = GamePacket::FetchedGame { state };
+
+    println!("{:#?}", packet);
+
+    if socket
+    .send(Message::Text(serde_json::to_string(&packet).unwrap()))
+    .await
+    .is_err() {
+    return;
+}
 }
 
 pub async fn create_game(socket: &mut WebSocket, game_hodler: &GameHodler) {

@@ -39,6 +39,9 @@ pub (crate) enum GamePacket {
     FetchedMoves { //Response containing move positions for rock on the requested board.
         moves: String,
     },
+    FetchedGame { //Response containing the requested gamestate.
+        state: String,
+    },
     GameCreated { //Response containing game url
         url: String,
     }
