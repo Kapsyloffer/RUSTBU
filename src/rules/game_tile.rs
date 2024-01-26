@@ -36,7 +36,8 @@ impl Tile {
             return movelist;
         }
         
-        //0 = y, 1 = x
+        //[y, x]?, x → y ↓
+        //Ok wtf did I do here?
         let directions = [
             (0, -1),
             (0, 1),
@@ -47,14 +48,12 @@ impl Tile {
             (1, 1),
             (1, -1),
         ];
-        //So a move to the left is [1, 0]
 
         for (dy, dx) in directions.iter() {
-            for i in 1..3 as i8 {
+            for i in 1..=2 as i8 {
                 let new_pos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
 
                 if Tile::is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx)) {
-                    //println!("ADDED {} {}, DIRECTION: {} {}, DIFF: {} {}", new_pos.0, new_pos.1, dy, dx, (cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
                     movelist.push((new_pos.0, new_pos.1)); //this is so crummy.
                     continue;
                 }
@@ -70,8 +69,7 @@ impl Tile {
         new_pos: (i8, i8),
         i: &i8,
         aggr: bool,
-        (dy, dx): (&i8, &i8),
-    ) -> bool {
+        (dy, dx): (&i8, &i8)) -> bool {
         //Check if in range.
         let newy = new_pos.0 as usize;
         let newx = new_pos.1 as usize;
@@ -79,62 +77,44 @@ impl Tile {
         let stepy = (cur_pos.0 + dy * 1) as usize;
         let stepx = (cur_pos.1 + dx * 1) as usize;
 
-        //println!("newy: {:?}\nnewx: {:?}\ndy: {}\ndx: {}\ni: {}", newy, newx, dy, dx, i);
-
-        //println!("cur_pos: {:?}\nnew_pos: {:?}\nstepy: {}\nstepx: {}", cur_pos, new_pos, stepy, stepx);
-
         //If outta range
         if newx > 3 || newy > 3 || stepy > 3 || stepx > 3 {
-            //println!("\n\nMove is out of range. \nCurpos: {:?}\nNewpos: {:?}\nNewx: {}\nNewy: {}\nStepx: {}\nStepy: {}\ndy: {}\ndx: {}\n\n", cur_pos, new_pos, newx, newy, stepx, stepy, dy, dx);
             return false;
         }
 
         //Passive
         if !aggr {
             if state[newy][newx] != Tile::Empty {
-                println!("You tried to passive into a mf.");
                 return false;
             }
         }
 
-        if aggr
-        //Det här är gigacrummy. TODO: Make less crummy.
-        {
+        if aggr{
             //Knuffa ej våra egna stenar.
             if state[newy][newx] == state[cur_pos.0 as usize][cur_pos.1 as usize] {
-                println!("Cannot push own rocks.");
                 return false;
             }
 
             if *i == 1 && state[newy][newx] != Tile::Empty {
                 //In case stenen vi puttar faller av boarden.
                 if (cur_pos.0 + 2 * dy) > 3
-                    || (cur_pos.1 + 2 * dx) > 3
-                    || (cur_pos.0 + 2 * dy) < 0
-                    || (cur_pos.1 + 2 * dx) < 0
-                {
+                || (cur_pos.1 + 2 * dx) > 3
+                || (cur_pos.0 + 2 * dy) < 0
+                || (cur_pos.1 + 2 * dx) < 0 {
                     return true;
                 }
-                //Checka om det finns en sten bakom stenen vi puttar.
-                //println!("(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}\n(cur_pos.0 + 2 * dy) = {}\n(cur_pos.1 + 2 * dx) = {}", (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx), (cur_pos.0 + 2 * dy), (cur_pos.1 + 2 * dx));
-                //println!("No rock is falling off. Returns true if valid: {}\nwtf is there: {:?}", (state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty), state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize]);
-                return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize]
-                    == Tile::Empty;
+                //Checka om det finns en sten bakom stenen vi puttar. Om Tomt we good.
+                return state[(cur_pos.0 + 2 * dy) as usize][(cur_pos.1 + 2 * dx) as usize] == Tile::Empty;
             } else if *i == 2 && state[stepy][stepx] != Tile::Empty {
                 //Checka om det finns en sten bakom stenen vi puttar.
-                //println!("Rock 1 step ahead: {:?}\nRock 2 step ahead: {:?}", state[stepx][stepy], state[newx][newy]);
                 return state[newy][newx] == Tile::Empty;
             }
         }
+
         return true;
     }
 
     pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
-        //TODO: get_possible_moves borde inte finnas.
-        /* if !Tile::get_possible_moves(b, false, cur_pos).contains(&new_pos)
-        {
-            return false
-        }*/
 
         let dx = new_pos.1 - cur_pos.1;
         let dy = new_pos.0 - cur_pos.0;
@@ -168,23 +148,15 @@ impl Tile {
         //New space has the rock
         boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
 
+        //Update state with new board.
         b.set_state(&boardstate);
-
-        //Får ut storleken flyttad så vi kan slänga in den i aggr.
-        //let sizediff = ((cur_pos.0 - new_pos.0).abs(), (cur_pos.1 - new_pos.1).abs());
         return true;
     }
 
     pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
         if Tile::is_empty(b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize]) {
-            println!("wtf are you doing");
+            eprintln!("wtf are you doing"); //Idk wtf triggers this, but it feels fitting to leave in.
         }
-
-        //TODO: get_possible_moves borde inte finnas.
-        /*if !Tile::get_possible_moves(b, true, cur_pos).contains(&new_pos)
-        {
-            return false;
-        }*/
 
         let dx = new_pos.1 - cur_pos.1;
         let dy = new_pos.0 - cur_pos.0;
@@ -195,26 +167,22 @@ impl Tile {
         );
 
         //i = antal steps, 1 eller 2
-        let i = dy.abs().max(dx.abs());
+        let size = dy.abs().max(dx.abs());
 
-        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, true, (&dir.0, &dir.1)) {
-            println!("not valid.");
+        //First and foremost check if the move is valid.
+        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &size, true, (&dir.0, &dir.1)) {
             return false;
         }
 
         let mut boardstate = *b.get_state();
 
-        //let dir = ((diff.0 as f32 / 2.0).ceil() as i8, (diff.1 as f32 / 2.0).ceil() as i8);
         let dir = (
             (dy as f32 / 2.0).round() as i8,
             (dx as f32 / 2.0).round() as i8,
         );
-        //println!("{:?}", dir);
-        //Linear size of diff
-        let size = i;
 
         /*
-        Detta kommer ge typ:
+        b.get_state() kommer ge typ:
         [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
         [ ][ ][ ][B]      [ ][ ][ ][W]      [ ][ ][ ][W]
         [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
@@ -237,6 +205,8 @@ impl Tile {
             (new_pos.0 + 1 * dir.0) as usize,
             (new_pos.1 + 1 * dir.1) as usize,
         );
+
+        //Check if the rock we push is still on the board by seeing if its "move" is valid.
         let still_on_board = Tile::is_valid(
             b.get_state(),
             new_pos,
@@ -248,10 +218,10 @@ impl Tile {
 
         //Om den puttade stenen fortfarande är på brädet.
         if still_on_board {
-            //Ta stenen
+            //Ta puttade stenen
             let rocky = boardstate[(new_pos.0 + (size - 1) * dir.0) as usize]
                 [(new_pos.1 + (size - 1) * dir.1) as usize];
-            //Sätt nästa position till den stenen
+            //Och sätt nästa position till den stenen
             boardstate[push_pos.0][push_pos.1] = rocky;
         }
 

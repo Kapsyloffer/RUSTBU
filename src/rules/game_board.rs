@@ -34,11 +34,9 @@ impl Board {
         for i in 0..4 {
             //Top row (White)
             board[0][i] = Tile::white();
-            //board[0][i] = Some(Stone::new(Color::White,  (0, i)));
 
             //Bottom row (Black)
             board[3][i] = Tile::black();
-            //board[3][i] = Some(Stone::new(Color::Black,  (3, i)));
         }
 
         /*
@@ -47,9 +45,6 @@ impl Board {
         [ ][ ][ ][ ]
         [ ][ ][ ][ ]
         [B][B][B][B]
-
-        Boarden displayas
-        flipped för white.
          */
         return board;
     }

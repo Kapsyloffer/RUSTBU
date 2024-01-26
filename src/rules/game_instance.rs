@@ -1,12 +1,7 @@
 use rand::{distributions::Alphanumeric, Rng};
 use serde::Serialize;
+use super::{game_board::{Board, Color}, game_tile::Tile,};
 
-use super::{
-    game_board::{Board, Color},
-    game_tile::Tile,
-};
-
-//#[derive(Serialize, Deserialize, Debug)]
 #[derive(Debug, Clone, Serialize)]
 pub struct Game {
     player_b: Option<String>,
@@ -44,10 +39,6 @@ impl Game {
         return (self.player_b.to_owned(), self.player_w.to_owned());
     }
 
-    pub fn get_boards(&self) -> [Board; 4] {
-        return self.boards;
-    }
-
     pub fn set_player(&mut self, _c: Option<Color>) {
         todo!()
     }
@@ -61,8 +52,10 @@ impl Game {
         return None;
     }
 
+    //Used for "fancy print" in CLI.
     pub fn display(&mut self) -> String {
         let mut disp: String = String::from("\n\n\tS H O B U\n\n");
+        
         let red = "\x1b[31m";
         let green = "\x1b[32m";
         let reset = "\x1b[0m";
@@ -131,9 +124,11 @@ impl Game {
             disp.push_str("\n");
         }
         disp.push_str("\n----------- BLACK---------\n\n");
+        
         return String::from(disp);
     }
 
+    //Used for making a game lobby.
     pub fn generate_url() -> String {
         let s: String = rand::thread_rng()
             .sample_iter(&Alphanumeric)
