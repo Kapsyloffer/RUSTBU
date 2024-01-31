@@ -1,6 +1,6 @@
 ## RUSTBU
 
-![Logo](assets/RUSTBU.png)
+![Logo](https://raw.githubusercontent.com/Kapsyloffer/RUSTBU/master/assets/RUSTBU.png)
 
 A lichess clone of SHOBU powered by Rust.
 
@@ -13,6 +13,9 @@ how 2 run:
 3. ???
 
 4. Profit.
+
+Keep in mind that this is just the backend you also need the frontend in order to run it:
+https://github.com/Kapsyloffer/RUSTBU-FE
 
 ---
 
@@ -31,7 +34,7 @@ how 2 run:
 - [x] Mirror the game for the white player. (i.e. white rocks on bottom)
 - [ ] Render actual rock positions.
 - [ ] Proper use of websockets.
-- [ ] Move using clicks
+- [x] Move using clicks
 - [ ] Move by dragging
 - [ ] Highlight boards where movement is possible. (homeboards on passive, boards of opposite colour on aggresssive)
 - [ ] Locally change board layouts between standard and "dork" (placeholder name)
@@ -41,8 +44,8 @@ Standard layout:       "DORK" layout:
     ------                ------
     [B][W]                [W][B]
 ```
-- [ ] Show possible movement path, like in lichess.
-- [ ] Max 2 steps per move.
+- [x] Show possible movement path, like in lichess.
+- [x] Max 2 steps per move.
 - [ ] Take back passive move locally. (Because we send both at the same time)
 - [ ] Aggressive move should have the same size and direction as passive.
 - [ ] Prevent the first move from being on the opponent's homeboard.
@@ -55,7 +58,6 @@ Standard layout:       "DORK" layout:
 - [x] Max 2 steps per move.
 - [x] Prevent the first move from being on the opponent's homeboard.
 - [x] Prevent pushing any rocks in the passive move.
-
 - [x] Aggressive Movement Phase.
 - [x] Prevent pushing of same coloured rock.
 - [x] Prevent pushing of more than 2 rocks at once.
@@ -63,7 +65,6 @@ Standard layout:       "DORK" layout:
 - [x] Check for winner.
 - [x] Change active player if both the passive and aggressive move are OK.
 - [x] Unit test movement rules.
-
 - [ ] Proper use of websockets.
 - [x] Handle websocket connection.
 - [x] Generate link on new game, and redirect.
@@ -77,7 +78,7 @@ Standard layout:       "DORK" layout:
 
 - [ ] Lobby browser.
 - [ ] Lobby/in-game chat.
-- [ ] Option to select color on lobby creation.
+- [ ] Option to select your color on lobby creation.
 - [ ] Option to surrender.
 - [ ] Option to offer draw.
 - [ ] Option to ask for takeback.
