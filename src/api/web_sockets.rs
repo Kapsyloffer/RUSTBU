@@ -17,8 +17,8 @@ use crate::
 pub (crate) enum GamePacket {
     Action { //Movement action
         url: String,
-        move_p: Action,
-        move_a: Action,
+        move_p: MovementAction,
+        move_a: MovementAction,
     },
     CreateGame, //Call to create new game.
 

@@ -27,7 +27,9 @@ how 2 run:
 - [ ] Allow moves only if the game is started.
 - [ ] Allow moves only if it's your turn.
 - [ ] Navigatable Menu using mouse.
-- [ ] Mirror the game for the white player. (i.e. white rocks on bottom)
+- [ ] Determine which colour a player is.
+- [x] Mirror the game for the white player. (i.e. white rocks on bottom)
+- [ ] Render actual rock positions.
 - [ ] Proper use of websockets.
 - [ ] Move using clicks
 - [ ] Move by dragging

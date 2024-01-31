@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::{api::web_sockets::GamePacket, rules::{game_board::Color, game_hodler::GameHodler, game_tile::Tile}};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Action {
+pub struct MovementAction {
     board_colour: Color,
     home_colour: Color,
     x1: i8,
@@ -14,7 +14,7 @@ pub struct Action {
     aggr: bool,
 }
 
-pub async fn do_move(game_hodler: &GameHodler, id: &String, move_p: &Action, move_a: &Action) {
+pub async fn do_move(game_hodler: &GameHodler, id: &String, move_p: &MovementAction, move_a: &MovementAction) {
     let mut games = game_hodler.games.lock().unwrap();
     let Some(game) = games.get_mut(id) else {
         return;
