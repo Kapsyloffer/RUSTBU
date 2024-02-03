@@ -101,7 +101,7 @@ impl Tile {
 
             if *size == 1 && state[newy][newx] != Tile::Empty {
                 //Checka om det finns en sten bakom stenen vi puttar. Om Tomt we good.
-                return state[(cur_pos.0 + (size + 1) * dy) as usize][(cur_pos.1 + (size + 1) * dx) as usize] == Tile::Empty;
+                return state[rocky as usize][rockx as usize] == Tile::Empty;
             } else if *size == 2 && state[stepy][stepx] != Tile::Empty {
                 //If a future rock position is not empty then the move is not valid.
                 if state[rocky as usize][rockx as usize] != Tile::Empty{
@@ -208,20 +208,32 @@ impl Tile {
         let stepy = new_pos.0 - 1 * dir.0;
         let stepx = new_pos.1 - 1 * dir.1;
 
-        //Sätt nya posen till vår färg
-        boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+
 
         //If rock is still on board.
         if rockx <= 3 && rocky <= 3{
-            if boardstate[stepy as usize][stepx as usize] != Tile::Empty {
+            //Denna kallas in case vi landar på stenen.
+            if boardstate[new_pos.0 as usize][new_pos.1 as usize] != Tile::Empty && size == 1{
+                //Flytta stenen till nextpos.
+                boardstate[rocky as usize][rockx as usize] = boardstate[new_pos.0 as usize][new_pos.1 as usize];
+                //Set bår sten till nya positionen.
+                boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+            }
+            //Denna kallas in case vi hoppar äver stenen.
+            if boardstate[stepy as usize][stepx as usize] != Tile::Empty && size == 2{
                 //Sätt nästa position till stenens position.
                 boardstate[rocky as usize][rockx as usize] = boardstate[stepy as usize][stepx as usize];
                 //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
                 boardstate[stepy as usize][stepx as usize] = Tile::empty();
             }
-        }else {
+        //OM STENEN FALLER AV.
+        }else if rockx > 3 || rocky > 3{
+            //Sätt nya posen till vår färg
+            boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
             //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
             boardstate[stepy as usize][stepx as usize] = Tile::empty();
+            //redundant? Eh.
+            boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
         }
         
         //Rensa förra platsen.
