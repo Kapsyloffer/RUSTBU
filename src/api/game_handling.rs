@@ -50,3 +50,16 @@ pub async fn check_exists(socket: &mut WebSocket, url: &String, game_hodler: &Ga
         return;
     }
 }
+
+pub async fn join_game(_socket: &mut WebSocket, url: &String, player_id: &String, game_hodler: &GameHodler){
+    let mut binding = game_hodler
+    .games
+    .lock()
+    .unwrap();
+
+    if binding.get_mut(url).unwrap().add_player(player_id.to_owned()){
+        println!("Player added to: {}!", url);
+    }else {
+        println!("Player not added to: {}!", url);
+    }
+}

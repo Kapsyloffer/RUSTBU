@@ -871,7 +871,7 @@ fn movement_one_in_each_dir_2_step_aggr() {
 }
 
 #[test]
-fn frogger() {
+fn leapfrog_1() {
     let state: [[Tile; 4]; 4] = [
         [Tile::White, Tile::Empty, Tile::Empty, Tile::White],
         [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
@@ -890,7 +890,50 @@ fn frogger() {
     board.set_state(&state);
 
 
-    Tile::aggressive_move(&mut board, (0, 2), (2, 2));
+    assert!(Tile::aggressive_move(&mut board, (0, 2), (2, 2)));
 
     assert_eq!(board.get_state(), &target_state);
+}
+
+#[test]
+fn leapfrog_2() {
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let mut board = Board::new_board(Color::Black, Color::White);
+    board.set_state(&state);
+
+
+    assert!(Tile::aggressive_move(&mut board, (0, 0), (2, 2)));
+
+    assert_eq!(board.get_state(), &target_state);
+}
+
+
+#[test]
+fn add_player_test() {
+    let mut g = Game::new_game();
+
+    assert!(g.add_player(String::from("Testplayer_b")));
+    assert!(!g.add_player(String::from("Testplayer_b")));
+
+    assert!(g.add_player(String::from("Testplayer_w")));
+
+    assert!(!g.add_player(String::from("spectator")));
+
+    let players = g.get_players();
+
+    assert_eq!(players.0.unwrap(), String::from("Testplayer_b"));
+    assert_eq!(players.1.unwrap(), String::from("Testplayer_w"));
 }

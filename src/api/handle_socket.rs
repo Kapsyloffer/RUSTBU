@@ -8,7 +8,7 @@ use crate::
     rules::game_hodler::GameHodler,
 };
 
-use super::game_packets::GamePacket;
+use super::{game_handling::join_game, game_packets::GamePacket};
 
 pub async fn handler(
     ws: WebSocketUpgrade, 
@@ -38,7 +38,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
             match packet {
                 //recieve and process movement action
                 GamePacket::Action { url, move_p, move_a } => {
-                    do_move(&game_hodler, &url, &move_p, &move_a).await;
+                    do_move( &game_hodler, &url, &move_p, &move_a).await;
                 }
                 GamePacket::CreateGame => {
                     create_game(&mut socket, &game_hodler).await;
@@ -49,6 +49,9 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                 //Send current gamestate
                 GamePacket::FetchGame { url } => {
                     fetch_game(&mut socket, &url, &game_hodler).await;
+                }
+                GamePacket::JoinGame { url , player_id} => {
+                    join_game(&mut socket, &url,  &player_id, &game_hodler).await;
                 }
                 GamePacket::FetchMoves { url, h, c, x, y, aggr} => {
                     fetch_moves(&mut socket, &game_hodler, &url, &h, &c, &x, &y, &aggr).await;

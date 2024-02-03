@@ -39,8 +39,16 @@ impl Game {
         return (self.player_b.to_owned(), self.player_w.to_owned());
     }
 
-    pub fn set_player(&mut self, _c: Option<Color>) {
-        todo!()
+    pub fn add_player(&mut self, player_id: String) -> bool {
+        // Check if player is not already assigned to player_b or player_w
+        if self.player_b.is_none() && self.player_w != Some(player_id.clone()) {
+            self.player_b = Some(player_id.clone());
+            return true;
+        } else if self.player_w.is_none() && self.player_b != Some(player_id.clone()) {
+            self.player_w = Some(player_id.clone());
+            return true;
+        }
+        return false;
     }
 
     pub fn get_board(&mut self, h: Color, c: Color) -> Option<&mut Board> {

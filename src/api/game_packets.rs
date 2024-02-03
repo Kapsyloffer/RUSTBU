@@ -36,5 +36,9 @@ pub (crate) enum GamePacket {
     },
     GameCreated { //Response containing game url
         url: String,
+    },
+    JoinGame { 
+        url: String, 
+        player_id: String,
     }
 }

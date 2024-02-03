@@ -14,9 +14,9 @@ pub struct MovementAction {
     aggr: bool,
 }
 
-pub async fn do_move(game_hodler: &GameHodler, id: &String, move_p: &MovementAction, move_a: &MovementAction) {
+pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAction, move_a: &MovementAction) {
     let mut games = game_hodler.games.lock().unwrap();
-    let Some(game) = games.get_mut(id) else {
+    let Some(game) = games.get_mut(url) else {
         return;
     };
     if move_p.board_colour == move_a.board_colour {
@@ -58,6 +58,7 @@ pub async fn do_move(game_hodler: &GameHodler, id: &String, move_p: &MovementAct
     }
 
     println!("{}", game.display());
+
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Color, c: &Color, x: &i8, y: &i8, aggr: &bool,) {
