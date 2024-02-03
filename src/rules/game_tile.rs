@@ -208,7 +208,7 @@ impl Tile {
         let stepy = new_pos.0 - 1 * dir.0;
         let stepx = new_pos.1 - 1 * dir.1;
 
-
+        //TODO: Get rid of this nightmare code.
 
         //If rock is still on board.
         if rockx <= 3 && rocky <= 3{
@@ -219,7 +219,7 @@ impl Tile {
                 //Set bår sten till nya positionen.
                 boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
             }
-            //Denna kallas in case vi hoppar äver stenen.
+            //Denna kallas in case vi hoppar över stenen.
             if boardstate[stepy as usize][stepx as usize] != Tile::Empty && size == 2{
                 //Sätt nästa position till stenens position.
                 boardstate[rocky as usize][rockx as usize] = boardstate[stepy as usize][stepx as usize];

@@ -890,7 +890,7 @@ fn leapfrog_1() {
     board.set_state(&state);
 
 
-    assert!(Tile::aggressive_move(&mut board, (0, 2), (2, 2)));
+    assert!(Tile::aggressive_move(&mut board, (2, 0), (2, 2)));
 
     assert_eq!(board.get_state(), &target_state);
 }
@@ -932,6 +932,9 @@ fn leapfrog_3() {
 
     let mut board = Board::new_board(Color::Black, Color::White);
     board.set_state(&state);
+
+    println!("0,1: {:?}", board.get_state()[0][1]);
+    println!("1,2: {:?}", board.get_state()[1][2]);
 
     let move_list = Tile::get_possible_moves(&mut board, true, (0, 1));
     println!("{:?}", move_list);
