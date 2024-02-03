@@ -532,7 +532,7 @@ fn movement_aggressive_3_0_slightpush() {
     let boardstate_next: [[Tile; 4]; 4] = [
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
-        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White,  Tile::Empty, Tile::Empty],
         [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
     ];
     b.set_state(&boardstate);
