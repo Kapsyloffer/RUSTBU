@@ -869,3 +869,28 @@ fn movement_one_in_each_dir_2_step_aggr() {
         ));
     }
 }
+
+#[test]
+fn frogger() {
+    let state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Black, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::White],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let mut board = Board::new_board(Color::Black, Color::White);
+    board.set_state(&state);
+
+
+    Tile::aggressive_move(&mut board, (0, 2), (2, 2));
+
+    assert_eq!(board.get_state(), &target_state);
+}
