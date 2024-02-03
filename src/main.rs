@@ -1,5 +1,5 @@
 use axum::{routing::get, Router};
-use rustbu::{api::web_sockets::*, rules::game_hodler::GameHodler};
+use rustbu::{api::handle_socket::*, rules::game_hodler::GameHodler};
 
 #[tokio::main]
 async fn main() {

@@ -37,7 +37,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [x] Move using clicks
 - [ ] Move by dragging
 - [ ] Highlight boards where movement is possible. (homeboards on passive, boards of opposite colour on aggresssive)
-- [ ] Locally change board layouts between standard and "dork" (placeholder name)
+- [x] Locally change board layouts between standard and "dork" (placeholder name)
 ```
 Standard layout:       "DORK" layout:
     [B][W]                [B][W]
@@ -68,7 +68,7 @@ Standard layout:       "DORK" layout:
 - [ ] Proper use of websockets.
 - [x] Handle websocket connection.
 - [x] Generate link on new game, and redirect.
-- [ ] Update state for both players on board change.
+- [ ] Update state for both players on board change. (IMPORTANT!!)
 - [ ] Unit test websocket gameplay.
 - [ ] Joining a game; lobby owner is black, next person to join is white.
 - [ ] If a game is full you're spectator.
@@ -82,6 +82,7 @@ Standard layout:       "DORK" layout:
 - [ ] Option to surrender.
 - [ ] Option to offer draw.
 - [ ] Option to ask for takeback.
+- [ ] Movement History (+ Algebraic notation).
 - [ ] Visual setting, checkered board or "normal" board.
 - [ ] bo3, winner plays white next game (goes second).
 - [ ] gamemodes?

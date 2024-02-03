@@ -1,7 +1,7 @@
 use axum::extract::ws::{Message, WebSocket};
 use serde::{Deserialize, Serialize};
 
-use crate::{api::web_sockets::GamePacket, rules::{game_board::Color, game_hodler::GameHodler, game_tile::Tile}};
+use crate::{api::game_packets::*, rules::{game_board::Color, game_hodler::GameHodler, game_tile::Tile}};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MovementAction {
