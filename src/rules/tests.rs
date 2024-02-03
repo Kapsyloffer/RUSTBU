@@ -922,6 +922,24 @@ fn leapfrog_2() {
 
 
 #[test]
+fn leapfrog_3() {
+    let state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::White, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Black, Tile::Black, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Color::Black, Color::White);
+    board.set_state(&state);
+
+    let move_list = Tile::get_possible_moves(&mut board, true, (0, 1));
+    println!("{:?}", move_list);
+    assert!(!move_list.contains(&(1, 2)));
+}
+
+
+#[test]
 fn add_player_test() {
     let mut g = Game::new_game();
 
@@ -934,6 +952,6 @@ fn add_player_test() {
 
     let players = g.get_players();
 
-    assert_eq!(players.0.unwrap(), String::from("Testplayer_b"));
-    assert_eq!(players.1.unwrap(), String::from("Testplayer_w"));
+    assert_eq!(players.0, String::from("Testplayer_b"));
+    assert_eq!(players.1, String::from("Testplayer_w"));
 }

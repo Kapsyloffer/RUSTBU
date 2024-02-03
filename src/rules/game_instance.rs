@@ -4,8 +4,8 @@ use super::{game_board::{Board, Color}, game_tile::Tile,};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Game {
-    player_b: Option<String>,
-    player_w: Option<String>,
+    player_b: String,
+    player_w: String,
     boards: [Board; 4],
     turn: Color,
 }
@@ -19,8 +19,8 @@ impl Game {
         let board_wb = Board::new_board(Color::White, Color::Black);
 
         return Game {
-            player_b: None,
-            player_w: None,
+            player_b: String::from("None"),
+            player_w: String::from("None"),
             boards: [board_bw, board_bb, board_wb, board_ww],
             turn: Color::Black,
         };
@@ -34,18 +34,18 @@ impl Game {
         }
     }
 
-    pub fn get_players(&self) -> (Option<String>, Option<String>) {
+    pub fn get_players(&self) -> (String, String) {
         //Forgive me father for I have sinned.
         return (self.player_b.to_owned(), self.player_w.to_owned());
     }
 
     pub fn add_player(&mut self, player_id: String) -> bool {
         // Check if player is not already assigned to player_b or player_w
-        if self.player_b.is_none() && self.player_w != Some(player_id.clone()) {
-            self.player_b = Some(player_id.clone());
+        if self.player_b == "None" && self.player_w != player_id.clone() {
+            self.player_b = player_id.clone();
             return true;
-        } else if self.player_w.is_none() && self.player_b != Some(player_id.clone()) {
-            self.player_w = Some(player_id.clone());
+        } else if self.player_w == "None" && self.player_b != player_id.clone() {
+            self.player_w = player_id.clone();
             return true;
         }
         return false;
