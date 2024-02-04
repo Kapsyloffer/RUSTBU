@@ -932,12 +932,9 @@ fn leapfrog_3() {
     let mut board = Board::new_board(Color::Black, Color::White);
     board.set_state(&state);
 
-    println!("0,1: {:?}", board.get_state()[0][1]);
-    println!("1,2: {:?}", board.get_state()[1][2]);
-
     let move_list = Tile::get_possible_moves(&mut board, true, (0, 1));
     println!("{:?}", move_list);
-    assert!(!move_list.contains(&(1, 2)));
+    assert!(!move_list.contains(&(2, 1)));
 }
 
 
