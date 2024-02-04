@@ -303,17 +303,16 @@ fn movement_aggressive_1_step_push() {
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
+
     assert!(Tile::get_possible_moves(&b, true, (0, 2)).contains(&(0, 1)));
 
-    print!("POSSIBLE");
+    assert!(Tile::aggressive_move(&mut b, (0, 2), (0, 3)));
 
-    Tile::aggressive_move(&mut b, (0, 2), (0, 3));
+    println!("{}", b.fancy_print());
+    println!("{}", b2.fancy_print());
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
-
-    println!("{:#?}", *b.get_state());
-    println!("{:#?}", *b2.get_state());
 }
 
 #[test]
@@ -532,7 +531,7 @@ fn movement_aggressive_3_0_slightpush() {
     let boardstate_next: [[Tile; 4]; 4] = [
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
-        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White,  Tile::Empty, Tile::Empty],
         [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
     ];
     b.set_state(&boardstate);
@@ -542,11 +541,11 @@ fn movement_aggressive_3_0_slightpush() {
 
     assert!(Tile::aggressive_move(&mut b, (1, 2), (2, 1)));
 
+    println!("{}", b.fancy_print());
+    println!("{}", b2.fancy_print());
+
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
-
-    println!("{:#?}", *b.get_state());
-    println!("{:#?}", *b2.get_state());
 }
 
 #[test]
@@ -890,7 +889,7 @@ fn leapfrog_1() {
     board.set_state(&state);
 
 
-    assert!(Tile::aggressive_move(&mut board, (0, 2), (2, 2)));
+    assert!(Tile::aggressive_move(&mut board, (2, 0), (2, 2)));
 
     assert_eq!(board.get_state(), &target_state);
 }
@@ -935,7 +934,7 @@ fn leapfrog_3() {
 
     let move_list = Tile::get_possible_moves(&mut board, true, (0, 1));
     println!("{:?}", move_list);
-    assert!(!move_list.contains(&(1, 2)));
+    assert!(!move_list.contains(&(2, 1)));
 }
 
 
@@ -954,4 +953,11 @@ fn add_player_test() {
 
     assert_eq!(players.0, String::from("Testplayer_b"));
     assert_eq!(players.1, String::from("Testplayer_w"));
+}
+
+#[test]
+fn is_empty_test() {
+    assert!(Tile::is_empty(Tile::empty()));
+    assert!(!Tile::is_empty(Tile::white()));
+    assert!(!Tile::is_empty(Tile::black()));
 }

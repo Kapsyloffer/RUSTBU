@@ -78,4 +78,20 @@ impl Board {
     pub fn get_home(&self) -> Color {
         return self.home;
     }
+
+    pub fn fancy_print(&self) -> String {
+        let mut disp: String = String::new(); 
+        for i in 0..4 as usize {
+            for j in 0..4 as usize {
+                match self.get_state()[i][j]
+                {
+                    Tile::White => disp.push_str("[W]"),
+                    Tile::Black => disp.push_str("[B]"),
+                    Tile::Empty => disp.push_str("[ ]"),
+                }
+            }
+            disp.push_str("\n");
+        }
+        return disp;
+    }
 }
