@@ -90,7 +90,7 @@ impl Tile {
 
             //future rock positions:
             let rock_y = cur_pos.0 + (*size + 1) * dy;
-            let rock_x = cur_pos.0 + (*size + 1) * dx;
+            let rock_x = cur_pos.1 + (*size + 1) * dx;
 
             //In case stenen vi puttar faller av boarden.
             if (rock_y) > 3 || (rock_x) > 3 || (rock_y) < 0 || (rock_x) < 0 {
