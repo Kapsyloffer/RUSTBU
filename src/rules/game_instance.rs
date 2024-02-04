@@ -1,6 +1,10 @@
 use rand::{distributions::Alphanumeric, Rng};
 use serde::Serialize;
-use super::{game_board::{Board, Color}, game_tile::Tile,};
+
+use super::{
+    game_board::{Board, Color},
+    game_tile::Tile,
+};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Game {
@@ -51,7 +55,16 @@ impl Game {
         return false;
     }
 
-    pub fn get_board(&mut self, h: Color, c: Color) -> Option<&mut Board> {
+    pub fn get_board(&self, h: Color, c: Color) -> Option<&Board> {
+        for board in &self.boards {
+            if board.get_color() == c && board.get_home() == h {
+                return Some(board);
+            }
+        }
+        return None;
+    }
+
+    pub fn get_board_mut(&mut self, h: Color, c: Color) -> Option<&mut Board> {
         for board in &mut self.boards {
             if board.get_color() == c && board.get_home() == h {
                 return Some(board);
@@ -63,7 +76,7 @@ impl Game {
     //Used for "fancy print" in CLI.
     pub fn display(&mut self) -> String {
         let mut disp: String = String::from("\n\n\tS H O B U\n\n");
-        
+
         let red = "\x1b[31m";
         let green = "\x1b[32m";
         let reset = "\x1b[0m";
@@ -132,7 +145,7 @@ impl Game {
             disp.push_str("\n");
         }
         disp.push_str("\n----------- BLACK---------\n\n");
-        
+
         return String::from(disp);
     }
 

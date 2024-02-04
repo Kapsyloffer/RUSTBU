@@ -1,65 +1,92 @@
-use axum::extract::ws::WebSocket;
-use axum::extract::ws::Message;
-use crate::api::game_packets::*;
-use crate::rules::game_hodler::GameHodler; 
-use crate::rules::game_instance::Game;
+use axum::extract::ws::{Message, WebSocket};
+use tokio::sync::broadcast;
 
+use crate::{
+    api::game_packets::*,
+    rules::{
+        game_hodler::{GameHodler, Lobby},
+        game_instance::Game,
+    },
+};
 
 pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &GameHodler) {
-    let mut games = game_hodler.games.lock().unwrap().to_owned();
-    let Some(game) = games.get_mut(url) else {
-        return;
+    let packet = {
+        let mut games = game_hodler.games.lock().unwrap();
+        let Some(game) = games.get_mut(url) else {
+            return;
+        };
+        let state: String = format!("{:?}", game);
+        GamePacket::FetchedGame { state }
     };
-    let state: String = format!("{:?}", game);
-    let packet = GamePacket::FetchedGame { state };
 
     //println!("{:#?}", packet);
 
     if socket
-    .send(Message::Text(serde_json::to_string(&packet).unwrap()))
-    .await
-    .is_err() {
-    return;
-}
+        .send(Message::Text(serde_json::to_string(&packet).unwrap()))
+        .await
+        .is_err()
+    {
+        return;
+    }
 }
 
-pub async fn create_game(socket: &mut WebSocket, game_hodler: &GameHodler) {
+pub async fn create_game(
+    socket: &mut WebSocket,
+    game_hodler: &GameHodler,
+    sender: broadcast::Sender<()>,
+) {
     let url = Game::generate_url();
     println!("\nCreated game: {}\n", url);
-    game_hodler
-        .games
-        .lock()
-        .unwrap()
-        .insert(url.to_owned(), Game::new_game());
+    game_hodler.games.lock().unwrap().insert(
+        url.to_owned(),
+        Lobby {
+            game: Game::new_game(),
+            sender,
+        },
+    );
 
     let packet = GamePacket::GameCreated { url };
     if socket
         .send(Message::Text(serde_json::to_string(&packet).unwrap()))
         .await
-        .is_err() {
+        .is_err()
+    {
         return;
     }
 }
 
 pub async fn check_exists(socket: &mut WebSocket, url: &String, game_hodler: &GameHodler) {
-    let e: bool; //exists
-    let games = game_hodler.games.lock().unwrap().to_owned();
-    e = games.get(url).is_some();
-    
-    if socket.send(Message::Text(format!("{}", e))).await.is_err() {
+    let exists = {
+        let games = game_hodler.games.lock().unwrap();
+        games.get(url).is_some()
+    };
+
+    if socket
+        .send(Message::Text(format!("{}", exists)))
+        .await
+        .is_err()
+    {
         return;
     }
 }
 
-pub async fn join_game(_socket: &mut WebSocket, url: &String, player_id: &String, game_hodler: &GameHodler){
-    let mut binding = game_hodler
-    .games
-    .lock()
-    .unwrap();
-
-    if binding.get_mut(url).unwrap().add_player(player_id.to_owned()){
+pub async fn join_game(
+    _socket: &mut WebSocket,
+    url: &String,
+    player_id: &String,
+    game_hodler: &GameHodler,
+) {
+    if game_hodler
+        .games
+        .lock()
+        .unwrap()
+        .get_mut(url)
+        .unwrap()
+        .game
+        .add_player(player_id.to_owned())
+    {
         println!("Player added to: {}!", url);
-    }else {
+    } else {
         println!("Player not added to: {}!", url);
     }
 }

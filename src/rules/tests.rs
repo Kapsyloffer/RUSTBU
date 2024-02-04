@@ -303,7 +303,6 @@ fn movement_aggressive_1_step_push() {
     let mut b2 = Board::new_board(Color::Black, Color::Black);
     b2.set_state(&boardstate);
 
-
     assert!(Tile::get_possible_moves(&b, true, (0, 2)).contains(&(0, 1)));
 
     assert!(Tile::aggressive_move(&mut b, (0, 2), (0, 3)));
@@ -531,7 +530,7 @@ fn movement_aggressive_3_0_slightpush() {
     let boardstate_next: [[Tile; 4]; 4] = [
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
-        [Tile::Empty, Tile::White,  Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
         [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
     ];
     b.set_state(&boardstate);
@@ -610,7 +609,7 @@ fn movement_aggressive_0_0_push_2_steps() {
 
 #[test]
 fn get_board_from_game_instance_test() {
-    let mut g = Game::new_game();
+    let g = Game::new_game();
     let b = g.get_board(Color::Black, Color::White).unwrap();
 
     assert_eq!(b.get_color(), Color::White);
@@ -888,7 +887,6 @@ fn leapfrog_1() {
     let mut board = Board::new_board(Color::Black, Color::White);
     board.set_state(&state);
 
-
     assert!(Tile::aggressive_move(&mut board, (2, 0), (2, 2)));
 
     assert_eq!(board.get_state(), &target_state);
@@ -913,12 +911,10 @@ fn leapfrog_2() {
     let mut board = Board::new_board(Color::Black, Color::White);
     board.set_state(&state);
 
-
     assert!(Tile::aggressive_move(&mut board, (0, 0), (2, 2)));
 
     assert_eq!(board.get_state(), &target_state);
 }
-
 
 #[test]
 fn leapfrog_3() {
@@ -936,7 +932,6 @@ fn leapfrog_3() {
     println!("{:?}", move_list);
     assert!(!move_list.contains(&(2, 1)));
 }
-
 
 #[test]
 fn add_player_test() {
