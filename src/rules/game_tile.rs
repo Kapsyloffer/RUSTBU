@@ -69,19 +69,17 @@ impl Tile {
         let newy = new_pos.0 as usize;
         let newx = new_pos.1 as usize;
 
-        let stepy = (cur_pos.0 + dy * 1) as usize;
-        let stepx = (cur_pos.1 + dx * 1) as usize;
+        let step_y = (cur_pos.0 + dy * 1) as usize;
+        let step_x = (cur_pos.1 + dx * 1) as usize;
 
         //If outta range
-        if newx > 3 || newy > 3 || stepy > 3 || stepx > 3 {
+        if newx > 3 || newy > 3 || step_y > 3 || step_x > 3 {
             return false;
         }
 
         //Passive
         if !aggr {
-            if state[newy][newx] != Tile::Empty {
-                return false;
-            }
+            return state[newy][newx] == Tile::Empty;
         }
 
         if aggr{
@@ -91,20 +89,20 @@ impl Tile {
             }
 
             //future rock positions:
-            let rocky = cur_pos.0 + (*size + 1) * dy;
-            let rockx = cur_pos.0 + (*size + 1) * dx;
+            let rock_y = cur_pos.0 + (*size + 1) * dy;
+            let rock_x = cur_pos.0 + (*size + 1) * dx;
 
             //In case stenen vi puttar faller av boarden.
-            if (rocky) > 3 || (rockx) > 3 || (rocky) < 0 || (rockx) < 0 {
+            if (rock_y) > 3 || (rock_x) > 3 || (rock_y) < 0 || (rock_x) < 0 {
                 return true;
             }
 
             if *size == 1 && state[newy][newx] != Tile::Empty {
                 //Checka om det finns en sten bakom stenen vi puttar. Om Tomt we good.
-                return state[rocky as usize][rockx as usize] == Tile::Empty;
-            } else if *size == 2 && state[stepy][stepx] != Tile::Empty {
+                return state[rock_y as usize][rock_x as usize] == Tile::Empty;
+            } else if *size == 2 && state[step_y][step_x] != Tile::Empty {
                 //If a future rock position is not empty then the move is not valid.
-                if state[rocky as usize][rockx as usize] != Tile::Empty{
+                if state[rock_y as usize][rock_x as usize] != Tile::Empty{
                     return false;
                 }
                 //Checka om det finns en sten bakom stenen vi puttar.
@@ -157,7 +155,7 @@ impl Tile {
     pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
         let cur_tile = b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize];
         if Tile::is_empty(cur_tile) {
-            eprintln!("\nwtf are you doing. That's not a rock!\n"); 
+            eprintln!("\nwtf are you doing? That's not a rock!\n"); 
         }
 
         let dx = new_pos.1 - cur_pos.1;
@@ -202,42 +200,66 @@ impl Tile {
 
         Hopefully
         */
-        let rockx = (new_pos.1 + 1 * dir.1) as usize;
-        let rocky = (new_pos.0 + 1 * dir.0) as usize;
+        //Starting position of aggressive rock.
+        let start_y = cur_pos.0 as usize;
+        let start_x = cur_pos.1 as usize;
 
-        let stepy = new_pos.0 - 1 * dir.0;
-        let stepx = new_pos.1 - 1 * dir.1;
+        //Space between end and start (In case we move 2 steps)
+        let step_y = (cur_pos.0 + 1 * dir.0) as usize;
+        let step_x = (cur_pos.1 + 1 * dir.1) as usize;
 
-        //TODO: Get rid of this nightmare code.
+        //Target position
+        let end_y = new_pos.0 as usize;
+        let end_x = new_pos.1 as usize;
 
-        //If rock is still on board.
-        if rockx <= 3 && rocky <= 3{
-            //Denna kallas in case vi landar på stenen.
-            if boardstate[new_pos.0 as usize][new_pos.1 as usize] != Tile::Empty && size == 1{
-                //Flytta stenen till nextpos.
-                boardstate[rocky as usize][rockx as usize] = boardstate[new_pos.0 as usize][new_pos.1 as usize];
-                //Set bår sten till nya positionen.
-                boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
-            }
-            //Denna kallas in case vi hoppar över stenen.
-            if boardstate[stepy as usize][stepx as usize] != Tile::Empty && size == 2{
-                //Sätt nästa position till stenens position.
-                boardstate[rocky as usize][rockx as usize] = boardstate[stepy as usize][stepx as usize];
-                //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
-                boardstate[stepy as usize][stepx as usize] = Tile::empty();
-            }
-        //OM STENEN FALLER AV.
-        }else if rockx > 3 || rocky > 3{
-            //Sätt nya posen till vår färg
-            boardstate[new_pos.0 as usize][new_pos.1 as usize] = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
-            //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
-            boardstate[stepy as usize][stepx as usize] = Tile::empty();
-            //redundant? Eh.
-            boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+        //End position for the rock we push.
+        let rock_y = (new_pos.0 + 1 * dir.0) as usize;
+        let rock_x = (new_pos.1 + 1 * dir.1) as usize;
+
+        let mut stepping: bool = true;
+        let mut on_board: bool = true;
+        if step_x == end_x && step_y == end_y {
+            stepping = false;
         }
+        if rock_x > 3 || rock_y > 3{
+            on_board = false;
+        }
+        //If the rock is still on the board.
+        if on_board{
+            if boardstate[end_y][end_x] != Tile::Empty && !stepping{
+                boardstate[rock_y][rock_x] = boardstate[end_y][end_x];
+            }
+            else if boardstate[step_y][step_x] != Tile::Empty && stepping{
+                println!("rocky: {}, rockx: {}, stepy: {}, stepx: {}", rock_y, rock_x, step_y, step_x);
+                boardstate[rock_y][rock_x] = boardstate[step_y][step_x];
+                //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
+                boardstate[step_y][step_x] = Tile::empty();
+            }   
+        }
+
+        //If the rock gets pushed off the edge.
+        if !on_board {
+            if stepping {
+                if boardstate[end_y][end_x] != Tile::Empty {
+                    boardstate[end_y][end_x] = Tile::empty();
+                }
+                else if boardstate[step_y][step_x] != Tile::Empty{
+                    boardstate[step_y][step_x] = Tile::empty();
+                }
+            }
+        }
+
+        /*
+        [start][step][end][rock]- Case 1
+        [start][step][end]- Case 2
+        [start][end][rock]- Case 3
+        [start][end]- Case 4
+         */
         
+        //Flytta stenen.
+        boardstate[end_y][end_x] = boardstate[start_y][start_x];
         //Rensa förra platsen.
-        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+        boardstate[start_y][start_x] = Tile::empty();
         //Uppdatera boardstate.
         b.set_state(&boardstate);
 

@@ -7,7 +7,7 @@ async fn main() {
         .route("/ws", get(handler))
         .with_state(GameHodler::new());
 
-    let listener = tokio::net::TcpListener::bind("localhost:4444")
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:4444")
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
