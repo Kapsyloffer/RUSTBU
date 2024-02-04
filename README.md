@@ -32,7 +32,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [ ] Navigatable Menu using mouse.
 - [ ] Determine which colour a player is.
 - [x] Mirror the game for the white player. (i.e. white rocks on bottom)
-- [ ] Render actual rock positions.
+- [x] Render actual rock positions.
 - [ ] Proper use of websockets.
 - [x] Move using clicks
 - [ ] Move by dragging
@@ -47,6 +47,7 @@ Standard layout:       "DORK" layout:
 - [x] Show possible movement path, like in lichess.
 - [x] Max 2 steps per move.
 - [ ] Take back passive move locally. (Because we send both at the same time)
+- [ ] Render local rock positions. i.e. if we moved passive, show it.
 - [ ] Aggressive move should have the same size and direction as passive.
 - [ ] Prevent the first move from being on the opponent's homeboard.
 - [ ] Prevent aggressive move on a board of the same colour as the passive move.
@@ -65,13 +66,13 @@ Standard layout:       "DORK" layout:
 - [x] Check for winner.
 - [x] Change active player if both the passive and aggressive move are OK.
 - [x] Unit test movement rules.
-- [ ] Proper use of websockets.
 - [x] Handle websocket connection.
 - [x] Generate link on new game, and redirect.
+- [ ] Proper use of websockets.
 - [ ] Update state for both players on board change. (IMPORTANT!!)
 - [ ] Unit test websocket gameplay.
-- [ ] Joining a game; lobby owner is black, next person to join is white.
-- [ ] If a game is full you're spectator.
+- [x] Joining a game; lobby owner is black, next person to join is white.
+- [x] If a game is full you're spectator.
 
 
 ### Future improvements:
