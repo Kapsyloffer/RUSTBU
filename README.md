@@ -48,7 +48,7 @@ Standard layout:       "DORK" layout:
 - [x] Max 2 steps per move.
 - [ ] Take back passive move locally. (Because we send both at the same time)
 - [ ] Render local rock positions. i.e. if we moved passive, show it.
-- [ ] Aggressive move should have the same size and direction as passive.
+- [x] Aggressive move should have the same size and direction as passive.
 - [ ] Prevent the first move from being on the opponent's homeboard.
 - [ ] Prevent aggressive move on a board of the same colour as the passive move.
 
@@ -69,7 +69,7 @@ Standard layout:       "DORK" layout:
 - [x] Handle websocket connection.
 - [x] Generate link on new game, and redirect.
 - [ ] Proper use of websockets.
-- [ ] Update state for both players on board change. (IMPORTANT!!)
+- [x] Update state for both players on board change. (TODO: Do properly...)
 - [ ] Unit test websocket gameplay.
 - [x] Joining a game; lobby owner is black, next person to join is white.
 - [x] If a game is full you're spectator.
