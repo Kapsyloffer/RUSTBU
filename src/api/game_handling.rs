@@ -42,11 +42,10 @@ pub async fn create_game(socket: &mut WebSocket, game_hodler: &GameHodler) {
 }
 
 pub async fn check_exists(socket: &mut WebSocket, url: &String, game_hodler: &GameHodler) {
-    let e: bool; //exists
     let games = game_hodler.games.lock().unwrap().to_owned();
-    e = games.get(url).is_some();
+    let exists = games.get(url).is_some();
     
-    if socket.send(Message::Text(format!("{}", e))).await.is_err() {
+    if socket.send(Message::Text(format!("{}", exists))).await.is_err() {
         return;
     }
 }

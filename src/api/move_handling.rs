@@ -20,9 +20,19 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         return;
     };
     if move_p.board_colour == move_a.board_colour {
+        println!("Cannot move on same coloured board.");
         return;
         //panic!("Cannot move on the same colour");
     }
+
+    //In case the passive and aggressive move differ.
+    if move_p.x1 - move_p.x2 != move_a.x1 - move_a.x2
+    || move_p.y1 - move_p.y2 != move_a.y1 - move_a.y2
+    {
+        println!("Cheating Detected! Calling SÄPO...");
+        return;
+    }
+
     //Make move on p
     let board_p = game
         .get_board(move_p.home_colour, move_p.board_colour)
@@ -58,7 +68,6 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     }
 
     println!("{}", game.display());
-
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Color, c: &Color, x: &i8, y: &i8, aggr: &bool,) {
