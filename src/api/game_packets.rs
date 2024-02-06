@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::rules::game_board::Color;
+use crate::rules::game_tile::Tile;
 
 use super::move_handling::MovementAction;
 
@@ -22,8 +22,8 @@ pub (crate) enum GamePacket {
     },
     FetchMoves { //Call to fetch moves from a rock on a board
         url: String,
-        h: Color,
-        c: Color,
+        h: Tile,
+        c: Tile,
         x: i8,
         y: i8,
         aggr: bool,

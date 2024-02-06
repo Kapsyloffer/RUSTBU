@@ -1,23 +1,17 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use super::game_tile::Tile;
 
 #[derive(Clone, Copy, PartialEq, Debug, Serialize)]
 pub struct Board {
-    color: Color,
-    home: Color,
+    color: Tile,
+    home: Tile,
     state: [[Tile; 4]; 4],
-}
-
-#[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
-pub enum Color {
-    White,
-    Black,
 }
 
 impl Board {
     //Creates a new board
-    pub fn new_board(board_color: Color, home_color: Color) -> Board {
+    pub fn new_board(board_color: Tile, home_color: Tile) -> Board {
         return Board {
             color: board_color,
             home: home_color,
@@ -57,7 +51,7 @@ impl Board {
         self.state = *new_state;
     }
 
-    pub fn check_winner(b: &Board) -> Option<Color> {
+    pub fn check_winner(b: &Board) -> Option<Tile> {
         let state = b.get_state();
 
         let has_white = state.iter().any(|row| row.contains(&Tile::White));
@@ -65,17 +59,17 @@ impl Board {
 
         match (has_white, has_black) {
             (true, true) => None,
-            (false, true) => Some(Color::Black),
-            (true, false) => Some(Color::White),
+            (false, true) => Some(Tile::Black),
+            (true, false) => Some(Tile::White),
             _ => None,
         }
     }
 
-    pub fn get_color(&self) -> Color {
+    pub fn get_color(&self) -> Tile {
         return self.color;
     }
 
-    pub fn get_home(&self) -> Color {
+    pub fn get_home(&self) -> Tile {
         return self.home;
     }
 
