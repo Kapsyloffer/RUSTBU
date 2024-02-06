@@ -30,53 +30,66 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [ ] Allow moves only if the game is started.
 - [ ] Allow moves only if it's your turn.
 - [ ] Navigatable Menu using mouse.
-- [ ] Determine which colour a player is.
+- [x] Determine which colour a player is.
+- [ ] A Black player cannot move white rocks, and vice versa.
 - [x] Mirror the game for the white player. (i.e. white rocks on bottom)
 - [x] Render actual rock positions.
 - [ ] Proper use of websockets.
 - [x] Move using clicks
 - [ ] Move by dragging
 - [ ] Highlight boards where movement is possible. (homeboards on passive, boards of opposite colour on aggresssive)
-- [x] Locally change board layouts between standard and "dork" (placeholder name)
+- [x] Locally change board layouts between standard and "dork" (See figure 1)
+- [x] Show possible movement path, like in lichess.
+- [x] Max 2 steps per move.
+- [x] Take back passive move locally.
+- [ ] Render local rock positions. i.e. if we moved passive, show it.
+- [x] Aggressive move should have the same size and direction as passive.
+- [ ] Prevent the first move from being on the opponent's homeboard.
+- [x] Prevent aggressive move on a board of the same colour as the passive move.
+- [x] Prevent aggressive move on a board of the same colour as the passive move.
+- [ ] End the game when we have a winner.
+
+Figure 1:
+
 ```
 Standard layout:       "DORK" layout:
     [B][W]                [B][W]
     ------                ------
     [B][W]                [W][B]
 ```
-- [x] Show possible movement path, like in lichess.
-- [x] Max 2 steps per move.
-- [ ] Take back passive move locally. (Because we send both at the same time)
-- [ ] Render local rock positions. i.e. if we moved passive, show it.
-- [x] Aggressive move should have the same size and direction as passive.
-- [ ] Prevent the first move from being on the opponent's homeboard.
-- [ ] Prevent aggressive move on a board of the same colour as the passive move.
 
 ### Backend todo:
 
 - [x] Passive Movement Phase.
 - [x] Prevent pushing any rocks in the passive move.
 - [x] Max 2 steps per move.
-- [x] Prevent the first move from being on the opponent's homeboard.
+- [ ] Prevent the passive move from being on the opponent's homeboard.
 - [x] Prevent pushing any rocks in the passive move.
 - [x] Aggressive Movement Phase.
 - [x] Prevent pushing of same coloured rock.
 - [x] Prevent pushing of more than 2 rocks at once.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
+- [x] Prevent aggressive move that's different from the passive move.
+- [x] Prevent moves on boards of same colour.
 - [x] Check for winner.
 - [x] Change active player if both the passive and aggressive move are OK.
 - [x] Unit test movement rules.
 - [x] Handle websocket connection.
+- [ ] Verify which player is making a move. Black should not move white rocks.
 - [x] Generate link on new game, and redirect.
 - [ ] Proper use of websockets.
 - [x] Update state for both players on board change. (TODO: Do properly...)
 - [ ] Unit test websocket gameplay.
 - [x] Joining a game; lobby owner is black, next person to join is white.
-- [x] If a game is full you're spectator.
+- [x] If a game is full you're spectator. (ish)
+- [ ] No moves can be made until the game has started.
+- [ ] End the game when we have a winner.
 
 
 ### Future improvements:
 
+- [ ] Sound effects, like in Lichess/Chess.com
+- [ ] Ability to draw arrows like in Lichess/Chess.com
 - [ ] Lobby browser.
 - [ ] Lobby/in-game chat.
 - [ ] Option to select your color on lobby creation.
