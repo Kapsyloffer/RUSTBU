@@ -61,7 +61,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         .unwrap();
     let b4_a = board_a.clone(); //In case it breaks
 
-    if b4_p.get_state()[move_a.x1 as usize][move_a.y1 as usize] != turn{
+    if b4_a.get_state()[move_a.x1 as usize][move_a.y1 as usize] != turn{
         println!("You have to wait for your turn!");
         return;
     }
