@@ -19,6 +19,8 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     let Some(game) = games.get_mut(url) else {
         return;
     };
+    let turn = game.get_turn();
+
     if move_p.board_colour == move_a.board_colour {
         println!("Cannot move on same coloured board.");
         return;
@@ -33,7 +35,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         return;
     }
 
-    if move_p.home_colour != game.get_turn(){
+    if move_p.home_colour != turn{
         println!("That's not your homeboard you sussy baka!");
         return;
     }
@@ -43,6 +45,12 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         .get_board(move_p.home_colour, move_p.board_colour)
         .unwrap();
     let b4_p = board_p.clone(); //In case it breaks
+
+    if b4_p.get_state()[move_p.x1 as usize][move_p.y1 as usize] != turn{
+        println!("You have to wait for your turn!");
+        return;
+    }
+
     let moved_p: bool = Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
     println!("moved_p: {moved_p}");
 
@@ -51,10 +59,15 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         .get_board(move_a.home_colour, move_a.board_colour)
         .unwrap();
     let b4_a = board_a.clone(); //In case it breaks
+
+    if b4_p.get_state()[move_a.x1 as usize][move_a.y1 as usize] != turn{
+        println!("You have to wait for your turn!");
+        return;
+    }
+
     let moved_a: bool =
         Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
     println!("moved_a: {moved_a}");
-
     //If either move fail.
     if !moved_p || !moved_a {
         //Reset passive move board
@@ -80,7 +93,7 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
     let b = binding.get_mut(url).unwrap().get_board(*h, *c).unwrap();
 
     let move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
-    println!("fetch_moves: {}", move_list);
+    //println!("fetch_moves: {}", move_list);
 
     let packet = GamePacket::FetchedMoves { moves: move_list };
     if socket
