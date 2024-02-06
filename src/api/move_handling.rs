@@ -12,6 +12,7 @@ pub struct MovementAction {
     x2: i8,
     y2: i8,
     aggr: bool,
+    player: String,
 }
 
 pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAction, move_a: &MovementAction) {
@@ -88,12 +89,24 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     println!("{}", game.display());
 }
 
-pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool,) {
+pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool, player: &String) {
     let mut binding = game_hodler.games.lock().unwrap().to_owned();
     let b = binding.get_mut(url).unwrap().get_board(*h, *c).unwrap();
+    //This is so stupid.
+    let binding2 =  game_hodler.games.lock().unwrap().to_owned();
+    let game = binding2.get(url).unwrap();
 
-    let move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
+    let mut move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
     //println!("fetch_moves: {}", move_list);
+
+    
+
+    if game.is_player(player) != game.get_turn(){
+        println!("Don't cheat, bad things will happen to ya!");
+        //return;
+        move_list = format!("[]");
+    }
+    
 
     let packet = GamePacket::FetchedMoves { moves: move_list };
     if socket

@@ -27,6 +27,7 @@ pub (crate) enum GamePacket {
         x: i8,
         y: i8,
         aggr: bool,
+        player: String,
     },
     FetchedMoves { //Response containing move positions for rock on the requested board.
         moves: String,

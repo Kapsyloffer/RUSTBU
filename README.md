@@ -31,7 +31,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [ ] Allow moves only if it's your turn.
 - [ ] Navigatable Menu using mouse.
 - [x] Determine which colour a player is.
-- [ ] A Black player cannot move white rocks, and vice versa.
+- [x] A Black player cannot move white rocks, and vice versa.
 - [x] Mirror the game for the white player. (i.e. white rocks on bottom)
 - [x] Render actual rock positions.
 - [ ] Proper use of websockets.
@@ -44,7 +44,6 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [x] Take back passive move locally.
 - [ ] Render local rock positions. i.e. if we moved passive, show it.
 - [x] Aggressive move should have the same size and direction as passive.
-- [ ] Prevent the first move from being on the opponent's homeboard.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
 - [ ] End the game when we have a winner.
@@ -63,7 +62,7 @@ Standard layout:       "DORK" layout:
 - [x] Passive Movement Phase.
 - [x] Prevent pushing any rocks in the passive move.
 - [x] Max 2 steps per move.
-- [ ] Prevent the passive move from being on the opponent's homeboard.
+- [x] Prevent the passive move from being on the opponent's homeboard.
 - [x] Prevent pushing any rocks in the passive move.
 - [x] Aggressive Movement Phase.
 - [x] Prevent pushing of same coloured rock.
@@ -75,13 +74,14 @@ Standard layout:       "DORK" layout:
 - [x] Change active player if both the passive and aggressive move are OK.
 - [x] Unit test movement rules.
 - [x] Handle websocket connection.
-- [ ] Verify which player is making a move. Black should not move white rocks.
+- [x] Verify which player is making a move. Black should not move white rocks.
 - [x] Generate link on new game, and redirect.
 - [ ] Proper use of websockets.
 - [x] Update state for both players on board change. (TODO: Do properly...)
 - [ ] Unit test websocket gameplay.
 - [x] Joining a game; lobby owner is black, next person to join is white.
 - [x] If a game is full you're spectator. (ish)
+- [x] Prevent the first move from being on the opponent's homeboard.
 - [ ] No moves can be made until the game has started.
 - [ ] End the game when we have a winner.
 

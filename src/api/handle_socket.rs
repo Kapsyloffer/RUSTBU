@@ -53,8 +53,8 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                 GamePacket::JoinGame { url , player_id} => {
                     join_game(&mut socket, &url,  &player_id, &game_hodler).await;
                 }
-                GamePacket::FetchMoves { url, h, c, x, y, aggr} => {
-                    fetch_moves(&mut socket, &game_hodler, &url, &h, &c, &x, &y, &aggr).await;
+                GamePacket::FetchMoves { url, h, c, x, y, aggr, player} => {
+                    fetch_moves(&mut socket, &game_hodler, &url, &h, &c, &x, &y, &aggr, &player).await;
                 }
                 GamePacket::GameCreated { url } => {
                     if socket.send(Message::Text(url)).await.is_err() {
