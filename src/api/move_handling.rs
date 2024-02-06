@@ -99,10 +99,10 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
     let mut move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
     //println!("fetch_moves: {}", move_list);
 
-    
-
-    if game.is_player(player) != game.get_turn(){
-        println!("Don't cheat, bad things will happen to ya!");
+    if game.is_player(player) != game.get_turn() 
+    || b.get_state()[*x as usize][*y as usize] != game.is_player(player) 
+    || !aggr && game.is_player(player) != b.get_home(){
+        //println!("Don't cheat, bad things will happen to ya!");
         //return;
         move_list = format!("[]");
     }
