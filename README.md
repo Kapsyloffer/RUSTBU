@@ -28,7 +28,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [x] Entering a link joins the game.
 - [ ] Entering a link checks if the game is started.
 - [ ] Allow moves only if the game is started.
-- [ ] Allow moves only if it's your turn.
+- [x] Allow moves only if it's your turn.
 - [ ] Navigatable Menu using mouse.
 - [x] Determine which colour a player is.
 - [x] A Black player cannot move white rocks, and vice versa.
@@ -42,7 +42,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [x] Show possible movement path, like in lichess.
 - [x] Max 2 steps per move.
 - [x] Take back passive move locally.
-- [ ] Render local rock positions. i.e. if we moved passive, show it.
+- [x] Render local rock positions. i.e. if we moved passive, show it.
 - [x] Aggressive move should have the same size and direction as passive.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
@@ -82,6 +82,7 @@ Standard layout:       "DORK" layout:
 - [x] Joining a game; lobby owner is black, next person to join is white.
 - [x] If a game is full you're spectator. (ish)
 - [x] Prevent the first move from being on the opponent's homeboard.
+- [ ] Add a game_started variable or something.
 - [ ] No moves can be made until the game has started.
 - [ ] End the game when we have a winner.
 

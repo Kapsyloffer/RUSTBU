@@ -14,10 +14,19 @@ fn state_init() {
     let top_left_stone = board.get_state()[0][0];
     let bot_right_stone = board.get_state()[3][3];
 
+    let target: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::White, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Black, Tile::Black, Tile::Black],
+    ];
+
     //White
     assert_eq!(top_left_stone, Tile::White);
     //Black
     assert_eq!(bot_right_stone, Tile::Black);
+
+    assert_eq!(board.get_state(), &target);
 }
 
 #[test]
