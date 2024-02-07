@@ -963,7 +963,7 @@ fn is_empty_test() {
 }
 
 #[test]
-fn diagonal_push(){
+fn diagonal_push_1(){
     let state: [[Tile; 4]; 4] = [
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
         [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
@@ -990,6 +990,149 @@ fn diagonal_push(){
     let mut board = Board::new_board(Tile::Black, Tile::White);
     board.set_state(&state);
 
-    assert!(Tile::aggressive_move(&mut board, (0, 3), (1, 2))); 
+    assert!(Tile::aggressive_move(&mut board, (3, 0), (1, 2))); 
+    assert_eq!(board.get_state(), &target_state);
+}
+
+
+#[test]
+fn diagonal_push_2(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::White, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::White],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Black],
+    ];
+
+    /*
+    We want this:
+    [W][ ][W][W]      [W][ ][W][ ]
+    [ ][ ][ ][B]   => [ ][ ][ ][B]
+    [ ][B][ ][W]      [ ][W][ ][W]
+    [ ][ ][ ][B]      [B][ ][ ][B]
+
+     */
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+
+    assert!(Tile::aggressive_move(&mut board, (0, 3), (2, 1))); 
+    assert_eq!(board.get_state(), &target_state);
+}
+
+#[test]
+fn diagonal_push_3(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
+    ];
+
+    /*
+    We want this:
+    [W][ ][ ][ ]      [ ][ ][ ][ ]
+    [ ][ ][ ][ ]   => [ ][ ][ ][ ]
+    [ ][ ][B][ ]      [ ][ ][W][ ]
+    [ ][ ][ ][ ]      [ ][ ][ ][B]
+
+     */
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+
+    assert!(Tile::aggressive_move(&mut board, (0, 0), (2, 2))); 
+    assert_eq!(board.get_state(), &target_state);
+}
+
+#[test]
+fn diagonal_push_4(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+
+    /*
+    We want this:
+    [ ][ ][ ][ ]      [B][ ][ ][ ]
+    [ ][B][ ][ ]   => [ ][W][ ][ ]
+    [ ][ ][ ][ ]      [ ][ ][ ][ ]
+    [ ][ ][ ][W]      [ ][ ][ ][ ]
+
+     */
+
+    assert!(Tile::aggressive_move(&mut board, (3, 3), (1, 1))); 
+    assert_eq!(board.get_state(), &target_state);
+}
+
+#[test]
+fn diagonal_push_5(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+
+    assert!(Tile::aggressive_move(&mut board, (3, 3), (1, 1))); 
+    assert_eq!(board.get_state(), &target_state);
+}
+
+#[test]
+fn diagonal_push_1_step(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+
+    assert!(Tile::aggressive_move(&mut board, (3, 3), (2, 2))); 
     assert_eq!(board.get_state(), &target_state);
 }

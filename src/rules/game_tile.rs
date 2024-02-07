@@ -230,10 +230,14 @@ impl Tile {
                 boardstate[rock_y][rock_x] = boardstate[end_y][end_x];
             }
             else if boardstate[step_y][step_x] != Tile::Empty && stepping{
-                println!("rocky: {}, rockx: {}, stepy: {}, stepx: {}", rock_y, rock_x, step_y, step_x);
+                //println!("rocky: {}, rockx: {}, stepy: {}, stepx: {}", rock_y, rock_x, step_y, step_x);
                 boardstate[rock_y][rock_x] = boardstate[step_y][step_x];
                 //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
                 boardstate[step_y][step_x] = Tile::empty();
+            }
+            //Edge case; diagonal 2 step pushes that are still on the board.
+            else if boardstate[end_y][end_x] != Tile::Empty && boardstate[step_y][step_x] == Tile::Empty && stepping{
+                boardstate[rock_y][rock_x] = boardstate[end_y][end_x];
             }   
         }
 
@@ -254,7 +258,7 @@ impl Tile {
         [start][step][end]- Case 2
         [start][end][rock]- Case 3
         [start][end]- Case 4
-         */
+        */
         
         //Flytta stenen.
         boardstate[end_y][end_x] = boardstate[start_y][start_x];
