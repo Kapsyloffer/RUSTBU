@@ -961,3 +961,26 @@ fn is_empty_test() {
     assert!(!Tile::is_empty(Tile::white()));
     assert!(!Tile::is_empty(Tile::black()));
 }
+
+#[test]
+fn diagonal_push(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Black],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::White);
+    board.set_state(&state);
+
+    assert!(Tile::aggressive_move(&mut board, (0, 3), (1, 2))); 
+    assert_eq!(board.get_state(), &target_state);
+}
