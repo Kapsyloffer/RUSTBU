@@ -978,6 +978,15 @@ fn diagonal_push(){
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Black],
     ];
 
+    /*
+    We want this:
+    [ ][ ][ ][ ]      [ ][ ][ ][W]
+    [ ][ ][W][ ]   => [ ][ ][B][ ]
+    [B][ ][ ][ ]      [B][ ][ ][ ]
+    [B][ ][ ][B]      [ ][ ][ ][B]
+
+     */
+
     let mut board = Board::new_board(Tile::Black, Tile::White);
     board.set_state(&state);
 
