@@ -57,6 +57,7 @@ impl Game {
 
     pub fn set_winner(&mut self, t: &Tile){
         if self.winner == Tile::Empty{
+            println!("Winner: {:?}", self.winner);
             self.winner = t.to_owned();
         }
     }
@@ -94,8 +95,11 @@ impl Game {
         let green = "\x1b[32m";
         let reset = "\x1b[0m";
 
+        let p_w_rope = format!("\n----------- {} ---------\n\n",  &self.player_w as &str);
+        let p_b_rope = format!("\n----------- {} ---------\n\n",  &self.player_b as &str);
+
         //TRASH
-        disp.push_str("\n----------- WHITE ---------\n\n");
+        disp.push_str(&p_w_rope);
         for i in 0..4 as usize {
             for j in 0..4 as usize {
                 disp.push_str(red);
@@ -157,7 +161,7 @@ impl Game {
             }
             disp.push_str("\n");
         }
-        disp.push_str("\n----------- BLACK---------\n\n");
+        disp.push_str(&p_b_rope);
         
         return String::from(disp);
     }
