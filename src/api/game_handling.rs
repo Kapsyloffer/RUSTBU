@@ -13,8 +13,6 @@ pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &Game
     let state: String = format!("{:?}", game);
     let packet = GamePacket::FetchedGame { state };
 
-    //println!("{:#?}", packet);
-
     if socket
     .send(Message::Text(serde_json::to_string(&packet).unwrap()))
     .await
@@ -57,8 +55,8 @@ pub async fn join_game(_socket: &mut WebSocket, url: &String, player_id: &String
     .unwrap();
 
     if binding.get_mut(url).unwrap().add_player(player_id.to_owned()){
-        println!("Player added to: {}!", url);
+        println!("{} added to: {}!", player_id.to_owned(), url);
     }else {
-        println!("Player not added to: {}!", url);
+        println!("{} not added to: {}!", player_id.to_owned(), url);
     }
 }

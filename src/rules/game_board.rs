@@ -51,17 +51,16 @@ impl Board {
         self.state = *new_state;
     }
 
-    pub fn check_winner(b: &Board) -> Option<Tile> {
+    pub fn check_winner(b: &Board) -> Tile {
         let state = b.get_state();
 
         let has_white = state.iter().any(|row| row.contains(&Tile::White));
         let has_black = state.iter().any(|row| row.contains(&Tile::Black));
 
         match (has_white, has_black) {
-            (true, true) => None,
-            (false, true) => Some(Tile::Black),
-            (true, false) => Some(Tile::White),
-            _ => None,
+            (false, true) => Tile::Black,
+            (true, false) => Tile::White,
+            _ => Tile::Empty,
         }
     }
 

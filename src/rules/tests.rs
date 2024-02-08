@@ -266,11 +266,11 @@ fn check_winner() {
     let mut bb: Board = Board::new_board(Tile::Black, Tile::Black);
     bb.set_state(&boardstate_black);
 
-    assert_eq!(Board::check_winner(&bn), None);
-    assert_eq!(Board::check_winner(&bn2), None);
+    assert_eq!(Board::check_winner(&bn), Tile::Empty);
+    assert_eq!(Board::check_winner(&bn2), Tile::Empty);
 
-    assert_eq!(Board::check_winner(&bw), Some(Tile::White));
-    assert_eq!(Board::check_winner(&bb), Some(Tile::Black));
+    assert_eq!(Board::check_winner(&bw), Tile::White);
+    assert_eq!(Board::check_winner(&bb), Tile::Black);
 }
 
 #[test]

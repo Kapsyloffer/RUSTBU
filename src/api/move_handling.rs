@@ -1,7 +1,7 @@
 use axum::extract::ws::{Message, WebSocket};
 use serde::{Deserialize, Serialize};
 
-use crate::{api::game_packets::*, rules::{game_hodler::GameHodler, game_tile::Tile}};
+use crate::{api::game_packets::*, rules::{game_board::Board, game_hodler::GameHodler, game_tile::Tile}};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MovementAction {
@@ -21,6 +21,11 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         return;
     };
     let turn = game.get_turn();
+
+    if game.has_winner(){
+        println!("Nah");
+        return;
+    }
 
     if move_p.board_colour == move_a.board_colour {
         println!("Cannot move on same coloured board.");
@@ -69,6 +74,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     let moved_a: bool =
         Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
     println!("moved_a: {moved_a}");
+
     //If either move fail.
     if !moved_p || !moved_a {
         //Reset passive move board
@@ -83,10 +89,13 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
 
         //return;
     } else {
+        let winner = Board::check_winner(&board_a);
+        game.set_winner(&winner);
+        println!("Winner: {:?}", winner);
         game.next_turn();
     }
 
-    println!("{}", game.display());
+    //println!("{}", game.display());
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool, player: &String) {
@@ -101,7 +110,8 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
 
     if game.is_player(player) != game.get_turn() 
     || b.get_state()[*x as usize][*y as usize] != game.is_player(player) 
-    || !aggr && game.is_player(player) != b.get_home(){
+    || !aggr && game.is_player(player) != b.get_home()
+    || game.has_winner(){
         //println!("Don't cheat, bad things will happen to ya!");
         //return;
         move_list = format!("[]");

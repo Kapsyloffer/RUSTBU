@@ -8,6 +8,7 @@ pub struct Game {
     player_w: String,
     boards: [Board; 4],
     turn: Tile,
+    winner: Tile, 
 }
 
 impl Game {
@@ -23,6 +24,7 @@ impl Game {
             player_w: String::from("None"),
             boards: [board_bw, board_bb, board_wb, board_ww],
             turn: Tile::Black,
+            winner: Tile::Empty,
         };
     }
 
@@ -51,6 +53,16 @@ impl Game {
             p if p == self.player_w => Tile::white(),
             _ => Tile::empty(),
         }
+    }
+
+    pub fn set_winner(&mut self, t: &Tile){
+        if self.winner == Tile::Empty{
+            self.winner = t.to_owned();
+        }
+    }
+
+    pub fn has_winner(&self) -> bool{
+        return self.winner != Tile::Empty;
     }
 
     pub fn add_player(&mut self, player_id: String) -> bool {

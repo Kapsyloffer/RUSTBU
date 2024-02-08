@@ -46,7 +46,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [x] Aggressive move should have the same size and direction as passive.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
 - [x] Prevent aggressive move on a board of the same colour as the passive move.
-- [ ] End the game when we have a winner.
+- [x] End the game when we have a winner.
 
 Figure 1:
 
@@ -84,7 +84,7 @@ Standard layout:       "DORK" layout:
 - [x] Prevent the first move from being on the opponent's homeboard.
 - [ ] Add a game_started variable or something.
 - [ ] No moves can be made until the game has started.
-- [ ] End the game when we have a winner.
+- [x] End the game when we have a winner.
 
 
 ### Future improvements:
