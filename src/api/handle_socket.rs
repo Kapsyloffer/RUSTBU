@@ -8,7 +8,7 @@ use crate::
     rules::game_hodler::GameHodler,
 };
 
-use super::{game_handling::join_game, game_packets::GamePacket};
+use super::{game_handling::{fetch_previous_moves, join_game}, game_packets::GamePacket};
 
 pub async fn handler(
     ws: WebSocketUpgrade, 
@@ -60,6 +60,9 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                     if socket.send(Message::Text(url)).await.is_err() {
                         return;
                     }
+                },
+                GamePacket::PreviousMoves { url } => {
+                    fetch_previous_moves(&mut socket, &game_hodler, &url).await;
                 }
                 _ => unimplemented!(),
             }

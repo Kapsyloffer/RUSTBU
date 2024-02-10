@@ -1,5 +1,6 @@
 use rand::{distributions::Alphanumeric, Rng};
 use serde::Serialize;
+
 use super::{game_board::Board, game_tile::Tile,};
 
 #[derive(Debug, Clone, Serialize)]
@@ -56,10 +57,9 @@ impl Game {
     }
 
     pub fn set_winner(&mut self, t: &Tile){
-        if self.winner == Tile::Empty{
-            println!("Winner: {:?}", self.winner);
+        if self.winner == Tile::Empty {
             self.winner = t.to_owned();
-        }
+        } 
     }
 
     pub fn has_winner(&self) -> bool{

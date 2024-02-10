@@ -90,10 +90,17 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     } else {
         let winner = Board::check_winner(&board_a);
         game.set_winner(&winner);
+        
+        if winner != Tile::Empty {
+            println!("Winner for game {}: {:?}", url, winner);
+        }
+        //Insert previous move in the game hodler.
+        game_hodler.moves.lock().unwrap().insert(String::from(url), (move_p.clone(), move_a.clone())); 
         game.next_turn();
     }
 
-    println!("{}", game.display());
+    //println!("{:#?}", game_hodler.moves);
+    //println!("{}", game.display());
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool, player: &String) {
@@ -106,6 +113,11 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
     let mut move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
     //println!("fetch_moves: {}", move_list);
 
+    /* We may not fetch moves if: 
+    It's not your turn, 
+    It's not your piece, 
+    It's not your homeboard (passive move), 
+    If the game is over. */
     if game.is_player(player) != game.get_turn() 
     || b.get_state()[*x as usize][*y as usize] != game.is_player(player) 
     || !aggr && game.is_player(player) != b.get_home()

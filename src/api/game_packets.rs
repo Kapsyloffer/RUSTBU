@@ -41,5 +41,8 @@ pub (crate) enum GamePacket {
     JoinGame { 
         url: String, 
         player_id: String,
+    },
+    PreviousMoves{
+        url: String
     }
 }
