@@ -61,7 +61,7 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                         return;
                     }
                 },
-                GamePacket::PreviousMoves { url } => {
+                GamePacket::FetchPreviousMoves { url } => {
                     fetch_previous_moves(&mut socket, &game_hodler, &url).await;
                 }
                 _ => unimplemented!(),
