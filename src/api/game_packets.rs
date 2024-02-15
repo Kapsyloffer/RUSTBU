@@ -7,23 +7,27 @@ use super::move_handling::MovementAction;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "type")]
 pub (crate) enum GamePacket {
-    Action { //Movement action
+    //Call to make a move.
+    Action { 
         url: String,
         move_p: MovementAction,
         move_a: MovementAction,
     },
+    //Call to create new game.
     CreateGame {
         player_id: String,
         color: Tile,
-    }, //Call to create new game.
-
-    CheckExists { //Call to check if game exists
+    },
+    //Call to check if game exists (Unused)
+    CheckExists { 
         url: String,
     },
-    FetchGame { //Call to fetch game state
+    //Call to fetch game state
+    FetchGame { 
         url: String,
     },
-    FetchMoves { //Call to fetch moves from a rock on a board
+    //Call to fetch moves from a rock on a given board
+    FetchMoves { 
         url: String,
         h: Tile,
         c: Tile,
@@ -32,22 +36,28 @@ pub (crate) enum GamePacket {
         aggr: bool,
         player: String,
     },
-    FetchedMoves { //Response containing move positions for rock on the requested board.
+    //Response containing possible move positions for rock on the requested board.
+    FetchedMoves { 
         moves: String,
     },
-    FetchedGame { //Response containing the requested gamestate.
+    //Response containing the requested gamestate.
+    FetchedGame { 
         state: String,
     },
-    GameCreated { //Response containing game url
+    //Response containing game url
+    GameCreated { 
         url: String,
     },
+    //Request to join a game
     JoinGame { 
         url: String, 
         player_id: String,
     },
+    //Request previous moves made.
     FetchPreviousMoves{
         url: String
     },
+    //Response containing previous moves made.
     PreviousMoves{
         move_p: MovementAction,
         move_a: MovementAction,

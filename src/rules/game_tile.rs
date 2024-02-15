@@ -169,30 +169,11 @@ impl Tile {
             (dx as f32 / 2.0).round() as i8,
         );
 
-        /*
-        b.get_state() kommer ge typ:
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-        [ ][ ][ ][B]      [ ][ ][ ][W]      [ ][ ][ ][W]
-        [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
-        [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][B][ ][ ]
-        [ ][ ][ ][ ]      [ ][W][ ][ ]      [ ][W][ ][ ]
-        [ ][B][ ][ ]  =>  [ ][B][ ][ ]  =>  [ ][ ][ ][ ]
-        [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-
-        [ ][W][B][ ]      [ ][ ][B][W]      [ ][ ][ ][W]
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-        [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-
-        Hopefully
-        */
-        //Starting position of aggressive rock.
+        //Starting position of the aggressive rock.
         let start_y = cur_pos.0 as usize;
         let start_x = cur_pos.1 as usize;
 
-        //Space between end and start (In case we move 2 steps)
+        //The space between end and start (Only used if we move 2 steps)
         let step_y = (cur_pos.0 + 1 * dir.0) as usize;
         let step_x = (cur_pos.1 + 1 * dir.1) as usize;
 
@@ -212,13 +193,13 @@ impl Tile {
         if rock_x > 3 || rock_y > 3{
             on_board = false;
         }
-        //If the rock is still on the board.
+
+        //If the pushed rock is still on the board.
         if on_board{
             if boardstate[end_y][end_x] != Tile::Empty && !stepping{
                 boardstate[rock_y][rock_x] = boardstate[end_y][end_x];
             }
             else if boardstate[step_y][step_x] != Tile::Empty && stepping{
-                //println!("rocky: {}, rockx: {}, stepy: {}, stepx: {}", rock_y, rock_x, step_y, step_x);
                 boardstate[rock_y][rock_x] = boardstate[step_y][step_x];
                 //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
                 boardstate[step_y][step_x] = Tile::Empty;
