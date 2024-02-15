@@ -40,8 +40,8 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                 GamePacket::Action { url, move_p, move_a } => {
                     do_move( &game_hodler, &url, &move_p, &move_a).await;
                 }
-                GamePacket::CreateGame => {
-                    create_game(&mut socket, &game_hodler).await;
+                GamePacket::CreateGame {player_id, color} => {
+                    create_game(&mut socket, player_id, &color, &game_hodler).await;
                 }
                 GamePacket::CheckExists { url } => {
                     check_exists(&mut socket, &url, &game_hodler).await;

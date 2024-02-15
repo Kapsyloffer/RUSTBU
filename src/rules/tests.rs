@@ -951,12 +951,12 @@ fn leapfrog_3() {
 fn add_player_test() {
     let mut g = Game::new_game();
 
-    assert!(g.add_player(String::from("Testplayer_b")));
-    assert!(!g.add_player(String::from("Testplayer_b")));
+    assert!(g.add_player(String::from("Testplayer_b"), None));
+    assert!(!g.add_player(String::from("Testplayer_b"), None));
 
-    assert!(g.add_player(String::from("Testplayer_w")));
+    assert!(g.add_player(String::from("Testplayer_w"), None));
 
-    assert!(!g.add_player(String::from("spectator")));
+    assert!(!g.add_player(String::from("spectator"), None));
 
     let players = g.get_players();
 

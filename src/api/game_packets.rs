@@ -12,7 +12,10 @@ pub (crate) enum GamePacket {
         move_p: MovementAction,
         move_a: MovementAction,
     },
-    CreateGame, //Call to create new game.
+    CreateGame {
+        player_id: String,
+        color: Tile,
+    }, //Call to create new game.
 
     CheckExists { //Call to check if game exists
         url: String,
