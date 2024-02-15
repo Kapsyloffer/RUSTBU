@@ -45,7 +45,11 @@ pub (crate) enum GamePacket {
         url: String, 
         player_id: String,
     },
-    PreviousMoves{
+    FetchPreviousMoves{
         url: String
+    },
+    PreviousMoves{
+        move_p: MovementAction,
+        move_a: MovementAction,
     }
 }
