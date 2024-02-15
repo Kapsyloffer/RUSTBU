@@ -24,7 +24,7 @@ pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &Game
 
 pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile, game_hodler: &GameHodler) {
     let url = Game::generate_url();
-    println!("\nCreated game: {}\n", url);
+    println!("\n{} created game: {}\n", player_id, url);
     game_hodler
         .games
         .lock()

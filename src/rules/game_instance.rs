@@ -82,9 +82,6 @@ impl Game {
             }
             Some(Tile::Empty) => unimplemented!(),
             None => {
-                println!("{:?}",color);
-                println!("{:?}",self.player_b);
-                println!("{:?}\n",self.player_w);
                 if self.player_b != "None" && self.player_w != "None" { //Full lobby
                     return false;
                 } else if self.player_b == player_id || self.player_w == player_id { //Duplicate entries.

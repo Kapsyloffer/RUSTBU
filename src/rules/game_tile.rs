@@ -118,15 +118,7 @@ impl Tile {
         }
 
         let mut boardstate = *b.get_state();
-        /*
-        Detta kommer ge typ:
-        [W][B][ ][B]
-        [ ][W][ ][ ]
-        [ ][ ][ ][ ]
-        [ ][w][B][W]
-
-        Så vi tar cur_pos och flyttar till new_pos
-        */
+        
         let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
 
         //Old space is empty

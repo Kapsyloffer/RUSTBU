@@ -82,7 +82,7 @@ Standard layout:       "DORK" layout:
 - [x] Joining a game; lobby owner is black, next person to join is white.
 - [x] If a game is full you're spectator. (ish)
 - [x] Prevent the first move from being on the opponent's homeboard.
-- [ ] No moves can be made until the game has started.
+- [x] No moves can be made until the game has started.
 - [x] End the game when we have a winner.
 - [ ] Prevent duplicate URLs. (Rare issue, but still bad if it happens.)
 
