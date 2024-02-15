@@ -212,7 +212,7 @@ fn valid_movement_locked_aggressive_4() {
 
 #[test]
 fn check_if_stones_update() {
-    let boardstate: [[Tile; 4]; 4] = [[Tile::empty(); 4]; 4];
+    let boardstate: [[Tile; 4]; 4] = [[Tile::Empty; 4]; 4];
 
     let mut b = Board::new_board(Tile::Black, Tile::Black);
     let b2 = Board::new_board(Tile::Black, Tile::Black);
@@ -965,10 +965,58 @@ fn add_player_test() {
 }
 
 #[test]
+fn add_player_test_black(){
+    let mut g = Game::new_game();
+
+    assert!(g.add_player(String::from("Testplayer_b"), Some(Tile::Black)));
+
+    assert!(g.get_players().0 == String::from("Testplayer_b"));
+}
+
+#[test]
+fn add_player_test_white(){
+    let mut g = Game::new_game();
+
+    assert!(g.add_player(String::from("Testplayer_w"), Some(Tile::White)));
+
+    assert!(g.get_players().1 == String::from("Testplayer_w"));
+}
+
+#[test]
+fn add_player_test_join_black(){
+    let mut g = Game::new_game();
+
+    assert!(g.add_player(String::from("w"), Some(Tile::White)));
+    assert!(g.add_player(String::from("b"), None));
+
+    assert!(g.get_players().0 == "b");
+    assert!(g.get_players().1 == "w");
+}
+
+#[test]
+fn add_player_test_join_white(){
+    let mut g = Game::new_game();
+
+    assert!(g.add_player(String::from("b"), Some(Tile::Black)));
+    assert!(g.add_player(String::from("w"), None));
+
+    assert!(g.get_players().0 == "b");
+    assert!(g.get_players().1 == "w");
+}
+
+#[test]
+fn add_player_disallow_joins(){
+    let mut g = Game::new_game();
+    assert!(g.add_player(String::from("b"), Some(Tile::Black)));
+    assert!(!g.add_player(String::from("w"), Some(Tile::Black)));
+    assert!(!g.add_player(String::from("b"), Some(Tile::White)));
+}
+
+#[test]
 fn is_empty_test() {
-    assert!(Tile::is_empty(Tile::empty()));
-    assert!(!Tile::is_empty(Tile::white()));
-    assert!(!Tile::is_empty(Tile::black()));
+    assert!(Tile::is_empty(Tile::Empty));
+    assert!(!Tile::is_empty(Tile::White));
+    assert!(!Tile::is_empty(Tile::Black));
 }
 
 #[test]

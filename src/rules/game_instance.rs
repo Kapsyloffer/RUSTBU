@@ -50,9 +50,9 @@ impl Game {
 
     pub fn is_player(&self, s: &String) -> Tile {
         match s.as_str() {
-            p if p == self.player_b => Tile::black(),
-            p if p == self.player_w => Tile::white(),
-            _ => Tile::empty(),
+            p if p == self.player_b => Tile::Black,
+            p if p == self.player_w => Tile::White,
+            _ => Tile::Empty,
         }
     }
 
