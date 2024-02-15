@@ -100,7 +100,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     }
 
     //println!("{:#?}", game_hodler.moves);
-    //println!("{}", game.display());
+    println!("{}", game.display());
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool, player: &String) {
@@ -117,11 +117,14 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
     It's not your turn, 
     It's not your piece, 
     It's not your homeboard (passive move), 
-    If the game is over. */
+    If the game is over. 
+    If the game is not full.*/
     if game.is_player(player) != game.get_turn() 
     || b.get_state()[*x as usize][*y as usize] != game.is_player(player) 
     || !aggr && game.is_player(player) != b.get_home()
-    || game.has_winner(){
+    || game.has_winner()
+    || game.get_players().0 == "None"
+    || game.get_players().1 == "None" {
         //println!("Don't cheat, bad things will happen to ya!");
         //return;
         move_list = format!("[]");

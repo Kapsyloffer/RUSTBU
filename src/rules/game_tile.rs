@@ -16,18 +16,6 @@ impl Tile {
         return t == Tile::Empty;
     }
 
-    pub fn empty() -> Tile {
-        return Tile::Empty;
-    }
-
-    pub fn white() -> Tile {
-        return Tile::White;
-    }
-
-    pub fn black() -> Tile {
-        return Tile::Black;
-    }
-
     pub fn get_possible_moves(b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)> {
         let boardstate = b.get_state();
         let mut movelist: Vec<(i8, i8)> = Vec::new();
@@ -130,19 +118,11 @@ impl Tile {
         }
 
         let mut boardstate = *b.get_state();
-        /*
-        Detta kommer ge typ:
-        [W][B][ ][B]
-        [ ][W][ ][ ]
-        [ ][ ][ ][ ]
-        [ ][w][B][W]
-
-        Så vi tar cur_pos och flyttar till new_pos
-        */
+        
         let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
 
         //Old space is empty
-        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::empty();
+        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::Empty;
 
         //New space has the rock
         boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
@@ -181,30 +161,11 @@ impl Tile {
             (dx as f32 / 2.0).round() as i8,
         );
 
-        /*
-        b.get_state() kommer ge typ:
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-        [ ][ ][ ][B]      [ ][ ][ ][W]      [ ][ ][ ][W]
-        [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
-        [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][B][ ][ ]
-        [ ][ ][ ][ ]      [ ][W][ ][ ]      [ ][W][ ][ ]
-        [ ][B][ ][ ]  =>  [ ][B][ ][ ]  =>  [ ][ ][ ][ ]
-        [ ][w][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-
-        [ ][W][B][ ]      [ ][ ][B][W]      [ ][ ][ ][W]
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-        [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]  =>  [ ][ ][ ][ ]
-        [ ][ ][ ][ ]      [ ][ ][ ][ ]      [ ][ ][ ][ ]
-
-        Hopefully
-        */
-        //Starting position of aggressive rock.
+        //Starting position of the aggressive rock.
         let start_y = cur_pos.0 as usize;
         let start_x = cur_pos.1 as usize;
 
-        //Space between end and start (In case we move 2 steps)
+        //The space between end and start (Only used if we move 2 steps)
         let step_y = (cur_pos.0 + 1 * dir.0) as usize;
         let step_x = (cur_pos.1 + 1 * dir.1) as usize;
 
@@ -224,16 +185,16 @@ impl Tile {
         if rock_x > 3 || rock_y > 3{
             on_board = false;
         }
-        //If the rock is still on the board.
+
+        //If the pushed rock is still on the board.
         if on_board{
             if boardstate[end_y][end_x] != Tile::Empty && !stepping{
                 boardstate[rock_y][rock_x] = boardstate[end_y][end_x];
             }
             else if boardstate[step_y][step_x] != Tile::Empty && stepping{
-                //println!("rocky: {}, rockx: {}, stepy: {}, stepx: {}", rock_y, rock_x, step_y, step_x);
                 boardstate[rock_y][rock_x] = boardstate[step_y][step_x];
                 //Rensa platsen 1 steg bakom oss. (D'Lcrantz metoden)
-                boardstate[step_y][step_x] = Tile::empty();
+                boardstate[step_y][step_x] = Tile::Empty;
             }
             //Edge case; diagonal 2 step pushes that are still on the board.
             else if boardstate[end_y][end_x] != Tile::Empty && boardstate[step_y][step_x] == Tile::Empty && stepping{
@@ -245,10 +206,10 @@ impl Tile {
         if !on_board {
             if stepping {
                 if boardstate[end_y][end_x] != Tile::Empty {
-                    boardstate[end_y][end_x] = Tile::empty();
+                    boardstate[end_y][end_x] = Tile::Empty;
                 }
                 else if boardstate[step_y][step_x] != Tile::Empty{
-                    boardstate[step_y][step_x] = Tile::empty();
+                    boardstate[step_y][step_x] = Tile::Empty;
                 }
             }
         }
@@ -263,7 +224,7 @@ impl Tile {
         //Flytta stenen.
         boardstate[end_y][end_x] = boardstate[start_y][start_x];
         //Rensa förra platsen.
-        boardstate[start_y][start_x] = Tile::empty();
+        boardstate[start_y][start_x] = Tile::Empty;
         //Uppdatera boardstate.
         b.set_state(&boardstate);
 

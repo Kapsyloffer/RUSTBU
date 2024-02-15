@@ -27,7 +27,7 @@ https://github.com/Kapsyloffer/RUSTBU-FE
 - [x] Create a new game and get a sharable link to it
 - [x] Entering a link joins the game.
 - [x] Allow moves only if it's your turn.
-- [ ] Navigatable Menu using mouse.
+- [ ] Write good UI.
 - [x] Determine which colour a player is.
 - [x] A Black player cannot move white rocks, and vice versa.
 - [x] Mirror the game for the white player. (i.e. white rocks on bottom)
@@ -82,7 +82,7 @@ Standard layout:       "DORK" layout:
 - [x] Joining a game; lobby owner is black, next person to join is white.
 - [x] If a game is full you're spectator. (ish)
 - [x] Prevent the first move from being on the opponent's homeboard.
-- [ ] No moves can be made until the game has started.
+- [x] No moves can be made until the game has started.
 - [x] End the game when we have a winner.
 - [ ] Prevent duplicate URLs. (Rare issue, but still bad if it happens.)
 
@@ -93,7 +93,7 @@ Standard layout:       "DORK" layout:
 - [ ] Ability to draw arrows like in Lichess/Chess.com
 - [ ] Lobby browser.
 - [ ] Lobby/in-game chat.
-- [ ] Option to select your color on lobby creation.
+- [x] Option to select your color on lobby creation.
 - [ ] Option to surrender.
 - [ ] Option to offer draw.
 - [ ] Option to ask for takeback.

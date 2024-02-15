@@ -22,15 +22,15 @@ impl Board {
     //Create default board.
     fn new_state() -> [[Tile; 4]; 4] {
         //Creates a new empty boardstate.
-        let mut board: [[Tile; 4]; 4] = [[Tile::empty(); 4]; 4];
+        let mut board: [[Tile; 4]; 4] = [[Tile::Empty; 4]; 4];
 
         //Add rocks
         for i in 0..4 {
             //Top row (White)
-            board[0][i] = Tile::white();
+            board[0][i] = Tile::White;
 
             //Bottom row (Black)
-            board[3][i] = Tile::black();
+            board[3][i] = Tile::Black;
         }
 
         /*

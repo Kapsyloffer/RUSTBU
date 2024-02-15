@@ -50,9 +50,9 @@ impl Game {
 
     pub fn is_player(&self, s: &String) -> Tile {
         match s.as_str() {
-            p if p == self.player_b => Tile::black(),
-            p if p == self.player_w => Tile::white(),
-            _ => Tile::empty(),
+            p if p == self.player_b => Tile::Black,
+            p if p == self.player_w => Tile::White,
+            _ => Tile::Empty,
         }
     }
 
@@ -66,15 +66,35 @@ impl Game {
         return self.winner != Tile::Empty;
     }
 
-    pub fn add_player(&mut self, player_id: String) -> bool {
-        // Check if player is not already assigned to player_b or player_w
-        if self.player_b == "None" && self.player_w != player_id.clone() {
-            self.player_b = player_id.clone();
-            return true;
-        } else if self.player_w == "None" && self.player_b != player_id.clone() {
-            self.player_w = player_id.clone();
-            return true;
-        }
+    pub fn add_player(&mut self, player_id: String, color: Option<Tile>) -> bool {
+        match color {
+            Some(Tile::Black) => {
+                if self.player_b == "None" && self.player_w != player_id.clone() {
+                    self.player_b = player_id.clone();
+                    return true;
+                }
+            },
+            Some(Tile::White) => {
+                if self.player_w == "None" && self.player_b != player_id.clone() {
+                    self.player_w = player_id.clone();
+                    return true;
+                }
+            }
+            Some(Tile::Empty) => unimplemented!(),
+            None => {
+                if self.player_b != "None" && self.player_w != "None" { //Full lobby
+                    return false;
+                } else if self.player_b == player_id || self.player_w == player_id { //Duplicate entries.
+                    return false;
+                } else if  self.player_b == "None" {
+                    self.player_b = player_id.clone();
+                    return true;
+                } else if  self.player_w == "None"  {
+                    self.player_w = player_id.clone();
+                    return true;
+                }
+            }
+        };
         return false;
     }
 
