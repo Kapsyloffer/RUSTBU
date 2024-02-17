@@ -34,7 +34,7 @@ impl Board {
         }
 
         /*
-        Detta returnar:
+        This returns:
         [W][W][W][W]
         [ ][ ][ ][ ]
         [ ][ ][ ][ ]

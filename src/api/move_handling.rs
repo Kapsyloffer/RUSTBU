@@ -57,7 +57,6 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     }
 
     let moved_p: bool = Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
-    //println!("moved_p: {moved_p}");
 
     //Make move on a
     let board_a = game
@@ -70,9 +69,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         return;
     }
 
-    let moved_a: bool =
-        Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
-    //println!("moved_a: {moved_a}");
+    let moved_a: bool = Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
 
     //If either move fail.
     if !moved_p || !moved_a {
@@ -111,7 +108,6 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
     let game = binding2.get(url).unwrap();
 
     let mut move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
-    //println!("fetch_moves: {}", move_list);
 
     /* We may not fetch moves if: 
     It's not your turn, 

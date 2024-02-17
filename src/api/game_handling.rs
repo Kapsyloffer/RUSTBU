@@ -23,7 +23,9 @@ pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &Game
 }
 
 pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile, game_hodler: &GameHodler) {
-    let url = Game::generate_url();
+    //Just to prevent collissions (Rare af but yaknow, just in case.)
+    let map_size = game_hodler.games.lock().unwrap().len();
+    let url = format!("{}{}", Game::generate_url(), map_size);
     println!("\n{} created game: {}\n", player_id, url);
     game_hodler
         .games
@@ -38,15 +40,6 @@ pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile
         .send(Message::Text(serde_json::to_string(&packet).unwrap()))
         .await
         .is_err() {
-        return;
-    }
-}
-
-pub async fn check_exists(socket: &mut WebSocket, url: &String, game_hodler: &GameHodler) {
-    let games = game_hodler.games.lock().unwrap().to_owned();
-    let exists = games.get(url).is_some();
-    
-    if socket.send(Message::Text(format!("{}", exists))).await.is_err() {
         return;
     }
 }

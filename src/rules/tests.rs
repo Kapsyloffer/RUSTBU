@@ -1193,3 +1193,20 @@ fn diagonal_push_1_step(){
     assert!(Tile::aggressive_move(&mut board, (3, 3), (2, 2))); 
     assert_eq!(board.get_state(), &target_state);
 }
+
+#[test]
+fn is_valid_bug_test()
+{
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+    
+    //Not supposed to do that.
+    assert!(!Tile::is_valid(board.get_state(), (2, 1), (2, 3), &2, false, (&0, &1)));
+}

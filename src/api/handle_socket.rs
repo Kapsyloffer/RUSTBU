@@ -4,7 +4,7 @@ use axum::
 };
 use crate::
 {
-    api::{game_handling::{check_exists, create_game, fetch_game}, move_handling::*},
+    api::{game_handling::{create_game, fetch_game}, move_handling::*},
     rules::game_hodler::GameHodler,
 };
 
@@ -36,31 +36,33 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
             };
 
             match packet {
-                //recieve and process movement action
+                //recieve and process movement action.
                 GamePacket::Action { url, move_p, move_a } => {
                     do_move( &game_hodler, &url, &move_p, &move_a).await;
                 }
+                //Create a new game.
                 GamePacket::CreateGame {player_id, color} => {
                     create_game(&mut socket, player_id, &color, &game_hodler).await;
                 }
-                GamePacket::CheckExists { url } => {
-                    check_exists(&mut socket, &url, &game_hodler).await;
-                }
-                //Send current gamestate
-                GamePacket::FetchGame { url } => {
-                    fetch_game(&mut socket, &url, &game_hodler).await;
-                }
-                GamePacket::JoinGame { url , player_id} => {
-                    join_game(&mut socket, &url,  &player_id, &game_hodler).await;
-                }
-                GamePacket::FetchMoves { url, h, c, x, y, aggr, player} => {
-                    fetch_moves(&mut socket, &game_hodler, &url, &h, &c, &x, &y, &aggr, &player).await;
-                }
+                //Response on create a new game.
                 GamePacket::GameCreated { url } => {
                     if socket.send(Message::Text(url)).await.is_err() {
                         return;
                     }
-                },
+                }
+                //Send current gamestate.
+                GamePacket::FetchGame { url } => {
+                    fetch_game(&mut socket, &url, &game_hodler).await;
+                }
+                //Request to join a game.
+                GamePacket::JoinGame { url , player_id} => {
+                    join_game(&mut socket, &url,  &player_id, &game_hodler).await;
+                }
+                //Get possible moves.
+                GamePacket::FetchMoves { url, h, c, x, y, aggr, player} => {
+                    fetch_moves(&mut socket, &game_hodler, &url, &h, &c, &x, &y, &aggr, &player).await;
+                }
+                //Previously made moves.
                 GamePacket::FetchPreviousMoves { url } => {
                     fetch_previous_moves(&mut socket, &game_hodler, &url).await;
                 }

@@ -18,10 +18,6 @@ pub (crate) enum GamePacket {
         player_id: String,
         color: Tile,
     },
-    //Call to check if game exists (Unused)
-    CheckExists { 
-        url: String,
-    },
     //Call to fetch game state
     FetchGame { 
         url: String,
