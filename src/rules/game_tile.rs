@@ -60,34 +60,32 @@ impl Tile {
         let newy = new_pos.0 as usize;
         let newx = new_pos.1 as usize;
 
-        
-        //direction deltas
-        let dy = ((new_pos.0 - cur_pos.0) as f32 / 2.0).round() as i8;
-        let dx = ((new_pos.1 - cur_pos.1) as f32 / 2.0).round() as i8;
+        //Movement deltas.
+        let dy = new_pos.0 - cur_pos.0;
+        let dx = new_pos.1 - cur_pos.1;
 
-        
-        
-        
+        //Movement directions.
+        let dir_y = (dy as f32 / 2.0).round() as i8;
+        let dir_x = (dx as f32 / 2.0).round() as i8;
 
-        println!("dy: {}, dx: {}", dy, dx);
-
-        //i = size of step, 1 or 2.
+        //i = size of step, either 1 or 2.
         let size = dy.abs().max(dx.abs());
 
         //step coordinates (used if move is 2 in size)
-        let step_y = (cur_pos.0 + dy * 1) as usize;
-        let step_x = (cur_pos.1 + dx * 1) as usize;
+        let step_y = (cur_pos.0 + dir_y * 1) as usize;
+        let step_x = (cur_pos.1 + dir_x * 1) as usize;
 
         //If outta range
         if newx > 3 || newy > 3 || step_y > 3 || step_x > 3 {
             return false;
         }
 
-        //Passive
+        //Passive move; invalid if anything is in its way.
         if !aggr {
             return state[newy][newx] == Tile::Empty && state[step_y][step_x] == Tile::Empty;
         }
 
+        //Aggressive move.
         if aggr {
             //We may not push our own rocks.
             if state[newy][newx] == state[cur_pos.0 as usize][cur_pos.1 as usize] {
@@ -95,12 +93,11 @@ impl Tile {
             }
 
             //future rock positions if pushed:
-            let rock_y = cur_pos.0 + (size + 1) * dy;
-            let rock_x = cur_pos.1 + (size + 1) * dx;
+            let rock_y = cur_pos.0 + (size + 1) * dir_y;
+            let rock_x = cur_pos.1 + (size + 1) * dir_x;
 
             //In case the rock is pushed off the board.
             if (rock_y) > 3 || (rock_x) > 3 || (rock_y) < 0 || (rock_x) < 0 {
-                print!("rock_y: {}, rock_x: {}", rock_y, rock_x);
                 return true;
             }
 
@@ -147,7 +144,9 @@ impl Tile {
     }
 
     pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
+
         let cur_tile = b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize];
+
         if Tile::is_empty(cur_tile) {
             eprintln!("\nwtf are you doing? That's not a rock!\n"); 
         }
@@ -163,31 +162,29 @@ impl Tile {
         let mut boardstate = *b.get_state();
 
         //Direction
-        let dir = (
-            (dy as f32 / 2.0).round() as i8,
-            (dx as f32 / 2.0).round() as i8,
-        );
+        let dir_y = (dy as f32 / 2.0).round() as i8;
+        let dir_x = (dx as f32 / 2.0).round() as i8;
 
         //Starting position of the aggressive rock.
         let start_y = cur_pos.0 as usize;
         let start_x = cur_pos.1 as usize;
 
         //The space between end and start (Only used if we move 2 steps)
-        let step_y = (cur_pos.0 + 1 * dir.0) as usize;
-        let step_x = (cur_pos.1 + 1 * dir.1) as usize;
+        let step_y = (cur_pos.0 + 1 * dir_y) as usize;
+        let step_x = (cur_pos.1 + 1 * dir_x) as usize;
 
         //Target position
         let end_y = new_pos.0 as usize;
         let end_x = new_pos.1 as usize;
 
         //End position for the rock we push.
-        let rock_y = (new_pos.0 + 1 * dir.0) as usize;
-        let rock_x = (new_pos.1 + 1 * dir.1) as usize;
+        let rock_y = (new_pos.0 + 1 * dir_y) as usize;
+        let rock_x = (new_pos.1 + 1 * dir_x) as usize;
 
         let mut stepping: bool = true;
         let mut on_board: bool = true;
 
-        if step_x == end_x && step_y == end_y {
+        if (step_y, step_x) == (end_y, end_x) {
             stepping = false;
         }
         if rock_x > 3 || rock_y > 3{
