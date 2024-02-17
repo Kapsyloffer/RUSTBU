@@ -12,10 +12,6 @@ pub enum Tile {
 }
 
 impl Tile {
-    pub fn is_empty(t: Tile) -> bool {
-        return t == Tile::Empty;
-    }
-
     pub fn get_possible_moves(b: &Board, aggr: bool, cur_pos: (i8, i8)) -> Vec<(i8, i8)> {
         let boardstate = b.get_state();
         let mut movelist: Vec<(i8, i8)> = Vec::new();
@@ -51,7 +47,6 @@ impl Tile {
         return movelist;
     }
 
-    //This is ugly but eh.
     pub fn is_valid(board: &Board, cur_pos: (i8, i8), new_pos: (i8, i8), aggr: bool) -> bool {
 
         let state = board.get_state();
@@ -147,7 +142,7 @@ impl Tile {
 
         let cur_tile = b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize];
 
-        if Tile::is_empty(cur_tile) {
+        if cur_tile == Tile::Empty {
             eprintln!("\nwtf are you doing? That's not a rock!\n"); 
         }
 
