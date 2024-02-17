@@ -42,22 +42,39 @@ impl Tile {
             for i in 1..=2 as i8 {
                 let new_pos = (cur_pos.0 + i * dy, cur_pos.1 + i * dx);
 
-                if Tile::is_valid(boardstate, cur_pos, new_pos, &i, aggr, (&dy, &dx)) {
-                    movelist.push((new_pos.0, new_pos.1)); //this is so crummy.
-                    continue;
+                if !Tile::is_valid(&b, cur_pos, new_pos, aggr) {
+                    break;
                 }
-                break;
+                movelist.push((new_pos.0, new_pos.1));
             }
         }
         return movelist;
     }
 
     //This is ugly but eh.
-    pub fn is_valid(state: &[[Tile; 4]; 4], cur_pos: (i8, i8), new_pos: (i8, i8), size: &i8, aggr: bool, (dy, dx): (&i8, &i8)) -> bool {
+    pub fn is_valid(board: &Board, cur_pos: (i8, i8), new_pos: (i8, i8), aggr: bool) -> bool {
+
+        let state = board.get_state();
+
         //Check if in range.
         let newy = new_pos.0 as usize;
         let newx = new_pos.1 as usize;
 
+        
+        //direction deltas
+        let dy = ((new_pos.0 - cur_pos.0) as f32 / 2.0).round() as i8;
+        let dx = ((new_pos.1 - cur_pos.1) as f32 / 2.0).round() as i8;
+
+        
+        
+        
+
+        println!("dy: {}, dx: {}", dy, dx);
+
+        //i = size of step, 1 or 2.
+        let size = dy.abs().max(dx.abs());
+
+        //step coordinates (used if move is 2 in size)
         let step_y = (cur_pos.0 + dy * 1) as usize;
         let step_x = (cur_pos.1 + dx * 1) as usize;
 
@@ -78,18 +95,19 @@ impl Tile {
             }
 
             //future rock positions if pushed:
-            let rock_y = cur_pos.0 + (*size + 1) * dy;
-            let rock_x = cur_pos.1 + (*size + 1) * dx;
+            let rock_y = cur_pos.0 + (size + 1) * dy;
+            let rock_x = cur_pos.1 + (size + 1) * dx;
 
             //In case the rock is pushed off the board.
             if (rock_y) > 3 || (rock_x) > 3 || (rock_y) < 0 || (rock_x) < 0 {
+                print!("rock_y: {}, rock_x: {}", rock_y, rock_x);
                 return true;
             }
 
             //Check if a rock is behind our new position if we're pushing a rock. If it's empty we good.
-            if *size == 1 && state[newy][newx] != Tile::Empty {
+            if size == 1 && state[newy][newx] != Tile::Empty {
                 return state[rock_y as usize][rock_x as usize] == Tile::Empty;
-            } else if *size == 2 && state[step_y][step_x] != Tile::Empty {
+            } else if size == 2 && state[step_y][step_x] != Tile::Empty {
                 //If a future rock position is not empty then the move is not valid.
                 if state[rock_y as usize][rock_x as usize] != Tile::Empty{
                     return false;
@@ -103,19 +121,13 @@ impl Tile {
 
     pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
 
-        let dx = new_pos.1 - cur_pos.1;
-        let dy = new_pos.0 - cur_pos.0;
-
-        //i = size of step, 1 or 2.
-        let i = dy.abs().max(dx.abs());
-
         //If thhe move is invalid, return false.
-        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &i, false, (&dy, &dx)) {
+        if !Tile::is_valid(b, cur_pos, new_pos, false) {
             return false;
         }
 
         //If we move 0 steps the move is false.
-        if dx == 0 && dy == 0 {
+        if cur_pos == new_pos {
             return false;
         }
 
@@ -143,16 +155,8 @@ impl Tile {
         let dx = new_pos.1 - cur_pos.1;
         let dy = new_pos.0 - cur_pos.0;
 
-        let dir = (
-            (dy as f32 / 2.0).round() as i8,
-            (dx as f32 / 2.0).round() as i8,
-        );
-
-        //i = antal steps, 1 eller 2
-        let size = dy.abs().max(dx.abs());
-
         //First and foremost check if the move is valid.
-        if !Tile::is_valid(b.get_state(), cur_pos, new_pos, &size, true, (&dir.0, &dir.1)) {
+        if !Tile::is_valid(&b, cur_pos, new_pos, true) {
             return false;
         }
 
