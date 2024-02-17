@@ -650,15 +650,8 @@ fn movement_one_in_each_dir_1_step_passive() {
         (1, -1),
     ];
 
-    for d in directions {
-        assert!(Tile::is_valid(
-            b.get_state(),
-            (2, 2),
-            (2 + d.0, 2 + d.1),
-            &1,
-            false,
-            (&d.0, &d.1)
-        ));
+    for d in directions { 
+        assert!(Tile::is_valid(&b, (2, 2), (2 + d.0, 2 + d.1), false ));
     }
 }
 
@@ -687,14 +680,7 @@ fn movement_one_in_each_dir_1_step_aggressive() {
     ];
 
     for d in directions {
-        assert!(Tile::is_valid(
-            b.get_state(),
-            (2, 2),
-            (2 + d.0, 2 + d.1),
-            &1,
-            true,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid( &b, (2, 2), (2 + d.0, 2 + d.1), true));
     }
 }
 
@@ -744,47 +730,19 @@ fn movement_one_in_each_dir_2_step_passive() {
     let dir_br = [(-1, 0), (-1, -1), (0, -1)];
 
     for d in dir_tl {
-        assert!(Tile::is_valid(
-            b_tl.get_state(),
-            (0, 0),
-            (2 + d.0, 2 + d.1),
-            &2,
-            false,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_tl, (0, 0), (2 + d.0, 2 + d.1), false));
     }
 
     for d in dir_tr {
-        assert!(Tile::is_valid(
-            b_tr.get_state(),
-            (0, 3),
-            (2 + d.0, 2 + d.1),
-            &2,
-            false,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_tr, (0, 3), (2 + d.0, 2 + d.1), false));
     }
 
     for d in dir_bl {
-        assert!(Tile::is_valid(
-            b_bl.get_state(),
-            (3, 0),
-            (2 + d.0, 2 + d.1),
-            &2,
-            false,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_bl, (3, 0), (2 + d.0, 2 + d.1), false ));
     }
 
     for d in dir_br {
-        assert!(Tile::is_valid(
-            b_br.get_state(),
-            (3, 3),
-            (2 + d.0, 2 + d.1),
-            &2,
-            false,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_br, (3, 3), (2 + d.0, 2 + d.1), false));
     }
 }
 
@@ -834,47 +792,19 @@ fn movement_one_in_each_dir_2_step_aggr() {
     let dir_br = [(-1, 0), (-1, -1), (0, -1)];
 
     for d in dir_tl {
-        assert!(Tile::is_valid(
-            b_tl.get_state(),
-            (0, 0),
-            (2 + d.0, 2 + d.1),
-            &2,
-            true,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_tl, (0, 0), (2 + d.0, 2 + d.1), true));
     }
 
     for d in dir_tr {
-        assert!(Tile::is_valid(
-            b_tr.get_state(),
-            (0, 3),
-            (2 + d.0, 2 + d.1),
-            &2,
-            true,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_tr, (0, 3), (2 + d.0, 2 + d.1), true ));
     }
 
     for d in dir_bl {
-        assert!(Tile::is_valid(
-            b_bl.get_state(),
-            (3, 0),
-            (2 + d.0, 2 + d.1),
-            &2,
-            true,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_bl, (3,0), (2 + d.0, 2 + d.1), true ));
     }
 
     for d in dir_br {
-        assert!(Tile::is_valid(
-            b_br.get_state(),
-            (3, 3),
-            (2 + d.0, 2 + d.1),
-            &2,
-            true,
-            (&d.0, &d.1)
-        ));
+        assert!(Tile::is_valid(&b_br, (3, 3), (2 + d.0, 2 + d.1), true ));
     }
 }
 
@@ -1208,5 +1138,5 @@ fn is_valid_bug_test()
     board.set_state(&state);
     
     //Not supposed to do that.
-    assert!(!Tile::is_valid(board.get_state(), (2, 1), (2, 3), &2, false, (&0, &1)));
+    assert!(!Tile::is_valid(&board, (2, 1), (2, 3), false));
 }
