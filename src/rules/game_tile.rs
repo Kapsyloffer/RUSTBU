@@ -51,7 +51,11 @@ impl Tile {
 
         let state = board.get_state();
 
-        //Check if in range.
+        //Current position x and y.
+        let cur_y = cur_pos.0 as usize;
+        let cur_x = cur_pos.1 as usize;
+
+        //New position x and y.
         let new_y = new_pos.0 as usize;
         let new_x = new_pos.1 as usize;
 
@@ -70,49 +74,51 @@ impl Tile {
         let step_y = (cur_pos.0 + dir_y * 1) as usize;
         let step_x = (cur_pos.1 + dir_x * 1) as usize;
 
-        //If outta range
-        if new_x > 3 || new_y > 3 || step_y > 3 || step_x > 3 {
+        //Check if outta range
+        if new_x > 3 || new_y > 3 
+        || step_y > 3 || step_x > 3 {
             return false;
         }
 
         //Passive move; invalid if anything is in its way.
         if !aggr {
-            return state[new_y][new_x] == Tile::Empty && state[step_y][step_x] == Tile::Empty;
+            return state[new_y][new_x] == Tile::Empty 
+            && state[step_y][step_x] == Tile::Empty;
         }
 
         //TODO: Rewrite this better.
         //Aggressive move.
         if aggr {
             //We may not push our own rocks.
-            if state[new_y][new_x] == state[cur_pos.0 as usize][cur_pos.1 as usize] 
-            || state[step_y][step_x] == state[cur_pos.0 as usize][cur_pos.1 as usize] {
+            if state[new_y][new_x] == state[cur_y][cur_x] || state[step_y][step_x] == state[cur_y][cur_x] {
                 return false;
             }
 
             //future rock positions if pushed:
-            let rock_y = cur_pos.0 + (size + 1) * dir_y;
-            let rock_x = cur_pos.1 + (size + 1) * dir_x;
+            let rock_y = (cur_pos.0 + (size + 1) * dir_y) as usize;
+            let rock_x = (cur_pos.1 + (size + 1) * dir_x) as usize;
 
             //In case the rock is pushed off the board.
-            let on_board = !((rock_y) > 3 || (rock_x) > 3 || (rock_y) < 0 || (rock_x) < 0); 
+            let on_board = !((rock_y) > 3 || (rock_x) > 3); 
             
             if on_board {
                 //If a future rock position is not empty then the move is not valid.
-                if size == 2 && state[rock_y as usize][rock_x as usize] != Tile::Empty {
-                    if state[new_y as usize][new_x as usize] != Tile::Empty || state[step_y as usize][step_x as usize] != Tile::Empty {
+                if size == 2 && state[rock_y][rock_x] != Tile::Empty {
+                    if state[new_y][new_x] != Tile::Empty || state[step_y][step_x] != Tile::Empty {
                         return false;
                     }
                 }
             }
 
             //Edge case, rogue rock squish.
-            if size == 2 && state[new_y][new_x] != Tile::Empty && state[step_y][step_x] != Tile::Empty && !on_board{
+            if size == 2 && state[new_y][new_x] != Tile::Empty 
+            && state[step_y][step_x] != Tile::Empty && !on_board {
                 return false;
             }
 
             //Check if a rock is behind our new position if we're pushing a rock. If it's empty we good.
             if size == 1 && state[new_y][new_x] != Tile::Empty && on_board {
-                return state[rock_y as usize][rock_x as usize] == Tile::Empty;
+                return state[rock_y][rock_x] == Tile::Empty;
             }
 
             //If the rock we're pushing is between us and the target tile.
