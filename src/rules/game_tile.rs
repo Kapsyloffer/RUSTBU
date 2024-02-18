@@ -83,11 +83,9 @@ impl Tile {
         //TODO: Rewrite this better.
         //Aggressive move.
         if aggr {
-            println!("aggr");
             //We may not push our own rocks.
             if state[new_y][new_x] == state[cur_pos.0 as usize][cur_pos.1 as usize] 
             || state[step_y][step_x] == state[cur_pos.0 as usize][cur_pos.1 as usize] {
-                println!("own rocks");
                 return false;
             }
 
