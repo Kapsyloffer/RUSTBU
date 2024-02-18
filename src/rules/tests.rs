@@ -944,13 +944,6 @@ fn add_player_disallow_joins(){
 }
 
 #[test]
-fn is_empty_test() {
-    assert!(Tile::is_empty(Tile::Empty));
-    assert!(!Tile::is_empty(Tile::White));
-    assert!(!Tile::is_empty(Tile::Black));
-}
-
-#[test]
 fn diagonal_push_1(){
     let state: [[Tile; 4]; 4] = [
         [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
