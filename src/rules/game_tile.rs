@@ -101,7 +101,9 @@ impl Tile {
             if on_board {
                 //If a future rock position is not empty then the move is not valid.
                 if size == 2 && state[rock_y as usize][rock_x as usize] != Tile::Empty {
-                    return false;
+                    if state[new_y as usize][new_x as usize] != Tile::Empty || state[step_y as usize][step_x as usize] != Tile::Empty {
+                        return false;
+                    }
                 }
             }
 
