@@ -166,6 +166,7 @@ fn valid_movement_locked_aggressive_2() {
     for l in &list {
         println!("posible: {} {}", l.0, l.1);
     }
+    assert!(Tile::is_valid(&b, (0, 3), (1, 3), true));
     assert!(list.contains(&(1, 3)));
     assert!(list.contains(&(2, 3)));
     assert_eq!(list.len(), 2);
@@ -1139,4 +1140,55 @@ fn is_valid_bug_test()
     
     //Not supposed to do that.
     assert!(!Tile::is_valid(&board, (2, 1), (2, 3), false));
+}
+
+#[test]
+fn squish_test_1(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::White, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+    
+    //Not supposed to do that.
+    assert!(!Tile::is_valid(&board, (3, 0), (1, 0), true));
+    assert!(!Tile::aggressive_move(&mut board, (3, 0), (1, 0)));
+}
+
+#[test]
+fn squish_test_2(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+    
+    //Not supposed to do that.
+    assert!(!Tile::is_valid(&board, (3, 3), (1, 1), true));
+    assert!(!Tile::aggressive_move(&mut board, (3, 3), (1, 1)));
+}
+
+#[test]
+fn squish_test_3(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Black, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Black, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::White, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+    
+    //Not supposed to do that.
+    assert!(!Tile::is_valid(&board, (2, 2), (0, 0), true));
+    assert!(!Tile::aggressive_move(&mut board, (2, 2), (0, 0)));
 }
