@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
-
 use crate::rules::game_tile::Tile;
-
 use super::move_handling::MovementAction;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

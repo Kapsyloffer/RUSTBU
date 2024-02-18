@@ -22,56 +22,57 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
     };
     let turn = game.get_turn();
 
+    //You may not move if the game is ended.
     if game.has_winner(){
-        //println!("Nah");
         return;
     }
 
+    //You may not move on a same coloured board.
     if move_p.board_colour == move_a.board_colour {
-        //println!("Cannot move on same coloured board.");
         return;
     }
 
-    //In case the passive and aggressive move differ.
+    //In case the passive and aggressive move differ in size and direction.
     if move_p.x1 - move_p.x2 != move_a.x1 - move_a.x2
     || move_p.y1 - move_p.y2 != move_a.y1 - move_a.y2
     {
-        //println!("Cheating Detected! Calling SÄPO...");
         return;
     }
 
+    //In case the passive move is not made on your homeboard.
     if move_p.home_colour != turn{
-        //println!("That's not your homeboard you sussy baka!");
         return;
     }
 
-    //Make move on p
+    //Make a move on p
     let board_p = game
         .get_board(move_p.home_colour, move_p.board_colour)
         .unwrap();
-    let b4_p = board_p.clone(); //In case it breaks
+    //In case it breaks
+    let b4_p = board_p.clone(); 
 
+    //You may not move if it's not your turn.
     if b4_p.get_state()[move_p.x1 as usize][move_p.y1 as usize] != turn{
-        //println!("You have to wait for your turn!");
         return;
     }
 
     let moved_p: bool = Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
 
-    //Make move on a
+    //Make a move on a
     let board_a = game
         .get_board(move_a.home_colour, move_a.board_colour)
         .unwrap();
-    let b4_a = board_a.clone(); //In case it breaks
+    //In case it breaks
+    let b4_a = board_a.clone(); 
 
+    //You may not move if it's not your turn.
     if b4_a.get_state()[move_a.x1 as usize][move_a.y1 as usize] != turn{
-        //println!("You have to wait for your turn!");
         return;
     }
 
     let moved_a: bool = Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
 
-    //If either move fail.
+    //If either move fail we reset the board states.
     if !moved_p || !moved_a {
         //Reset passive move board
         game.get_board(move_p.home_colour, move_p.board_colour)
@@ -82,8 +83,6 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         game.get_board(move_a.home_colour, move_a.board_colour)
             .unwrap()
             .set_state(b4_a.get_state());
-
-        //return;
     } else {
         let winner = Board::check_winner(&board_a);
         game.set_winner(&winner);
@@ -96,7 +95,6 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         game.next_turn();
     }
 
-    //println!("{:#?}", game_hodler.moves);
     println!("{}", game.display());
 }
 

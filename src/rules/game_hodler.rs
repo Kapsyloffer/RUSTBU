@@ -4,7 +4,6 @@ use std::{
 };
 
 use crate::api::move_handling::MovementAction;
-
 use super::game_instance::Game;
 
 #[derive(Debug, Clone)]

@@ -16,7 +16,6 @@ impl Game {
     pub fn new_game() -> Game {
         let board_bw = Board::new_board(Tile::Black, Tile::White);
         let board_bb = Board::new_board(Tile::Black, Tile::Black);
-
         let board_ww = Board::new_board(Tile::White, Tile::White);
         let board_wb = Board::new_board(Tile::White, Tile::Black);
 
@@ -32,9 +31,7 @@ impl Game {
     pub fn next_turn(&mut self) {
         match self.turn {
             Tile::White => self.turn = Tile::Black,
-
             Tile::Black => self.turn = Tile::White,
-
             Tile::Empty => unimplemented!(),
         }
     }
@@ -44,7 +41,6 @@ impl Game {
     }
 
     pub fn get_players(&self) -> (String, String) {
-        //Forgive me father for I have sinned.
         return (self.player_b.to_owned(), self.player_w.to_owned());
     }
 

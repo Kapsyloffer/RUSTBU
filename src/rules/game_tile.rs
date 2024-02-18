@@ -23,16 +23,7 @@ impl Tile {
         
         //[y, x]?, x → y ↓
         //Ok wtf did I do here?
-        let directions = [
-            (0, -1),
-            (0, 1),
-            (-1, 0),
-            (1, 0),
-            (-1, -1),
-            (-1, 1),
-            (1, 1),
-            (1, -1),
-        ];
+        let directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, 1), (1, -1)];
 
         for (dy, dx) in directions.iter() {
             for i in 1..=2 as i8 {
@@ -49,15 +40,16 @@ impl Tile {
 
     pub fn is_valid(board: &Board, cur_pos: (i8, i8), new_pos: (i8, i8), aggr: bool) -> bool {
 
+        //Boardstate
         let state = board.get_state();
 
         //Current position x and y.
-        let cur_y = cur_pos.0 as usize;
-        let cur_x = cur_pos.1 as usize;
+        let start_y = cur_pos.0 as usize;
+        let start_x = cur_pos.1 as usize;
 
         //New position x and y.
-        let new_y = new_pos.0 as usize;
-        let new_x = new_pos.1 as usize;
+        let end_y = new_pos.0 as usize;
+        let end_x = new_pos.1 as usize;
 
         //Movement deltas.
         let dy = new_pos.0 - cur_pos.0;
@@ -75,14 +67,14 @@ impl Tile {
         let step_x = (cur_pos.1 + dir_x * 1) as usize;
 
         //Check if outta range
-        if new_x > 3 || new_y > 3 
+        if end_x > 3 || end_y > 3 
         || step_y > 3 || step_x > 3 {
             return false;
         }
 
         //Passive move; invalid if anything is in its way.
         if !aggr {
-            return state[new_y][new_x] == Tile::Empty 
+            return state[end_y][end_x] == Tile::Empty 
             && state[step_y][step_x] == Tile::Empty;
         }
 
@@ -90,7 +82,7 @@ impl Tile {
         //Aggressive move.
         if aggr {
             //We may not push our own rocks.
-            if state[new_y][new_x] == state[cur_y][cur_x] || state[step_y][step_x] == state[cur_y][cur_x] {
+            if state[end_y][end_x] == state[start_y][start_x] || state[step_y][step_x] == state[start_y][start_x] {
                 return false;
             }
 
@@ -104,27 +96,27 @@ impl Tile {
             if on_board {
                 //If a future rock position is not empty then the move is not valid.
                 if size == 2 && state[rock_y][rock_x] != Tile::Empty {
-                    if state[new_y][new_x] != Tile::Empty || state[step_y][step_x] != Tile::Empty {
+                    if state[end_y][end_x] != Tile::Empty || state[step_y][step_x] != Tile::Empty {
                         return false;
                     }
                 }
             }
 
             //Edge case, rogue rock squish.
-            if size == 2 && state[new_y][new_x] != Tile::Empty 
+            if size == 2 && state[end_y][end_x] != Tile::Empty 
             && state[step_y][step_x] != Tile::Empty && !on_board {
                 return false;
             }
 
             //Check if a rock is behind our new position if we're pushing a rock. If it's empty we good.
-            if size == 1 && state[new_y][new_x] != Tile::Empty && on_board {
+            if size == 1 && state[end_y][end_x] != Tile::Empty && on_board {
                 return state[rock_y][rock_x] == Tile::Empty;
             }
 
             //If the rock we're pushing is between us and the target tile.
             if size == 2 && state[step_y][step_x] != Tile::Empty {
                 //Check if there is a rock where we're going.
-                return state[new_y][new_x] == Tile::Empty;
+                return state[end_y][end_x] == Tile::Empty;
             }
         }
         return true;
@@ -132,25 +124,29 @@ impl Tile {
 
     pub fn passive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
 
-        //If thhe move is invalid, return false.
-        if !Tile::is_valid(b, cur_pos, new_pos, false) {
-            return false;
-        }
+        //Start pos
+        let start_y = cur_pos.0 as usize;
+        let start_x = cur_pos.1 as usize;
 
-        //If we move 0 steps the move is false.
-        if cur_pos == new_pos {
+        //End pos
+        let end_y = new_pos.0 as usize;
+        let end_x = new_pos.1 as usize;
+        
+
+        //If the move is invalid, return false.
+        if !Tile::is_valid(b, cur_pos, new_pos, false) {
             return false;
         }
 
         let mut boardstate = *b.get_state();
         
-        let rock_me = boardstate[cur_pos.0 as usize][cur_pos.1 as usize];
+        let rock_me = boardstate[start_y][start_x];
 
-        //Old space is empty
-        boardstate[cur_pos.0 as usize][cur_pos.1 as usize] = Tile::Empty;
+        //Clear the old space
+        boardstate[start_y][start_x] = Tile::Empty;
 
-        //New space has the rock
-        boardstate[new_pos.0 as usize][new_pos.1 as usize] = rock_me;
+        //Move the rock
+        boardstate[end_y][end_x] = rock_me;
 
         //Update state with new board.
         b.set_state(&boardstate);
@@ -160,11 +156,11 @@ impl Tile {
     pub fn aggressive_move(b: &mut Board, cur_pos: (i8, i8), new_pos: (i8, i8)) -> bool {
 
         let cur_tile = b.to_owned().get_state()[cur_pos.0 as usize][cur_pos.1 as usize];
-
         if cur_tile == Tile::Empty {
             eprintln!("\nwtf are you doing? That's not a rock!\n"); 
         }
 
+        //Movement detlas.
         let dx = new_pos.1 - cur_pos.1;
         let dy = new_pos.0 - cur_pos.0;
 
@@ -234,13 +230,6 @@ impl Tile {
                 }
             }
         }
-
-        /*
-        [start][step][end][rock]- Case 1
-        [start][step][end]- Case 2
-        [start][end][rock]- Case 3
-        [start][end]- Case 4
-        */
         
         //Move the rock.
         boardstate[end_y][end_x] = boardstate[start_y][start_x];

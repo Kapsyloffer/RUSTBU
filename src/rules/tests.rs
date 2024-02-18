@@ -318,9 +318,6 @@ fn movement_aggressive_1_step_push() {
 
     assert!(Tile::aggressive_move(&mut b, (0, 2), (0, 3)));
 
-    println!("{}", b.fancy_print());
-    println!("{}", b2.fancy_print());
-
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());
 }
@@ -550,9 +547,6 @@ fn movement_aggressive_3_0_slightpush() {
     b2.set_state(&boardstate);
 
     assert!(Tile::aggressive_move(&mut b, (1, 2), (2, 1)));
-
-    println!("{}", b.fancy_print());
-    println!("{}", b2.fancy_print());
 
     assert_eq!(*b.get_state(), boardstate_next);
     assert_ne!(b2.get_state(), b.get_state());

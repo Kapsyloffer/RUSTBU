@@ -66,13 +66,11 @@ pub async fn fetch_previous_moves(socket: &mut WebSocket, game_hodler: &GameHodl
 
         if let Ok(serialized) = serialized {
             let serialized_message = Message::Text(serialized.clone());
-            //println!("{}", serialized);
             
             if socket.send(serialized_message).await.is_err() {
                 return;
             }
         } else {
-            // Handle serialization error
             eprintln!("Error serializing moves_tuple");
         }   
     }
