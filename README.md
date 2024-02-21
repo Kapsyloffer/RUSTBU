@@ -76,15 +76,15 @@ Standard layout:       "DORK" layout:
 - [x] Handle websocket connection.
 - [x] Verify which player is making a move. Black should not move white rocks.
 - [x] Generate link on new game, and redirect.
-- [ ] Broadcasting.
 - [x] Update state for both players on board change. (TODO: Do properly...)
-- [ ] Unit test websocket gameplay.
 - [x] Joining a game; lobby owner is black, next person to join is white.
 - [x] If a game is full you're spectator. (ish)
 - [x] Prevent the first move from being on the opponent's homeboard.
 - [x] No moves can be made until the game has started.
 - [x] End the game when we have a winner.
-- [ ] Prevent duplicate URLs. (Rare issue, but still bad if it happens.)
+- [x] Prevent duplicate URLs. (Rare issue, but still bad if it happens.)
+- [ ] Unit test websocket gameplay.
+- [ ] Broadcasting.
 
 
 ### Future improvements:
@@ -98,9 +98,10 @@ Standard layout:       "DORK" layout:
 - [ ] Option to offer draw.
 - [ ] Option to ask for takeback.
 - [ ] Movement History (+ Algebraic notation).
-- [ ] Visual setting, checkered board or "normal" board.
+- [ ] Visual settings for boards.
 - [ ] bo3, winner plays white next game (goes second).
-- [ ] gamemodes?
+- [ ] gamemodes: Different board sizes? bo3? House Rules?
+- [ ] Turn timer, with the rope burning to show time remaining.
 - [ ] Return to lobby after the game is over.
 - [ ] Account.
 - [ ] ELO.
@@ -109,6 +110,6 @@ Standard layout:       "DORK" layout:
 - [ ] Navigatable page.
 - [ ] Themes for boards and pieces.
 - [ ] SHOBU engine/AI.
+- [ ] Movement animations / Smooth movement.
 
 Disclaimer: I do not own SHOBU in any way, shape, or form.  I just find the game neat hence I'm doing this project.
-
