@@ -83,7 +83,6 @@ Standard layout:       "DORK" layout:
 - [x] No moves can be made until the game has started.
 - [x] End the game when we have a winner.
 - [x] Prevent duplicate URLs. (Rare issue, but still bad if it happens.)
-- [ ] Unit test websocket gameplay.
 - [ ] Broadcasting.
 
 
