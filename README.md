@@ -101,7 +101,7 @@ Standard layout:       "DORK" layout:
 - [ ] Visual settings for boards.
 - [ ] bo3, winner plays white next game (goes second).
 - [ ] gamemodes: Different board sizes? bo3? House Rules?
-- [ ] Turn timer, with the rope burning to show time remaining.
+- [ ] Game timer, with the rope burning to show time remaining.
 - [ ] Return to lobby after the game is over.
 - [ ] Account.
 - [ ] ELO.
