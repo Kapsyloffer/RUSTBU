@@ -111,5 +111,6 @@ Standard layout:       "DORK" layout:
 - [ ] Themes for boards and pieces.
 - [ ] SHOBU engine/AI.
 - [ ] Movement animations / Smooth movement.
+- [ ] Allow aggressive moves first / Detect which of the two moves is aggressive.
 
 Disclaimer: I do not own SHOBU in any way, shape, or form.  I just find the game neat hence I'm doing this project.
