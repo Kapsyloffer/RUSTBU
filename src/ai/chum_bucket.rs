@@ -125,8 +125,8 @@ impl ChumBucket {
                                 String::from("ChumBucketAI")
                             );
 
-                            println!("\nOUR BEST MOVE:\nROCKS:{}\nRANGE:{}\nMOVE_P:\n{:#?}\nMOVE_A:\n{:#?}", 
-                            rock_count, range_count, move_p, move_a);
+                            //println!("\nOUR BEST MOVE:\nROCKS:{}\nRANGE:{}\nMOVE_P:\n{:#?}\nMOVE_A:\n{:#?}", 
+                            //rock_count, range_count, move_p, move_a);
 
                             self.best_move_p = Some(move_p);
                             self.best_move_a = Some(move_a);

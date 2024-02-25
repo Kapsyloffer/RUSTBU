@@ -99,12 +99,6 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
             .unwrap()
             .set_state(b4_a.get_state());
     } else {
-        let winner = Board::check_winner(&board_a);
-        game.set_winner(&winner);
-        
-        if winner != Tile::Empty {
-            println!("Winner for game {}: {:?}", url, winner);
-        }
         //Insert previous move in the game hodler.
         game_hodler.moves.lock().unwrap().insert(String::from(url), (move_p.clone(), move_a.clone())); 
         game.next_turn();
@@ -114,25 +108,21 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         if game.get_players().0 == "ChumBucketAI" && game.get_turn() == Tile::Black {
             let (ai_p, ai_a) = ai_move(game, Tile::White);
             game_hodler.moves.lock().unwrap().insert(String::from(url), (ai_p.clone(), ai_a.clone())); 
-            let board_ai_a = game.get_board(ai_a.home_colour, ai_p.board_colour).unwrap();
-            let winner = Board::check_winner(&board_ai_a);
-            game.set_winner(&winner);
-            
-            if winner != Tile::Empty {
-                println!("Winner for game {}: {:?}", url, winner);
-            }
         }
         if game.get_players().1 == "ChumBucketAI" && game.get_turn() == Tile::White {
             let (ai_p, ai_a) = ai_move(game, Tile::White);
             game_hodler.moves.lock().unwrap().insert(String::from(url), (ai_p.clone(), ai_a.clone())); 
-            let board_ai_a = game.get_board(ai_a.home_colour, ai_p.board_colour).unwrap();
-            let winner = Board::check_winner(&board_ai_a);
-            game.set_winner(&winner);
-            
+        }
+        
+        for board in game.get_boards() {
+            let winner = Board::check_winner(&board);
             if winner != Tile::Empty {
+                game.set_winner(&winner);
                 println!("Winner for game {}: {:?}", url, winner);
+                break;
             }
         }
+
         game.next_turn();
     }
 }
