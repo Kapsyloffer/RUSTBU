@@ -11,7 +11,7 @@ pub struct ChumBucket {
 
 impl ChumBucket {
     pub fn new() -> ChumBucket {
-        return ChumBucket{best_move_p: None, best_move_a: None, best_rock_count: 0, best_range: 0};
+        return ChumBucket{best_move_p: None, best_move_a: None, best_rock_count: 100, best_range: 0};
     }
 
     //This AI is stupid and evaluates only based on:
@@ -56,7 +56,7 @@ impl ChumBucket {
                 for aggr_pos in &rock_positions_aggressive {
                     //So that we don't mess up the og states.
                     let mut home_clone = home_board.clone();
-                    let mut opp_clone = home_board.clone();
+                    let mut opp_clone = opp_board.clone();
                     
                     //New aggr pos defined using deltas
                     let new_aggr_pos: (i8, i8) = (aggr_pos.0 + dy, aggr_pos.1 + dx);
@@ -95,7 +95,7 @@ impl ChumBucket {
                             rock_count += Self::get_rock_positions(&game_board, opp_colour).len() as i8;
                         }
                     
-                        if rock_count < self.best_rock_count && range_count >= self.best_range {
+                        if rock_count <= self.best_rock_count /*&& range_count > self.best_range*/ {
                             //Obv very good
                             self.best_rock_count = rock_count;
                             self.best_range = range_count;
@@ -113,11 +113,14 @@ impl ChumBucket {
                                 opp_clone.get_color(),
                                 aggr_pos.1,
                                 aggr_pos.0,
-                                m.1,
-                                m.0,
-                                false,
+                                new_aggr_pos.1,
+                                new_aggr_pos.0,
+                                true,
                                 String::from("ChumBucketAI")
                             );
+
+                            println!("\nOUR BEST MOVE:\nROCKS:{}\nRANGE:{}\nMOVE_P{:#?}\nMOVE_A:{:#?}", 
+                            rock_count, range_count, move_p, move_a);
 
                             self.best_move_p = Some(move_p);
                             self.best_move_a = Some(move_a);

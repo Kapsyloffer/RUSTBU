@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{api::game_packets::*, rules::{game_board::Board, game_hodler::GameHodler, game_tile::Tile}};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct MovementAction {
     board_colour: Tile,
     home_colour: Tile,
