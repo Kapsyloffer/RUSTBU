@@ -108,7 +108,8 @@ Standard layout:       "DORK" layout:
 - [ ] Show a little flag next to name.
 - [ ] Navigatable page.
 - [ ] Themes for boards and pieces.
-- [ ] SHOBU engine/AI.
+- [x] SHOBU engine/AI.
+- [ ] SHOBU engine/AI but good.
 - [ ] Movement animations / Smooth movement.
 - [ ] Allow aggressive moves first / Detect which of the two moves is aggressive.
 

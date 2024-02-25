@@ -67,7 +67,7 @@ fn test_ai_1() {
     let best_moves = ai.get_move(&mut g, Tile::Black);
     println!("\n{:#?}\n", best_moves);
 
-    let target_move = MovementAction::new(Tile::White, Tile::White, 2, 3, 3, 2, true, String::from("ChumBucketAI"));
+    let target_move = MovementAction::new(Tile::White, Tile::White, 3, 2, 2, 3, true, String::from("ChumBucketAI"));
 
     assert_eq!(best_moves.1, target_move);
 }

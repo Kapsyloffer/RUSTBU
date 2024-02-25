@@ -6,7 +6,7 @@ pub struct ChumBucket {
     best_move_p: Option<MovementAction>,
     best_move_a: Option<MovementAction>,
     best_rock_count: i8,
-    best_range: i8 
+    best_range: i64 
 }
 
 impl ChumBucket {
@@ -39,6 +39,7 @@ impl ChumBucket {
     pub fn eval_move(&mut self, home_board: &Board, opp_board: &Board, game_state: &Game, ai_color: &Tile) {
         let rock_positions_passive = Self::get_rock_positions(&home_board, *ai_color);
         let rock_positions_aggressive = Self::get_rock_positions(&opp_board, *ai_color);
+        let mut range_count: i64 = 0; //Not working rn.
 
         //Runs for each rock on home.
         for passive_pos in rock_positions_passive {
@@ -59,7 +60,7 @@ impl ChumBucket {
                     let mut opp_clone = opp_board.clone();
                     
                     //New aggr pos defined using deltas
-                    let new_aggr_pos: (i8, i8) = (aggr_pos.0 + dy, aggr_pos.1 + dx);
+                    let new_aggr_pos: (i8, i8) = (aggr_pos.0 + dx, aggr_pos.1 + dy);
 
                     //If both true both moves are valid.
                     let moved_p = Tile::passive_move(&mut home_clone, passive_pos, new_passive_pos);
@@ -71,7 +72,6 @@ impl ChumBucket {
                         let game_clone = game_state.clone();
 
                         let mut rock_count: i8 = 0;
-                        let mut range_count: i8 = 0;
 
                         //Replace used boards on game_state, then eval
                         for mut game_board in game_clone.get_boards() {
@@ -87,16 +87,21 @@ impl ChumBucket {
                                 game_board.set_state(opp_clone.get_state());
                             }
 
+                            //Opponent colour
                             let opp_colour = Self::get_opponent(*ai_color);
-                            //Eval range
-                            range_count += Self::get_rock_positions(&game_board, *ai_color).len() as i8;
+                            
+                            //Eval range, but only for homeboards.
+                            if game_board.get_home() == *ai_color {
+                                range_count += Self::get_rock_positions(&game_board, *ai_color).len() as i64;
+                            }
                             //TODO: Only for homeboards.
 
                             //Eval Opponent rocks
                             rock_count += Self::get_rock_positions(&game_board, opp_colour).len() as i8;
                         }
                     
-                        if rock_count < self.best_rock_count {
+                        if rock_count < self.best_rock_count || 
+                        rock_count <= self.best_rock_count && range_count > self.best_range {
                             //Obv very good
                             self.best_rock_count = rock_count;
                             self.best_range = range_count;

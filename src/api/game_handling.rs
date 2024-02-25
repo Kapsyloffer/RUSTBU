@@ -22,7 +22,7 @@ pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &Game
 }
 }
 
-pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile, game_hodler: &GameHodler) {
+pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile, ai: bool, game_hodler: &GameHodler) {
     //Just to prevent collissions (Rare af but yaknow, just in case.)
     let map_size = game_hodler.games.lock().unwrap().len();
     let url = format!("{}{}", Game::generate_url(), map_size);
@@ -34,6 +34,11 @@ pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile
         .insert(url.to_owned(), Game::new_game());
 
     game_hodler.games.lock().unwrap().get_mut(&url).unwrap().add_player(player_id, Some(*color));
+    
+    //Add chumbucket if we play with AI
+    if ai {
+        game_hodler.games.lock().unwrap().get_mut(&url).unwrap().add_player(String::from("ChumBucketAI"), None);
+    }
 
     let packet = GamePacket::GameCreated { url };
     if socket

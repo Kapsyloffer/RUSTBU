@@ -42,7 +42,10 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                 }
                 //Create a new game.
                 GamePacket::CreateGame {player_id, color} => {
-                    create_game(&mut socket, player_id, &color, &game_hodler).await;
+                    create_game(&mut socket, player_id, &color, false, &game_hodler).await;
+                }
+                GamePacket::CreateGameWithAI { player_id, color } => {
+                    create_game(&mut socket, player_id, &color, true, &game_hodler).await;
                 }
                 //Response on create a new game.
                 GamePacket::GameCreated { url } => {

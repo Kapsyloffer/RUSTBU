@@ -16,6 +16,11 @@ pub (crate) enum GamePacket {
         player_id: String,
         color: Tile,
     },
+    //Call to create new game vs ChumBucket.
+    CreateGameWithAI {
+        player_id: String,
+        color: Tile,
+    },
     //Call to fetch game state
     FetchGame { 
         url: String,
