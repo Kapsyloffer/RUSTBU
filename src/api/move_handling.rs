@@ -1,9 +1,9 @@
 use axum::extract::ws::{Message, WebSocket};
 use serde::{Deserialize, Serialize};
+use crate::rules::game_instance::Game;
+use crate::{ai::chum_bucket::ChumBucket, api::game_packets::*, rules::{game_board::Board, game_hodler::GameHodler, game_tile::Tile}};
 
-use crate::{api::game_packets::*, rules::{game_board::Board, game_hodler::GameHodler, game_tile::Tile}};
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct MovementAction {
     board_colour: Tile,
     home_colour: Tile,
@@ -13,6 +13,21 @@ pub struct MovementAction {
     y2: i8,
     aggr: bool,
     player: String,
+}
+
+impl MovementAction {
+    pub fn new(b: Tile, h: Tile, x1: i8, y1: i8, x2: i8, y2: i8, a: bool, p: String) -> MovementAction{
+        return MovementAction{
+            board_colour: b,
+            home_colour: h,
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2,
+            aggr: a,
+            player: p,
+        };
+    }
 }
 
 pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAction, move_a: &MovementAction) {
@@ -84,18 +99,62 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
             .unwrap()
             .set_state(b4_a.get_state());
     } else {
-        let winner = Board::check_winner(&board_a);
-        game.set_winner(&winner);
-        
-        if winner != Tile::Empty {
-            println!("Winner for game {}: {:?}", url, winner);
-        }
         //Insert previous move in the game hodler.
         game_hodler.moves.lock().unwrap().insert(String::from(url), (move_p.clone(), move_a.clone())); 
         game.next_turn();
+
+        //AI CODE
+        //TODO: Get rid of.
+        if game.get_players().0 == "ChumBucketAI" && game.get_turn() == Tile::Black {
+            let (ai_p, ai_a) = ai_move(game, Tile::White);
+            game_hodler.moves.lock().unwrap().insert(String::from(url), (ai_p.clone(), ai_a.clone())); 
+        }
+        if game.get_players().1 == "ChumBucketAI" && game.get_turn() == Tile::White {
+            let (ai_p, ai_a) = ai_move(game, Tile::White);
+            game_hodler.moves.lock().unwrap().insert(String::from(url), (ai_p.clone(), ai_a.clone())); 
+        }
+        
+        for board in game.get_boards() {
+            let winner = Board::check_winner(&board);
+            if winner != Tile::Empty {
+                game.set_winner(&winner);
+                println!("Winner for game {}: {:?}", url, winner);
+                break;
+            }
+        }
+
+        game.next_turn();
+    }
+}
+
+//TODO: Get rid of.
+fn ai_move(game: &mut Game, ai_color: Tile) -> (MovementAction, MovementAction) {
+    let mut chummy = ChumBucket::new();
+    let (move_p, move_a) = chummy.get_move(game, ai_color);
+
+    //DO MOVE
+    let board_p: &mut Board = game.get_board(move_p.home_colour, move_p.board_colour).unwrap();
+    let moved_p = Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
+
+    if !moved_p {
+        println!("MOVEd_P FAILED!");
     }
 
-    println!("{}", game.display());
+    let board_a: &mut Board = game.get_board(move_a.home_colour, move_a.board_colour).unwrap();
+    let moved_a = Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
+    if !moved_a {
+        println!("MOVEd_A FAILED!");
+    }
+
+    if moved_p && moved_a  {
+        println!("AI MOVE: OK!");
+        println!("{}", game.display());
+    } else {
+        println!("AI MOVE: NOT OK!");
+        println!("{}", game.display());
+    }
+
+    return (move_p, move_a);
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool, player: &String) {
@@ -107,24 +166,32 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
 
     let mut move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
 
-    /* We may not fetch moves if: 
-    It's not your turn, 
-    It's not your piece, 
-    It's not your homeboard (passive move), 
-    If the game is over. 
-    If the game is not full.*/
-    if game.is_player(player) != game.get_turn() 
-    || b.get_state()[*x as usize][*y as usize] != game.is_player(player) 
-    || !aggr && game.is_player(player) != b.get_home()
-    || game.has_winner()
-    || game.get_players().0 == "None"
-    || game.get_players().1 == "None" {
-        //println!("Don't cheat, bad things will happen to ya!");
-        //return;
+    //Cannot fetch if it's not your turn.
+    if game.is_player(player) != game.get_turn() {
         move_list = format!("[]");
     }
-    
 
+    //Cannot fetch if it's not your piece
+    if b.get_state()[*x as usize][*y as usize] != game.is_player(player) {
+        move_list = format!("[]");
+    }
+
+    //Cannot make a passive move outside of your own homeboards.
+    if !aggr && game.is_player(player) != b.get_home() {
+        move_list = format!("[]");
+    }
+
+    //Cannot fetch moves if the game is over.
+    if game.has_winner() {
+        move_list = format!("[]");
+    }
+
+    //Cannot fetch moves if the game has not started.
+    if game.get_players().0 == "None" || game.get_players().1 == "None" {
+        move_list = format!("[]");
+    }
+
+    //Send it
     let packet = GamePacket::FetchedMoves { moves: move_list };
     if socket
         .send(Message::Text(serde_json::to_string(&packet).unwrap()))
