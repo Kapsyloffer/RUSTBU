@@ -17,15 +17,15 @@ impl ChumBucket {
     //This AI is stupid and evaluates only based on:
     //Freedom of movement (Higher is better)
     //& Enemy rocks remaining. (Lower is better)
-    pub fn get_move(&mut self, game: &mut Game, ai_color: Tile) -> (&MovementAction, &MovementAction) {
+    pub fn get_move(&mut self, game: &mut Game, ai_color: Tile) -> (MovementAction, MovementAction) {
         //First we get the opponent colour
         let opp_color = Self::get_opponent(ai_color);
 
         //Get all boards
-        let mut home_b = *game.get_board(ai_color, Tile::Black).unwrap();
-        let mut home_w = *game.get_board(ai_color, Tile::White).unwrap();
-        let mut opp_b = *game.get_board(opp_color, Tile::Black).unwrap();
-        let mut opp_w = *game.get_board(opp_color, Tile::White).unwrap();
+        let home_b = *game.get_board(ai_color, Tile::Black).unwrap();
+        let home_w = *game.get_board(ai_color, Tile::White).unwrap();
+        let opp_b = *game.get_board(opp_color, Tile::Black).unwrap();
+        let opp_w = *game.get_board(opp_color, Tile::White).unwrap();
 
         //Evaluate for each.
         self.eval_move(&home_b, &opp_w,  game, &ai_color);
@@ -33,7 +33,7 @@ impl ChumBucket {
         self.eval_move(&home_w, &opp_b,  game, &ai_color);
         self.eval_move(&home_w, &home_b, game, &ai_color);
 
-        unimplemented!();
+        return (self.best_move_p.clone().unwrap(), self.best_move_a.clone().unwrap());
     }
 
     pub fn eval_move(&mut self, home_board: &Board, opp_board: &Board, game_state: &Game, ai_color: &Tile) {
@@ -68,15 +68,13 @@ impl ChumBucket {
                     //Evaluate.
                     if moved_p && moved_a {
                         //Gamestate clone so that we don't mess anything up.
-                        let mut game_clone = game_state.clone();
-
-                        //Fetch each boards
-                        let mut boards = game_clone.get_boards();
+                        let game_clone = game_state.clone();
 
                         let mut rock_count:i8 = 0;
                         let mut range_count:i8 = 0;
+
                         //Replace used boards on game_state, then eval
-                        for mut game_board in boards {
+                        for mut game_board in game_clone.get_boards() {
                             //If both home and colour match for home_b
                             if game_board.get_home() == home_clone.get_home() 
                             && game_board.get_color() == home_clone.get_color() {
@@ -101,16 +99,28 @@ impl ChumBucket {
                             //Obv very good
                             self.best_rock_count = rock_count;
                             self.best_range = range_count;
-                            //TODO
-                            /*
-                            board_colour: Tile,
-                            home_colour: Tile,
-                            x1: i8,
-                            y1: i8,
-                            x2: i8,
-                            y2: i8,
-                            aggr: bool,
-                            player: String, */
+
+                            let move_p = MovementAction::new(home_clone.get_home(),
+                                home_clone.get_color(),
+                                passive_pos.1,
+                                passive_pos.0,
+                                m.1,
+                                m.0,
+                                false,
+                                String::from("ChumBucketAI")
+                            );
+                            let move_a = MovementAction::new(opp_clone.get_home(),
+                                opp_clone.get_color(),
+                                aggr_pos.1,
+                                aggr_pos.0,
+                                m.1,
+                                m.0,
+                                false,
+                                String::from("ChumBucketAI")
+                            );
+
+                            self.best_move_p = Some(move_p);
+                            self.best_move_a = Some(move_a);
                         }
                     }
                 }

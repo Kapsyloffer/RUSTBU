@@ -15,6 +15,21 @@ pub struct MovementAction {
     player: String,
 }
 
+impl MovementAction {
+    pub fn new(b: Tile, h: Tile, x1: i8, y1: i8, x2: i8, y2: i8, a: bool, p: String) -> MovementAction{
+        return MovementAction{
+            board_colour: b,
+            home_colour: h,
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2,
+            aggr: a,
+            player: p,
+        };
+    }
+}
+
 pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAction, move_a: &MovementAction) {
     let mut games = game_hodler.games.lock().unwrap();
     let Some(game) = games.get_mut(url) else {
