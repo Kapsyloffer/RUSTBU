@@ -106,6 +106,10 @@ impl Game {
         return None;
     }
 
+    pub fn get_boards(&self) -> [Board; 4] {
+        return self.boards;
+    }
+
     //Used for "fancy print" in CLI.
     pub fn display(&mut self) -> String {
         let mut disp: String = String::from("\n\n\tS H O B U\n\n");

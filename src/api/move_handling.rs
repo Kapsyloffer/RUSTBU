@@ -107,24 +107,32 @@ pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: 
 
     let mut move_list = format!("{:?}", Tile::get_possible_moves(b, *aggr, (*x, *y)));
 
-    /* We may not fetch moves if: 
-    It's not your turn, 
-    It's not your piece, 
-    It's not your homeboard (passive move), 
-    If the game is over. 
-    If the game is not full.*/
-    if game.is_player(player) != game.get_turn() 
-    || b.get_state()[*x as usize][*y as usize] != game.is_player(player) 
-    || !aggr && game.is_player(player) != b.get_home()
-    || game.has_winner()
-    || game.get_players().0 == "None"
-    || game.get_players().1 == "None" {
-        //println!("Don't cheat, bad things will happen to ya!");
-        //return;
+    //Cannot fetch if it's not your turn.
+    if game.is_player(player) != game.get_turn() {
         move_list = format!("[]");
     }
-    
 
+    //Cannot fetch if it's not your piece
+    if b.get_state()[*x as usize][*y as usize] != game.is_player(player) {
+        move_list = format!("[]");
+    }
+
+    //Cannot make a passive move outside of your own homeboards.
+    if !aggr && game.is_player(player) != b.get_home() {
+        move_list = format!("[]");
+    }
+
+    //Cannot fetch moves if the game is over.
+    if game.has_winner() {
+        move_list = format!("[]");
+    }
+
+    //Cannot fetch moves if the game has not started.
+    if game.get_players().0 == "None" || game.get_players().1 == "None" {
+        move_list = format!("[]");
+    }
+
+    //Send it
     let packet = GamePacket::FetchedMoves { moves: move_list };
     if socket
         .send(Message::Text(serde_json::to_string(&packet).unwrap()))
