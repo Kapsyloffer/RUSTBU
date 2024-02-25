@@ -96,8 +96,7 @@ impl ChumBucket {
                             rock_count += Self::get_rock_positions(&game_board, opp_colour).len() as i8;
                         }
                     
-                        if rock_count < self.best_rock_count 
-                        || rock_count == self.best_rock_count && range_count > self.best_range {
+                        if rock_count < self.best_rock_count {
                             //Obv very good
                             self.best_rock_count = rock_count;
                             self.best_range = range_count;
