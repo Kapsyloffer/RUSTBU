@@ -47,10 +47,10 @@ impl ChumBucket {
             let moves = Tile::get_possible_moves(&home_board, false, passive_pos);
 
             //Get the move deltas
-            for m in moves {
+            for new_passive_pos in moves {
                 //Deltas
-                let dy = m.0 - passive_pos.0;
-                let dx = m.1 - passive_pos.1;
+                let dy = new_passive_pos.1 - passive_pos.1;
+                let dx = new_passive_pos.0 - passive_pos.0;
 
                 //Try to make moves
                 for aggr_pos in &rock_positions_aggressive {
@@ -62,7 +62,7 @@ impl ChumBucket {
                     let new_aggr_pos: (i8, i8) = (aggr_pos.0 + dy, aggr_pos.1 + dx);
 
                     //If both true both moves are valid.
-                    let moved_p = Tile::passive_move(&mut home_clone, passive_pos, m);
+                    let moved_p = Tile::passive_move(&mut home_clone, passive_pos, new_passive_pos);
                     let moved_a = Tile::aggressive_move(&mut opp_clone, *aggr_pos, new_aggr_pos);
 
                     //Evaluate.
@@ -70,8 +70,8 @@ impl ChumBucket {
                         //Gamestate clone so that we don't mess anything up.
                         let game_clone = game_state.clone();
 
-                        let mut rock_count:i8 = 0;
-                        let mut range_count:i8 = 0;
+                        let mut rock_count: i8 = 0;
+                        let mut range_count: i8 = 0;
 
                         //Replace used boards on game_state, then eval
                         for mut game_board in game_clone.get_boards() {
@@ -90,41 +90,43 @@ impl ChumBucket {
                             let opp_colour = Self::get_opponent(*ai_color);
                             //Eval range
                             range_count += Self::get_rock_positions(&game_board, *ai_color).len() as i8;
+                            //TODO: Only for homeboards.
 
                             //Eval Opponent rocks
                             rock_count += Self::get_rock_positions(&game_board, opp_colour).len() as i8;
                         }
                     
-                        if rock_count <= self.best_rock_count /*&& range_count > self.best_range*/ {
+                        if rock_count < self.best_rock_count 
+                        || rock_count == self.best_rock_count && range_count > self.best_range {
                             //Obv very good
                             self.best_rock_count = rock_count;
                             self.best_range = range_count;
 
-                            let move_p = MovementAction::new(home_clone.get_home(),
-                                home_clone.get_color(),
-                                passive_pos.1,
+                            let move_p = MovementAction::new(home_clone.get_color(),
+                                home_clone.get_home(),
                                 passive_pos.0,
-                                m.1,
-                                m.0,
+                                passive_pos.1,
+                                new_passive_pos.0,
+                                new_passive_pos.1,
                                 false,
                                 String::from("ChumBucketAI")
                             );
-                            let move_a = MovementAction::new(opp_clone.get_home(),
-                                opp_clone.get_color(),
-                                aggr_pos.1,
+                            let move_a = MovementAction::new(opp_clone.get_color(),
+                                opp_clone.get_home(),
                                 aggr_pos.0,
-                                new_aggr_pos.1,
+                                aggr_pos.1,
                                 new_aggr_pos.0,
+                                new_aggr_pos.1,
                                 true,
                                 String::from("ChumBucketAI")
                             );
 
-                            println!("\nOUR BEST MOVE:\nROCKS:{}\nRANGE:{}\nMOVE_P{:#?}\nMOVE_A:{:#?}", 
+                            println!("\nOUR BEST MOVE:\nROCKS:{}\nRANGE:{}\nMOVE_P:\n{:#?}\nMOVE_A:\n{:#?}", 
                             rock_count, range_count, move_p, move_a);
 
                             self.best_move_p = Some(move_p);
                             self.best_move_a = Some(move_a);
-                        }
+                        } 
                     }
                 }
             }

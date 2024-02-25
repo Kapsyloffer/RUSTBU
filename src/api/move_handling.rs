@@ -1,7 +1,7 @@
 use axum::extract::ws::{Message, WebSocket};
 use serde::{Deserialize, Serialize};
-
-use crate::{api::game_packets::*, rules::{game_board::Board, game_hodler::GameHodler, game_tile::Tile}};
+use crate::rules::game_instance::Game;
+use crate::{ai::chum_bucket::ChumBucket, api::game_packets::*, rules::{game_board::Board, game_hodler::GameHodler, game_tile::Tile}};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct MovementAction {
@@ -108,9 +108,45 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         //Insert previous move in the game hodler.
         game_hodler.moves.lock().unwrap().insert(String::from(url), (move_p.clone(), move_a.clone())); 
         game.next_turn();
+
+        //TODO: Get rid of.
+        if game.get_players().0 == "ChumBucketAI" && game.get_turn() == Tile::Black {
+            ai_move(game, Tile::Black);
+            game.next_turn();
+        }
+        if game.get_players().1 == "ChumBucketAI" && game.get_turn() == Tile::White {
+            ai_move(game, Tile::White);
+            game.next_turn();
+        }
+    }
+}
+
+//TODO: Get rid of.
+fn ai_move(game: &mut Game, ai_color: Tile) {
+    let mut chummy = ChumBucket::new();
+    let (move_p, move_a) = chummy.get_move(game, ai_color);
+
+    //DO MOVE
+    let board_p: &mut Board = game.get_board(move_p.home_colour, move_p.board_colour).unwrap();
+    let move_p = Tile::passive_move(board_p, (move_p.x1, move_p.y1), (move_p.x2, move_p.y2));
+
+    if !move_p {
+        println!("MOVE_P FAILED!");
     }
 
-    println!("{}", game.display());
+    let board_a: &mut Board = game.get_board(move_a.home_colour, move_a.board_colour).unwrap();
+    let move_a = Tile::aggressive_move(board_a, (move_a.x1, move_a.y1), (move_a.x2, move_a.y2));
+    if !move_a {
+        println!("MOVE_A FAILED!");
+    }
+
+    if move_p && move_a  {
+        println!("AI MOVE: OK!");
+        println!("{}", game.display());
+    } else {
+        println!("AI MOVE: NOT OK!");
+        println!("{}", game.display());
+    }
 }
 
 pub async fn fetch_moves(socket: &mut WebSocket, game_hodler: &GameHodler, url: &String, h: &Tile, c: &Tile, x: &i8, y: &i8, aggr: &bool, player: &String) {
