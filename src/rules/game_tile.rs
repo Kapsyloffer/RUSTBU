@@ -210,7 +210,6 @@ impl Tile {
             //Leapfrog
             else if boardstate[step_y][step_x] != Tile::Empty && stepping {
                 boardstate[rock_y][rock_x] = boardstate[step_y][step_x];
-                //Clear the spot behind us. (The D'Lcrantz method)
                 boardstate[step_y][step_x] = Tile::Empty;
             }
             //Edge case; diagonal 2 step pushes that are still on the board.
@@ -220,15 +219,8 @@ impl Tile {
         }
 
         //If the rock gets pushed off the edge.
-        if !on_board {
-            if stepping {
-                if boardstate[end_y][end_x] != Tile::Empty {
-                    boardstate[end_y][end_x] = Tile::Empty;
-                }
-                else if boardstate[step_y][step_x] != Tile::Empty{
-                    boardstate[step_y][step_x] = Tile::Empty;
-                }
-            }
+        if !on_board && stepping {
+            boardstate[step_y][step_x] = Tile::Empty;
         }
         
         //Move the rock.

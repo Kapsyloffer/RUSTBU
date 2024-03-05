@@ -1205,3 +1205,29 @@ fn squish_test_4(){
     assert!(Tile::aggressive_move(&mut board, (3, 0), (1, 2)));
     assert_eq!(*board.get_state(), target_state);
 }
+
+
+#[test]
+fn squish_test_5(){
+    let state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Black, Tile::Empty],
+        [Tile::Empty, Tile::White, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let target_state: [[Tile; 4]; 4] = [
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::White],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+        [Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty],
+    ];
+
+    let mut board = Board::new_board(Tile::Black, Tile::Black);
+    board.set_state(&state);
+    
+    //Not supposed to do that.
+    assert!(Tile::is_valid(&board, (2, 1), (0, 3), true));
+    assert!(Tile::aggressive_move(&mut board, (2, 1), (0, 3)));
+    assert_eq!(*board.get_state(), target_state);
+}

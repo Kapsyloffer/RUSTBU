@@ -11,6 +11,5 @@ async fn main() {
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
-    //xd dick and balls
 }
 
