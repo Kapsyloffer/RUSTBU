@@ -112,5 +112,6 @@ Standard layout:       "DORK" layout:
 - [ ] SHOBU engine/AI but good.
 - [ ] Movement animations / Smooth movement.
 - [ ] Allow aggressive moves first / Detect which of the two moves is aggressive.
+- [ ] Make good.
 
 Disclaimer: I do not own SHOBU in any way, shape, or form.  I just find the game neat hence I'm doing this project.
