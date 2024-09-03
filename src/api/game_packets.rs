@@ -60,5 +60,10 @@ pub (crate) enum GamePacket {
     PreviousMoves{
         move_p: MovementAction,
         move_a: MovementAction,
+    },
+    //Fetch game lobbies
+    GetAllGames,
+    FetchedLobbies{
+        str: String,
     }
 }

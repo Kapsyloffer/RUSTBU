@@ -15,11 +15,29 @@ pub async fn fetch_game(socket: &mut WebSocket, url: &String, game_hodler: &Game
     let packet = GamePacket::FetchedGame { state };
 
     if socket
-    .send(Message::Text(serde_json::to_string(&packet).unwrap()))
-    .await
-    .is_err() {
-    return;
+        .send(Message::Text(serde_json::to_string(&packet).unwrap()))
+        .await
+        .is_err() {
+        return;
+    }
 }
+
+pub async fn get_all_games(socket: &mut WebSocket, game_hodler: &GameHodler) {
+    let games = game_hodler.games.lock().unwrap().to_owned();
+
+    let mut reduced_gamestring = String::new();
+
+    for g in games {
+         reduced_gamestring.push_str(&format!("{:?}", (g.0, g.1.get_players(), g.1.has_winner())));
+    }
+
+    let packet = GamePacket::FetchedLobbies{ str: reduced_gamestring };
+    if socket
+        .send(Message::Text(serde_json::to_string(&packet).unwrap()))
+        .await
+        .is_err() {
+        return;
+    }
 }
 
 pub async fn create_game(socket: &mut WebSocket, player_id: String, color: &Tile, ai: bool, game_hodler: &GameHodler) {

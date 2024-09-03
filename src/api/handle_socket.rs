@@ -4,7 +4,7 @@ use axum::
 };
 use crate::
 {
-    api::{game_handling::{create_game, fetch_game}, move_handling::*},
+    api::{game_handling::{create_game, fetch_game, get_all_games}, move_handling::*},
     rules::game_hodler::GameHodler,
 };
 
@@ -68,6 +68,11 @@ pub async fn handle_socket(mut socket: WebSocket, game_hodler: GameHodler) {
                 //Previously made moves.
                 GamePacket::FetchPreviousMoves { url } => {
                     fetch_previous_moves(&mut socket, &game_hodler, &url).await;
+                }
+                //Previously made moves.
+                GamePacket::GetAllGames => {
+                    //TODO: Make json, and return
+                    get_all_games(&mut socket, &game_hodler).await;
                 }
                 _ => unimplemented!(),
             }
