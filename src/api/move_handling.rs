@@ -100,7 +100,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
             .set_state(b4_a.get_state());
     } else {
         //Insert previous move in the game hodler.
-        game_hodler.moves.lock().unwrap().insert(String::from(url), (move_p.clone(), move_a.clone())); 
+        game_hodler.moves.lock().unwrap().insert(String::from(url), (move_p.clone(), move_a.clone()));      
         game.next_turn();
 
         //AI CODE
@@ -108,10 +108,12 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
         if game.get_players().0 == "ChumBucketAI" && game.get_turn() == Tile::Black {
             let (ai_p, ai_a) = ai_move(game, Tile::White);
             game_hodler.moves.lock().unwrap().insert(String::from(url), (ai_p.clone(), ai_a.clone())); 
+            game.next_turn();
         }
         if game.get_players().1 == "ChumBucketAI" && game.get_turn() == Tile::White {
             let (ai_p, ai_a) = ai_move(game, Tile::White);
             game_hodler.moves.lock().unwrap().insert(String::from(url), (ai_p.clone(), ai_a.clone())); 
+            game.next_turn();
         }
         
         for board in game.get_boards() {
@@ -122,8 +124,7 @@ pub async fn do_move(game_hodler: &GameHodler, url: &String, move_p: &MovementAc
                 break;
             }
         }
-
-        game.next_turn();
+        println!("{}", game.display());
     }
 }
 
